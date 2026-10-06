@@ -1,0 +1,200 @@
+// Server-side rollups for the management screens (Team Workload, Management Dashboard,
+// Reports & Analytics). Counting and summing is done by the database (count / groupBy)
+// instead of sending every task to the browser and adding them up there.
+//
+// All three cover only the projects the caller manages: a Project Manager sees their own
+// projects, an Org Admin the whole organization.
+import { prisma } from '../../db.js';
+import { assertProjectPermission } from '../projects/projects.service.js';
+import { managedTaskScope } from './tasks.service.js';
+
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+// A report for one specific project requires managing that project.
+async function assertManagedProject(actor, projectId) {
+  if (projectId) await assertProjectPermission(actor, projectId, 'tasks.manage');
+}
+
+// Team Workload: per assignee - open tasks, overdue tasks, estimated hours.
+export async function getWorkloadSummary(actor, projectId) {
+  await assertManagedProject(actor, projectId);
+
+  const baseWhere = {
+    ...managedTaskScope(actor, projectId),
+    completedAt: null,
+    assigneeId: { not: null },
+  };
+
+  const [openRows, overdueRows] = await Promise.all([
+    prisma.task.groupBy({
+      by: ['assigneeId'],
+      where: baseWhere,
+      _count: { _all: true },
+      _sum: { estimatedHours: true },
+    }),
+    prisma.task.groupBy({
+      by: ['assigneeId'],
+      where: { ...baseWhere, dueDate: { lt: new Date() } },
+      _count: { _all: true },
+    }),
+  ]);
+
+  const overdueByUser = new Map(overdueRows.map((r) => [r.assigneeId, r._count._all]));
+
+  return openRows.map((r) => ({
+    userId: r.assigneeId,
+    openCount: r._count._all,
+    overdueCount: overdueByUser.get(r.assigneeId) ?? 0,
+    estimatedHours: r._sum.estimatedHours ?? 0,
+  }));
+}
+
+// Management Dashboard: status counts, this week's completion, and the top priority tasks.
+export async function getDashboardSummary(actor, projectId) {
+  await assertManagedProject(actor, projectId);
+
+  const now = new Date();
+  const weekAgo = new Date(now.getTime() - 7 * DAY_MS);
+  const scope = managedTaskScope(actor, projectId);
+  const count = (extra) => prisma.task.count({ where: { ...scope, ...extra } });
+
+  const [
+    total,
+    done,
+    blocked,
+    overdue,
+    overdueExclBlocked,
+    weeklyTotal,
+    weeklyCompleted,
+    oldestOverdueTask,
+    exampleBlockedTask,
+    priorityTasks,
+  ] = await Promise.all([
+    count({}),
+    count({ completedAt: { not: null } }),
+    count({ completedAt: null, blocked: true }),
+    count({ completedAt: null, dueDate: { lt: now } }),
+    count({ completedAt: null, blocked: false, dueDate: { lt: now } }),
+    count({ dueDate: { gte: weekAgo, lte: now } }),
+    count({ dueDate: { gte: weekAgo, lte: now }, completedAt: { not: null } }),
+    prisma.task.findFirst({
+      where: { ...scope, completedAt: null, dueDate: { lt: now } },
+      orderBy: { dueDate: 'asc' },
+      select: { title: true },
+    }),
+    prisma.task.findFirst({
+      where: { ...scope, completedAt: null, blocked: true },
+      select: { title: true },
+    }),
+    // Only URGENT and HIGH are requested, and sorting the enum 'desc' happens to put URGENT
+    // before HIGH (U > H alphabetically). Don't add more priorities here without switching
+    // to an explicit rank like PRIORITY_RANK in tasks.service.js.
+    prisma.task.findMany({
+      where: { ...scope, completedAt: null, priority: { in: ['URGENT', 'HIGH'] } },
+      orderBy: [{ priority: 'desc' }, { dueDate: 'asc' }],
+      take: 5,
+      select: {
+        id: true,
+        title: true,
+        projectId: true,
+        priority: true,
+        dueDate: true,
+        assigneeId: true,
+        project: { select: { name: true } },
+      },
+    }),
+  ]);
+
+  return {
+    total,
+    open: total - done,
+    done,
+    blocked,
+    overdue,
+    overdueExclBlocked,
+    inProgress: Math.max(total - done - blocked - overdueExclBlocked, 0),
+    completionRate: total > 0 ? Math.round((done / total) * 100) : 0,
+    weekly: {
+      completed: weeklyCompleted,
+      total: weeklyTotal,
+      percent: weeklyTotal > 0 ? Math.round((weeklyCompleted / weeklyTotal) * 100) : 0,
+    },
+    oldestOverdueTitle: oldestOverdueTask?.title ?? null,
+    exampleBlockedTitle: exampleBlockedTask?.title ?? null,
+    priorityTasks: priorityTasks.map((t) => ({
+      id: t.id,
+      title: t.title,
+      projectId: t.projectId,
+      projectName: t.project.name,
+      priority: t.priority,
+      dueDate: t.dueDate,
+      assigneeId: t.assigneeId,
+    })),
+  };
+}
+
+// Reports & Analytics. Two scopes on purpose: the KPI numbers follow the assignee and
+// date-range filters, while `userActivity` always covers the whole project scope (every
+// member's overall numbers), which is what the "User activity report" table shows.
+export async function getReportsSummary(actor, filters) {
+  await assertManagedProject(actor, filters.projectId);
+
+  const now = new Date();
+  const projectScope = managedTaskScope(actor, filters.projectId);
+  const cutoff = filters.days && filters.days > 0 ? new Date(now.getTime() - filters.days * DAY_MS) : null;
+
+  const scoped = {
+    ...projectScope,
+    assigneeId: filters.assigneeId === 'me' ? actor.userId : filters.assigneeId,
+    ...(cutoff ? { OR: [{ createdAt: { gte: cutoff } }, { completedAt: { gte: cutoff } }] } : {}),
+  };
+
+  const [total, overdue, completedRows, assignedRows, completedByUserRows] = await Promise.all([
+    prisma.task.count({ where: scoped }),
+    prisma.task.count({ where: { ...scoped, completedAt: null, dueDate: { lt: now } } }),
+    prisma.task.findMany({
+      where: { ...scoped, completedAt: { not: null } },
+      select: { createdAt: true, completedAt: true, dueDate: true },
+    }),
+    prisma.task.groupBy({
+      by: ['assigneeId'],
+      where: { ...projectScope, assigneeId: { not: null } },
+      _count: { _all: true },
+    }),
+    prisma.task.groupBy({
+      by: ['assigneeId'],
+      where: { ...projectScope, assigneeId: { not: null }, completedAt: { not: null } },
+      _count: { _all: true },
+    }),
+  ]);
+
+  const completed = completedRows.length;
+  const totalDays = completedRows.reduce(
+    (sum, t) => sum + Math.max(0, Math.round((t.completedAt - t.createdAt) / DAY_MS)),
+    0,
+  );
+  const onTimeCount = completedRows.filter((t) => !t.dueDate || t.completedAt <= t.dueDate).length;
+
+  const completedByUser = new Map(completedByUserRows.map((r) => [r.assigneeId, r._count._all]));
+  const userActivity = assignedRows
+    .map((r) => {
+      const assigned = r._count._all;
+      const userCompleted = completedByUser.get(r.assigneeId) ?? 0;
+      return {
+        userId: r.assigneeId,
+        assigned,
+        completed: userCompleted,
+        rate: assigned > 0 ? Math.round((userCompleted / assigned) * 100) : 0,
+      };
+    })
+    .sort((a, b) => b.assigned - a.assigned);
+
+  return {
+    total,
+    completed,
+    overdue,
+    avgCompletionDays: completed > 0 ? Math.round(totalDays / completed) : 0,
+    onTimeRate: completed > 0 ? Math.round((onTimeCount / completed) * 100) : 0,
+    userActivity,
+  };
+}

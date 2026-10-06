@@ -1,0 +1,52 @@
+name: CI
+on:
+  push:
+  pull_request:
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: flowboard
+          POSTGRES_PASSWORD: flowboard
+          POSTGRES_DB: flowboard_express
+        ports: ['5433:5432']
+        options: >-
+          --health-cmd "pg_isready -U flowboard" --health-interval 5s
+          --health-timeout 5s --health-retries 10
+    env:
+      DATABASE_URL: postgresql://flowboard:flowboard@localhost:5433/flowboard_express
+      JWT_ACCESS_SECRET: ci-access-secret-at-least-32-characters
+      JWT_REFRESH_SECRET: ci-refresh-secret-at-least-32-characters
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm, cache-dependency-path: "**/package-lock.json" }
+      - run: node scripts/check-role-levels.mjs
+
+      # Express API: migrations + demo data, then the permission and planning checks against a
+      # running server.
+      - run: npm ci
+        working-directory: backend-express
+      - run: npx prisma migrate deploy && node prisma/seed.js
+        working-directory: backend-express
+      - run: |
+          node src/server.js &
+          npx --yes wait-on http://localhost:3000/api/health
+          npm run test:permissions
+          npm run test:planning
+        working-directory: backend-express
+      - run: npm audit --omit=dev --audit-level=critical
+        working-directory: backend-express
+
+      # Frontend: lint, build, unit tests, then the Playwright flow against its own API + database.
+      - run: npm ci
+        working-directory: frontend
+      - run: npm run lint && npm run build && npm test
+        working-directory: frontend
+      - run: npm audit --omit=dev --audit-level=critical
+        working-directory: frontend
+      - run: npx playwright install --with-deps chromium && npm run test:e2e
+        working-directory: frontend

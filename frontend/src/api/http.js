@@ -1,0 +1,77 @@
+import axios from 'axios';
+import { clearTokens, getAccessToken, notifySessionExpired, setTokens } from './session';
+
+const baseURL = import.meta.env.VITE_API_URL ?? 'http://localhost:3000/api';
+
+export const http = axios.create({ baseURL, withCredentials: true });
+
+http.interceptors.request.use((config) => {
+  const token = getAccessToken();
+  if (token) {
+    config.headers.set('Authorization', `Bearer ${token}`);
+  }
+  return config;
+});
+
+// Bare axios instance (no interceptors) used only for the refresh call itself,
+// to avoid an infinite loop if the refresh endpoint ever 401s.
+const refreshClient = axios.create({ baseURL, withCredentials: true });
+
+let refreshPromise = null;
+
+async function refreshAccessToken() {
+  if (!refreshPromise) {
+    refreshPromise = refreshClient
+      .post('/auth/refresh', {})
+      .then((res) => {
+        setTokens(res.data);
+        return res.data.accessToken;
+      })
+      .catch(() => {
+        clearTokens();
+        return null;
+      })
+      .finally(() => {
+        refreshPromise = null;
+      });
+  }
+  return refreshPromise;
+}
+
+http.interceptors.response.use(
+  (res) => res,
+  async (error) => {
+    const config = error.config;
+    const isAuthRoute = config?.url?.startsWith('/auth/');
+
+    if (error.response?.status === 401 && config && !config._retried && !isAuthRoute) {
+      config._retried = true;
+      const newToken = await refreshAccessToken();
+      if (newToken) {
+        config.headers.set('Authorization', `Bearer ${newToken}`);
+        return http(config);
+      }
+      notifySessionExpired();
+    }
+
+    const retryable = config?.method?.toLowerCase() === 'get' &&
+      (!error.response || error.response.status >= 500);
+    if (retryable && (config._retryCount ?? 0) < 2) {
+      config._retryCount = (config._retryCount ?? 0) + 1;
+      await new Promise((resolve) => setTimeout(resolve, 250 * 2 ** config._retryCount));
+      return http(config);
+    }
+
+    return Promise.reject(error);
+  },
+);
+
+export function getErrorMessage(error, fallback = 'Something went wrong. Please try again.') {
+  if (axios.isAxiosError(error)) {
+    const body = error.response?.data;
+    if (Array.isArray(body?.message)) return body.message.join(' ');
+    if (typeof body?.message === 'string') return body.message;
+  }
+  if (error instanceof Error) return error.message;
+  return fallback;
+}

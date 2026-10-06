@@ -1,0 +1,41 @@
+{
+  "name": "flowboard-backend-express",
+  "version": "1.0.0",
+  "description": "FlowBoard REST API - Node.js + Express + Prisma + Socket.IO",
+  "private": true,
+  "type": "module",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate deploy",
+    "prisma:seed": "node prisma/seed.js",
+    "prisma:studio": "prisma studio",
+    "postinstall": "prisma generate",
+    "test": "node --test",
+    "test:permissions": "node test/permissions.smoke.mjs",
+    "test:planning": "node test/planning.smoke.mjs"
+  },
+  "dependencies": {
+    "@prisma/adapter-pg": "^7.10.0",
+    "@prisma/client": "7.10.0",
+    "bcrypt": "^6.0.0",
+    "compression": "^1.8.1",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^17.4.2",
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.1.0",
+    "helmet": "^8.3.0",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^2.0.2",
+    "pg": "^8.23.0",
+    "prisma": "7.10.0",
+    "socket.io": "^4.8.3",
+    "zod": "^4.1.0"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

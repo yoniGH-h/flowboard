@@ -1,0 +1,23 @@
+# Dependencies and build output
+node_modules/
+frontend/dist/
+
+# Secrets - only the .env.example files are committed
+backend-express/.env
+frontend/.env
+
+# Files uploaded through the app, and the e2e test uploads
+backend-express/uploads/
+backend-express/uploads-test/
+
+# Playwright output
+frontend/test-results/
+frontend/playwright-report/
+
+# Database backups (scripts/backup.ps1)
+backups/
+
+# Working files and local tool settings
+tmp/
+.claude/
+*.log

@@ -1,0 +1,38 @@
+// Every setting the server reads from the environment (.env), in one place.
+import 'dotenv/config';
+import path from 'node:path';
+
+// The backend-express folder, so relative paths in .env don't depend on where `node` was started.
+const ROOT = path.resolve(import.meta.dirname, '..');
+
+function required(name) {
+  const value = process.env[name];
+  if (!value) {
+    throw new Error(`Missing required environment variable ${name} (see .env.example)`);
+  }
+  return value;
+}
+
+export const config = {
+  port: Number(process.env.PORT ?? 3000),
+  databaseUrl: required('DATABASE_URL'),
+  corsOrigins: (process.env.CORS_ORIGIN ?? 'http://localhost:5173')
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean),
+  jwt: {
+    accessSecret: required('JWT_ACCESS_SECRET'),
+    refreshSecret: required('JWT_REFRESH_SECRET'),
+    accessTtl: process.env.JWT_ACCESS_TTL ?? '15m',
+    refreshTtl: process.env.JWT_REFRESH_TTL ?? '7d',
+  },
+  uploadsDir: path.resolve(ROOT, process.env.UPLOADS_DIR ?? './uploads'),
+  maxUploadSizeMb: Number(process.env.MAX_UPLOAD_SIZE_MB ?? 10),
+  isProduction: process.env.NODE_ENV === 'production',
+  // Optional - voice / Zoom calls are disabled until these are set (see modules/meetings/zoom.js).
+  zoom: {
+    accountId: process.env.ZOOM_ACCOUNT_ID ?? '',
+    clientId: process.env.ZOOM_CLIENT_ID ?? '',
+    clientSecret: process.env.ZOOM_CLIENT_SECRET ?? '',
+  },
+};
