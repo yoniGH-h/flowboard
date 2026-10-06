@@ -20,7 +20,6 @@ import { DashboardHero } from './components/DashboardHero';
 import { useAuth } from '../../auth/AuthContext';
 import { useOrganizationUsers, useProjects, useTasks } from '../../lib/queries';
 import { isDueSoon, isOverdue } from '../../lib/taskStatus';
-import { buildSparkline } from '../../lib/trends';
 import { formatRelativeToNow } from '../../lib/format';
 import { useNotifications } from '../../lib/queries';
 
@@ -87,7 +86,6 @@ export function PersonalDashboardPage() {
             value={stats.assigned}
             icon={<ChecklistOutlinedIcon fontSize="small" />}
             accentColor="#3454D1"
-            sparkline={buildSparkline(stats.assigned, 6, 1)}
           />
         </Grid>
         <Grid size={{ xs: 12, sm: 6, md: 3 }}>
@@ -96,7 +94,6 @@ export function PersonalDashboardPage() {
             value={stats.dueSoon}
             icon={<EventBusyOutlinedIcon fontSize="small" />}
             accentColor="#8A5A00"
-            sparkline={buildSparkline(stats.dueSoon, 6, 2)}
           />
         </Grid>
         <Grid size={{ xs: 12, sm: 6, md: 3 }}>
@@ -105,7 +102,6 @@ export function PersonalDashboardPage() {
             value={stats.overdue}
             icon={<WarningAmberOutlinedIcon fontSize="small" />}
             accentColor="#C62828"
-            sparkline={buildSparkline(stats.overdue, 6, 3)}
           />
         </Grid>
         <Grid size={{ xs: 12, sm: 6, md: 3 }}>
@@ -115,7 +111,6 @@ export function PersonalDashboardPage() {
             icon={<TaskAltOutlinedIcon fontSize="small" />}
             accentColor="#2E7D32"
             helperText="of assigned tasks"
-            sparkline={buildSparkline(stats.completionRate, 6, 4)}
           />
         </Grid>
       </Grid>

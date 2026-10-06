@@ -20,7 +20,6 @@ import { EmptyState, LoadingState, NoSearchResultsState } from '../../components
 import { useAuth } from '../../auth/AuthContext';
 import { useOrganizationUsers, useProjects } from '../../lib/queries';
 import { isManager } from '../../lib/permissions';
-import { buildSparkline } from '../../lib/trends';
 
 const STATUS_FILTERS = [
   { label: 'All', value: 'ALL' },
@@ -81,7 +80,6 @@ export function MyProjectsPage() {
               label="Total Projects"
               value={summary.total}
               icon={<FolderOutlinedIcon fontSize="small" />}
-              sparkline={buildSparkline(summary.total, 6, 1)}
             />
           </Grid>
           <Grid size={{ xs: 12, sm: 6, md: 3 }}>
@@ -90,7 +88,6 @@ export function MyProjectsPage() {
               value={summary.active}
               icon={<PlayCircleOutlineOutlinedIcon fontSize="small" />}
               accentColor="#2A6FB0"
-              sparkline={buildSparkline(summary.active, 6, 2)}
             />
           </Grid>
           <Grid size={{ xs: 12, sm: 6, md: 3 }}>
@@ -99,7 +96,6 @@ export function MyProjectsPage() {
               value={summary.atRisk}
               icon={<WarningAmberOutlinedIcon fontSize="small" />}
               accentColor="#C62828"
-              sparkline={buildSparkline(summary.atRisk, 6, 3)}
             />
           </Grid>
           <Grid size={{ xs: 12, sm: 6, md: 3 }}>
@@ -108,7 +104,6 @@ export function MyProjectsPage() {
               value={summary.completed}
               icon={<TaskAltOutlinedIcon fontSize="small" />}
               accentColor="#2E7D32"
-              sparkline={buildSparkline(summary.completed, 6, 4)}
             />
           </Grid>
         </Grid>

@@ -32,7 +32,6 @@ import { EmptyState, LoadingState } from '../../components/common/States';
 import { useAuth } from '../../auth/AuthContext';
 import { useOrganizationUsers, useProject, useTasks, useProjectAttachments, useProjectActivity } from '../../lib/queries';
 import { formatDate, formatDateTime, formatFileSize, fullName } from '../../lib/format';
-import { buildSparkline } from '../../lib/trends';
 import { projectAbility } from '../../lib/permissions';
 import { ContactButtons } from '../../components/common/ContactButtons';
 import { RiskTrendChart } from './RiskTrendChart';
@@ -133,7 +132,6 @@ export function ProjectOverviewPage() {
             label="Total Tasks"
             value={taskStats.total}
             icon={<ChecklistOutlinedIcon fontSize="small" />}
-            sparkline={buildSparkline(taskStats.total, 6, 1)}
           />
         </Grid>
         <Grid size={{ xs: 6, md: 3 }}>
@@ -142,7 +140,6 @@ export function ProjectOverviewPage() {
             value={taskStats.done}
             icon={<TaskAltOutlinedIcon fontSize="small" />}
             accentColor="#2E7D32"
-            sparkline={buildSparkline(taskStats.done, 6, 2)}
           />
         </Grid>
         <Grid size={{ xs: 6, md: 3 }}>
@@ -151,7 +148,6 @@ export function ProjectOverviewPage() {
             value={taskStats.overdue}
             icon={<WarningAmberOutlinedIcon fontSize="small" />}
             accentColor="#C62828"
-            sparkline={buildSparkline(taskStats.overdue, 6, 3)}
           />
         </Grid>
         <Grid size={{ xs: 6, md: 3 }}>
@@ -160,7 +156,6 @@ export function ProjectOverviewPage() {
             value={taskStats.blocked}
             icon={<BlockOutlinedIcon fontSize="small" />}
             accentColor="#6B7080"
-            sparkline={buildSparkline(taskStats.blocked, 6, 4)}
           />
         </Grid>
       </Grid>

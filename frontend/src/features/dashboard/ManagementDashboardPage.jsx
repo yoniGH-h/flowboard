@@ -47,7 +47,6 @@ import { LoadingState } from '../../components/common/States';
 import { ActivityFeed } from './components/ActivityFeed';
 import { DashboardHero } from './components/DashboardHero';
 import { useAuditLog, useDashboardSummary, useOrganizationUsers, useProjects, useWorkloadSummary } from '../../lib/queries';
-import { buildCompletionTrend, buildSparkline } from '../../lib/trends';
 import { formatDateShort, fullName } from '../../lib/format';
 import { useAuth } from '../../auth/AuthContext';
 
@@ -101,9 +100,8 @@ export function ManagementDashboardPage() {
       ].filter((d) => d.value > 0)
     : [];
 
-  const completionRate = summary?.completionRate ?? 0;
-
-  const completionTrend = useMemo(() => buildCompletionTrend(completionRate), [completionRate]);
+  // Real weekly data from the server: % of tasks due by each week vs. % actually completed.
+  const completionTrend = summary?.completionTrend ?? [];
 
   const auditEntries = auditLog ?? [];
 
@@ -142,7 +140,6 @@ export function ManagementDashboardPage() {
                 label="Active Projects"
                 value={activeProjects.length}
                 icon={<AssessmentOutlinedIcon fontSize="small" />}
-                sparkline={buildSparkline(activeProjects.length, 6, 1)}
               />
             </Grid>
             <Grid size={{ xs: 12, sm: 6, md: 3 }}>
@@ -151,7 +148,6 @@ export function ManagementDashboardPage() {
                 value={summary?.open ?? 0}
                 icon={<ChecklistOutlinedIcon fontSize="small" />}
                 accentColor="#2A6FB0"
-                sparkline={buildSparkline(summary?.open ?? 0, 6, 2)}
               />
             </Grid>
             <Grid size={{ xs: 12, sm: 6, md: 3 }}>
@@ -160,7 +156,6 @@ export function ManagementDashboardPage() {
                 value={summary?.overdue ?? 0}
                 icon={<WarningAmberOutlinedIcon fontSize="small" />}
                 accentColor="#C62828"
-                sparkline={buildSparkline(summary?.overdue ?? 0, 6, 3)}
               />
             </Grid>
             <Grid size={{ xs: 12, sm: 6, md: 3 }}>
@@ -169,7 +164,6 @@ export function ManagementDashboardPage() {
                 value={summary?.blocked ?? 0}
                 icon={<BlockOutlinedIcon fontSize="small" />}
                 accentColor="#8A5A00"
-                sparkline={buildSparkline(summary?.blocked ?? 0, 6, 4)}
               />
             </Grid>
           </Grid>
@@ -432,8 +426,9 @@ export function ManagementDashboardPage() {
             <Grid size={{ xs: 12, md: 7 }}>
               <Card sx={{ height: '100%' }}>
                 <CardContent>
-                  <Typography variant="h4" sx={{ mb: 1.5 }}>
-                    Completion trend (planned vs. actual)
+                  <Typography variant="h4">Completion trend (planned vs. actual)</Typography>
+                  <Typography variant="caption" color="text.secondary" component="p" sx={{ mb: 1.5 }}>
+                    Last 8 weeks: share of tasks that were due by each week (planned) vs. share actually completed.
                   </Typography>
                   <Box sx={{ height: 220 }}>
                     <ResponsiveContainer width="100%" height="100%">

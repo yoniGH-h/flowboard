@@ -21,7 +21,6 @@ import { RiskBadge } from '../../components/common/RiskBadge';
 import { LoadingState } from '../../components/common/States';
 import { useOrganizationUsers, useProjects, useReportsSummary } from '../../lib/queries';
 import { fullName } from '../../lib/format';
-import { buildSparkline } from '../../lib/trends';
 import { InsightsSection } from './InsightsSection';
 import TaskAltOutlinedIcon from '@mui/icons-material/TaskAltOutlined';
 import ScheduleOutlinedIcon from '@mui/icons-material/ScheduleOutlined';
@@ -124,7 +123,6 @@ export function ReportsAnalyticsPage() {
             label="Tasks in Scope"
             value={summary.total}
             icon={<TaskAltOutlinedIcon fontSize="small" />}
-            sparkline={buildSparkline(summary.total, 6, 1)}
           />
         </Grid>
         <Grid size={{ xs: 12, sm: 6, md: 3 }}>
@@ -133,7 +131,6 @@ export function ReportsAnalyticsPage() {
             value={summary.completed}
             icon={<TrendingUpOutlinedIcon fontSize="small" />}
             accentColor="#2E7D32"
-            sparkline={buildSparkline(summary.completed, 6, 2)}
           />
         </Grid>
         <Grid size={{ xs: 12, sm: 6, md: 3 }}>
@@ -142,7 +139,6 @@ export function ReportsAnalyticsPage() {
             value={`${summary.avgCompletionDays}d`}
             icon={<ScheduleOutlinedIcon fontSize="small" />}
             accentColor="#2A6FB0"
-            sparkline={buildSparkline(summary.avgCompletionDays, 6, 3)}
           />
         </Grid>
         <Grid size={{ xs: 12, sm: 6, md: 3 }}>
@@ -152,7 +148,6 @@ export function ReportsAnalyticsPage() {
             icon={<WarningAmberOutlinedIcon fontSize="small" />}
             accentColor="#C62828"
             helperText={`${summary.onTimeRate}% on-time completion`}
-            sparkline={buildSparkline(summary.overdue, 6, 4)}
           />
         </Grid>
       </Grid>

@@ -35,7 +35,6 @@ import { useArchiveProject, useOrganizationUsers, useProjects } from '../../lib/
 import { ProjectFormDialog } from './ProjectFormDialog';
 import { hasPermission, isOrgAdmin, ROLE_LEVEL } from '../../lib/permissions';
 import { useAuth } from '../../auth/AuthContext';
-import { buildSparkline } from '../../lib/trends';
 
 export function ProjectManagementPage() {
   const navigate = useNavigate();
@@ -107,7 +106,6 @@ export function ProjectManagementPage() {
               label="Total Projects"
               value={summary.total}
               icon={<FolderOutlinedIcon fontSize="small" />}
-              sparkline={buildSparkline(summary.total, 6, 1)}
             />
           </Grid>
           <Grid size={{ xs: 12, sm: 6, md: 3 }}>
@@ -116,7 +114,6 @@ export function ProjectManagementPage() {
               value={summary.active}
               icon={<PlayCircleOutlineOutlinedIcon fontSize="small" />}
               accentColor="#2A6FB0"
-              sparkline={buildSparkline(summary.active, 6, 2)}
             />
           </Grid>
           <Grid size={{ xs: 12, sm: 6, md: 3 }}>
@@ -125,7 +122,6 @@ export function ProjectManagementPage() {
               value={summary.atRisk}
               icon={<WarningAmberOutlinedIcon fontSize="small" />}
               accentColor="#C62828"
-              sparkline={buildSparkline(summary.atRisk, 6, 3)}
             />
           </Grid>
           <Grid size={{ xs: 12, sm: 6, md: 3 }}>
@@ -134,7 +130,6 @@ export function ProjectManagementPage() {
               value={summary.archived}
               icon={<ArchiveOutlinedIcon fontSize="small" />}
               accentColor="#6B7080"
-              sparkline={buildSparkline(summary.archived, 6, 4)}
             />
           </Grid>
         </Grid>

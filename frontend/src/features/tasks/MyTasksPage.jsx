@@ -30,7 +30,6 @@ import { useAuth } from '../../auth/AuthContext';
 import { useOrganizationUsers, useProjects, useTasks } from '../../lib/queries';
 import { isDueSoon, isOverdue } from '../../lib/taskStatus';
 import { formatDateShort } from '../../lib/format';
-import { buildSparkline } from '../../lib/trends';
 
 export function MyTasksPage() {
   const { user } = useAuth();
@@ -109,7 +108,6 @@ export function MyTasksPage() {
               label="Assigned"
               value={summary.assigned}
               icon={<ChecklistOutlinedIcon fontSize="small" />}
-              sparkline={buildSparkline(summary.assigned, 6, 1)}
             />
           </Grid>
           <Grid size={{ xs: 12, sm: 6, md: 3 }}>
@@ -118,7 +116,6 @@ export function MyTasksPage() {
               value={summary.dueSoon}
               icon={<EventBusyOutlinedIcon fontSize="small" />}
               accentColor="#8A5A00"
-              sparkline={buildSparkline(summary.dueSoon, 6, 2)}
             />
           </Grid>
           <Grid size={{ xs: 12, sm: 6, md: 3 }}>
@@ -127,7 +124,6 @@ export function MyTasksPage() {
               value={summary.overdue}
               icon={<WarningAmberOutlinedIcon fontSize="small" />}
               accentColor="#C62828"
-              sparkline={buildSparkline(summary.overdue, 6, 3)}
             />
           </Grid>
           <Grid size={{ xs: 12, sm: 6, md: 3 }}>
@@ -136,7 +132,6 @@ export function MyTasksPage() {
               value={summary.blocked}
               icon={<BlockOutlinedIcon fontSize="small" />}
               accentColor="#6B7080"
-              sparkline={buildSparkline(summary.blocked, 6, 4)}
             />
           </Grid>
         </Grid>

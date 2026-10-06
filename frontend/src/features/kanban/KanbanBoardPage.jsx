@@ -30,7 +30,6 @@ import Alert from '@mui/material/Alert';
 import { useBoard, useLabels, useMoveTask, useOrganizationUsers, useProject, useTasks } from '../../lib/queries';
 import { projectAbility } from '../../lib/permissions';
 import { isOverdue } from '../../lib/taskStatus';
-import { buildSparkline } from '../../lib/trends';
 
 export function KanbanBoardPage() {
   const { projectId } = useParams();
@@ -118,7 +117,6 @@ export function KanbanBoardPage() {
             label="Total Tasks"
             value={summary.total}
             icon={<ChecklistOutlinedIcon fontSize="small" />}
-            sparkline={buildSparkline(summary.total, 6, 1)}
           />
         </Grid>
         <Grid size={{ xs: 12, sm: 6, md: 3 }}>
@@ -127,7 +125,6 @@ export function KanbanBoardPage() {
             value={summary.open}
             icon={<TaskAltOutlinedIcon fontSize="small" />}
             accentColor="#2A6FB0"
-            sparkline={buildSparkline(summary.open, 6, 2)}
           />
         </Grid>
         <Grid size={{ xs: 12, sm: 6, md: 3 }}>
@@ -136,7 +133,6 @@ export function KanbanBoardPage() {
             value={summary.overdue}
             icon={<WarningAmberOutlinedIcon fontSize="small" />}
             accentColor="#C62828"
-            sparkline={buildSparkline(summary.overdue, 6, 3)}
           />
         </Grid>
         <Grid size={{ xs: 12, sm: 6, md: 3 }}>
@@ -145,7 +141,6 @@ export function KanbanBoardPage() {
             value={summary.blocked}
             icon={<BlockOutlinedIcon fontSize="small" />}
             accentColor="#6B7080"
-            sparkline={buildSparkline(summary.blocked, 6, 4)}
           />
         </Grid>
       </Grid>

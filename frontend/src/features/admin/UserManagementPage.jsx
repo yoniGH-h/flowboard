@@ -37,7 +37,6 @@ import { LoadingState, NoSearchResultsState } from '../../components/common/Stat
 import { ROLE_LABELS, useAuth } from '../../auth/AuthContext';
 import { useOrganizationUsers, useRemoveUser, useSetUserStatus, useUpdateUserRoles } from '../../lib/queries';
 import { fullName } from '../../lib/format';
-import { buildSparkline } from '../../lib/trends';
 import { UserPermissionsDialog } from './UserPermissionsDialog';
 
 const STATUS_CONFIG = {
@@ -96,7 +95,6 @@ export function UserManagementPage() {
               label="Total Users"
               value={summary.total}
               icon={<PeopleAltOutlinedIcon fontSize="small" />}
-              sparkline={buildSparkline(summary.total, 6, 1)}
             />
           </Grid>
           <Grid size={{ xs: 12, sm: 6, md: 3 }}>
@@ -105,7 +103,6 @@ export function UserManagementPage() {
               value={summary.active}
               icon={<CheckCircleOutlineOutlinedIcon fontSize="small" />}
               accentColor="#2E7D32"
-              sparkline={buildSparkline(summary.active, 6, 2)}
             />
           </Grid>
           <Grid size={{ xs: 12, sm: 6, md: 3 }}>
@@ -114,7 +111,6 @@ export function UserManagementPage() {
               value={summary.suspended}
               icon={<BlockOutlinedIcon fontSize="small" />}
               accentColor="#8A5A00"
-              sparkline={buildSparkline(summary.suspended, 6, 3)}
             />
           </Grid>
           <Grid size={{ xs: 12, sm: 6, md: 3 }}>
@@ -123,7 +119,6 @@ export function UserManagementPage() {
               value={summary.invited}
               icon={<MailOutlineOutlinedIcon fontSize="small" />}
               accentColor="#2A6FB0"
-              sparkline={buildSparkline(summary.invited, 6, 4)}
             />
           </Grid>
         </Grid>

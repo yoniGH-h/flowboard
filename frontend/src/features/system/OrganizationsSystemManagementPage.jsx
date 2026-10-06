@@ -23,7 +23,6 @@ import { ConfirmDialog } from '../../components/common/ConfirmDialog';
 import { LoadingState } from '../../components/common/States';
 import { useAllAuditLog, useOrganizations, useSetOrganizationStatus } from '../../lib/queries';
 import { formatDate, formatDateTime } from '../../lib/format';
-import { buildSparkline } from '../../lib/trends';
 
 export function OrganizationsSystemManagementPage() {
   const [tab, setTab] = useState('organizations');
@@ -55,7 +54,6 @@ export function OrganizationsSystemManagementPage() {
             value={totals.organizations}
             icon={<DomainOutlinedIcon fontSize="small" />}
             helperText={`${totals.activeOrganizations} active`}
-            sparkline={buildSparkline(totals.organizations, 6, 1)}
           />
         </Grid>
         <Grid size={{ xs: 12, sm: 6, md: 3 }}>
@@ -64,14 +62,12 @@ export function OrganizationsSystemManagementPage() {
             value={totals.users}
             icon={<GroupsOutlinedIcon fontSize="small" />}
             accentColor="#2A6FB0"
-            sparkline={buildSparkline(totals.users, 6, 2)}
           />
         </Grid>
         <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <KpiCard
             label="Total Projects"
             value={totals.projects}
-            sparkline={buildSparkline(totals.projects, 6, 3)}
             icon={<AssessmentOutlinedIcon fontSize="small" />}
             accentColor="#2E7D32"
           />

@@ -9,6 +9,27 @@ import { assertProjectPermission } from '../projects/projects.service.js';
 import { managedTaskScope } from './tasks.service.js';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
+const TREND_WEEKS = 8;
+
+// Completion trend for the Management Dashboard, one point per week for the last 8 weeks,
+// from the tasks' real dates:
+//   planned   = % of the tasks that were due by the end of that week
+//   completed = % of the tasks that were actually completed by the end of that week
+// When "completed" stays under "planned", work is falling behind its due dates.
+function buildCompletionTrend(tasks, now) {
+  const total = tasks.length;
+  const percent = (n) => (total > 0 ? Math.round((n / total) * 100) : 0);
+  const points = [];
+  for (let i = TREND_WEEKS - 1; i >= 0; i -= 1) {
+    const weekEnd = new Date(now.getTime() - i * 7 * DAY_MS);
+    points.push({
+      label: i === 0 ? 'This week' : `${i}w ago`,
+      planned: percent(tasks.filter((t) => t.dueDate && t.dueDate <= weekEnd).length),
+      completed: percent(tasks.filter((t) => t.completedAt && t.completedAt <= weekEnd).length),
+    });
+  }
+  return points;
+}
 
 // A report for one specific project requires managing that project.
 async function assertManagedProject(actor, projectId) {
@@ -49,7 +70,8 @@ export async function getWorkloadSummary(actor, projectId) {
   }));
 }
 
-// Management Dashboard: status counts, this week's completion, and the top priority tasks.
+// Management Dashboard: status counts, this week's completion, the completion trend and the
+// top priority tasks.
 export async function getDashboardSummary(actor, projectId) {
   await assertManagedProject(actor, projectId);
 
@@ -69,6 +91,7 @@ export async function getDashboardSummary(actor, projectId) {
     oldestOverdueTask,
     exampleBlockedTask,
     priorityTasks,
+    taskDates,
   ] = await Promise.all([
     count({}),
     count({ completedAt: { not: null } }),
@@ -103,6 +126,7 @@ export async function getDashboardSummary(actor, projectId) {
         project: { select: { name: true } },
       },
     }),
+    prisma.task.findMany({ where: scope, select: { dueDate: true, completedAt: true } }),
   ]);
 
   return {
@@ -119,6 +143,7 @@ export async function getDashboardSummary(actor, projectId) {
       total: weeklyTotal,
       percent: weeklyTotal > 0 ? Math.round((weeklyCompleted / weeklyTotal) * 100) : 0,
     },
+    completionTrend: buildCompletionTrend(taskDates, now),
     oldestOverdueTitle: oldestOverdueTask?.title ?? null,
     exampleBlockedTitle: exampleBlockedTask?.title ?? null,
     priorityTasks: priorityTasks.map((t) => ({

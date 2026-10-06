@@ -20,7 +20,6 @@ import { KpiCard } from '../../components/common/KpiCard';
 import { LoadingState, EmptyState } from '../../components/common/States';
 import { useOrganizationUsers, useProjects, useWorkloadSummary } from '../../lib/queries';
 import { fullName } from '../../lib/format';
-import { buildSparkline } from '../../lib/trends';
 
 const CAPACITY_TASKS = 6; // tasks considered "full capacity" for the workload bar, prototype heuristic
 
@@ -68,7 +67,6 @@ export function TeamWorkloadPage() {
               label="Team Members"
               value={summary.members}
               icon={<GroupsOutlinedIcon fontSize="small" />}
-              sparkline={buildSparkline(summary.members, 6, 1)}
             />
           </Grid>
           <Grid size={{ xs: 12, sm: 6, md: 3 }}>
@@ -77,7 +75,6 @@ export function TeamWorkloadPage() {
               value={summary.totalOpen}
               icon={<ChecklistOutlinedIcon fontSize="small" />}
               accentColor="#2A6FB0"
-              sparkline={buildSparkline(summary.totalOpen, 6, 2)}
             />
           </Grid>
           <Grid size={{ xs: 12, sm: 6, md: 3 }}>
@@ -86,7 +83,6 @@ export function TeamWorkloadPage() {
               value={summary.overCapacity}
               icon={<TrendingUpOutlinedIcon fontSize="small" />}
               accentColor="#8A5A00"
-              sparkline={buildSparkline(summary.overCapacity, 6, 3)}
             />
           </Grid>
           <Grid size={{ xs: 12, sm: 6, md: 3 }}>
@@ -95,7 +91,6 @@ export function TeamWorkloadPage() {
               value={summary.totalOverdue}
               icon={<WarningAmberOutlinedIcon fontSize="small" />}
               accentColor="#C62828"
-              sparkline={buildSparkline(summary.totalOverdue, 6, 4)}
             />
           </Grid>
         </Grid>
