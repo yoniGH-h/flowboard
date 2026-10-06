@@ -83,6 +83,11 @@ npm run dev
 
 Password for every demo account: `password123` (local development only).
 
+**Demo mode** - with `VITE_DEMO_MODE=true` (already set in `frontend/.env.development`) the
+sign-in page lists these accounts for one-click sign-in, which is handy when presenting the
+system. Set it to `false` to hide them. A production build (`npm run build`) never includes
+them.
+
 | Email | Roles | Organization |
 |---|---|---|
 | ava.reynolds@nimbusdigital.io | Employee, Project Manager, Org Admin, System Admin | Nimbus Digital |

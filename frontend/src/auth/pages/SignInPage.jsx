@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { lazy, Suspense, useState } from 'react';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
@@ -6,7 +6,6 @@ import Alert from '@mui/material/Alert';
 import Link from '@mui/material/Link';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
 import Visibility from '@mui/icons-material/Visibility';
@@ -14,7 +13,12 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
 import { AuthLayout } from '../AuthLayout';
 import { useAuth } from '../AuthContext';
-import { signIn, DEMO_ACCOUNTS, DEMO_PASSWORD } from '../../api/authApi';
+import { signIn } from '../../api/authApi';
+
+// Demo mode (VITE_DEMO_MODE=true, set in .env.development): one-click sign-in with the demo
+// accounts. The check is written right here so a production build drops DemoAccounts.jsx -
+// and with it the accounts and the password - entirely.
+const DemoAccounts = import.meta.env.VITE_DEMO_MODE === 'true' ? lazy(() => import('../DemoAccounts')) : null;
 
 export function SignInPage() {
   const { signInWithResult } = useAuth();
@@ -52,11 +56,11 @@ export function SignInPage() {
     }
   };
 
-  const signInWithDemoAccount = async (demoEmail) => {
+  const signInWithDemoAccount = async (demoEmail, demoPassword) => {
     setFormError(null);
     setLoading(true);
     try {
-      const result = await signIn(demoEmail, DEMO_PASSWORD);
+      const result = await signIn(demoEmail, demoPassword);
       signInWithResult(result);
       navigate('/dashboard', { replace: true });
     } catch (err) {
@@ -129,29 +133,11 @@ export function SignInPage() {
         </Link>
       </Typography>
 
-      <Divider sx={{ my: 2.5 }}>
-        <Typography variant="caption" color="text.secondary">
-          SEEDED DEMO ACCOUNTS
-        </Typography>
-      </Divider>
-      <Stack spacing={0.75}>
-        {DEMO_ACCOUNTS.map((acc) => (
-          <Button
-            key={acc.email}
-            variant="outlined"
-            size="small"
-            onClick={() => signInWithDemoAccount(acc.email)}
-            disabled={loading}
-            sx={{ justifyContent: 'flex-start', textAlign: 'left' }}
-          >
-            {acc.label}
-          </Button>
-        ))}
-        <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5 }}>
-          Password for any demo account: <strong>{DEMO_PASSWORD}</strong>. These are real accounts in the local development database (see
-          the README for the full seeded list).
-        </Typography>
-      </Stack>
+      {DemoAccounts && (
+        <Suspense fallback={null}>
+          <DemoAccounts onSignIn={signInWithDemoAccount} disabled={loading} />
+        </Suspense>
+      )}
     </AuthLayout>
   );
 }

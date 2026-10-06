@@ -3,6 +3,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { SignInPage } from './SignInPage';
+import DemoAccounts from '../DemoAccounts';
 import { useAuth } from '../AuthContext';
 import { signIn } from '../../api/authApi';
 
@@ -90,5 +91,28 @@ describe('SignInPage validation', () => {
       expect(signIn).toHaveBeenCalledWith('ava.reynolds@nimbusdigital.io', 'password123');
     });
     expect(signInWithResult).toHaveBeenCalledWith(authResult);
+  });
+});
+
+describe('Demo accounts', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.mocked(useAuth).mockReturnValue({ signInWithResult });
+  });
+
+  it('are not shown on the sign-in page unless demo mode is on', () => {
+    renderPage();
+    expect(screen.queryByText('DEMO ACCOUNTS')).not.toBeInTheDocument();
+    expect(screen.queryByText('password123')).not.toBeInTheDocument();
+  });
+
+  it('sign in with the chosen account in one click', async () => {
+    const onSignIn = vi.fn();
+    const user = userEvent.setup();
+    render(<DemoAccounts onSignIn={onSignIn} disabled={false} />);
+
+    await user.click(screen.getByRole('button', { name: /Priya Sharma/ }));
+
+    expect(onSignIn).toHaveBeenCalledWith('priya.sharma@nimbusdigital.io', 'password123');
   });
 });

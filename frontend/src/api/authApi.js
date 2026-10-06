@@ -2,15 +2,6 @@
 import { http, getErrorMessage } from './http';
 import { setTokens, clearTokens } from './session';
 
-export const DEMO_PASSWORD = 'password123';
-
-export const DEMO_ACCOUNTS = [
-  { email: 'ava.reynolds@nimbusdigital.io', label: 'Ava Reynolds — all roles (Nimbus Digital)' },
-  { email: 'priya.sharma@nimbusdigital.io', label: 'Priya Sharma — Employee (Nimbus Digital)' },
-  { email: 'daniel.cho@nimbusdigital.io', label: 'Daniel Cho — Project Manager (Nimbus Digital)' },
-  { email: 'grace.kim@harborline.com', label: 'Grace Kim — Org Admin (Harborline Logistics)' },
-];
-
 export function highestRole(roles) {
   const order = ['SYSTEM_ADMIN', 'ORG_ADMIN', 'PROJECT_MANAGER', 'EMPLOYEE'];
   return order.find((r) => roles.includes(r)) ?? 'EMPLOYEE';
