@@ -1,77 +1,73 @@
 # FlowBoard
 
-A project-management platform for organizations, projects, teams and tasks, with a decision
-center for managers.
+מערכת לניהול פרויקטים, צוותים ומשימות בארגון, עם מרכז החלטות למנהלים.
 
-FlowBoard brings projects, a Kanban board, tasks, files, comments, real-time notifications,
-permissions and an audit log into one place - and adds a management layer that draws
-conclusions from that data: a delivery forecast for every project, where work gets stuck, how
-accurate estimates are, an explainable delay-risk score and its trend, recommendations, a
-"what-if" simulator, and a decision log that measures whether decisions actually helped.
+FlowBoard מרכזת במקום אחד פרויקטים, לוח Kanban, משימות, קבצים, תגובות, התראות בזמן אמת,
+הרשאות ויומן ביקורת – ומוסיפה שכבה ניהולית שמסיקה מסקנות מהנתונים: צפי סיום לכל פרויקט,
+השלב שבו העבודה נתקעת, דיוק הערכות הזמן, ציון סיכון לעיכוב שאפשר להסביר ומגמתו, המלצות
+לפעולה, סימולטור "מה אם", ויומן החלטות שבודק אם ההחלטות באמת עזרו.
 
-## Features
+## יכולות
 
-- **Multi-tenant organizations** - every request is filtered by the caller's organization on the
-  server.
-- **Four roles** - Employee → Project Manager → Organization Admin → System Admin. A Project
-  Manager controls only the projects they manage.
-- **Dynamic permissions** - every check uses a permission key. An Org Admin can change what each
-  role may do, and give a single employee an allow/deny exception, optionally until a date.
-- **Projects and Kanban** - configurable columns, server-enforced WIP limits, task dependencies,
-  subtasks, comments and file attachments.
-- **Real-time notifications** over Socket.IO, and voice / Zoom calls between team members
-  (optional, needs Zoom credentials).
-- **Insights** - delivery forecast, estimate accuracy, bottlenecks, delay-risk score and trend,
-  explained in plain language.
-- **Decision Center** - recommendations, a what-if simulator and a decision log
-  (then → predicted → now).
-- **Automation rules** ("when X, do Y") and an **audit log** of every important action.
+- **כמה ארגונים במערכת אחת** – כל בקשה מסוננת בשרת לפי הארגון של המשתמש המחובר.
+- **ארבעה תפקידים** – עובד ← מנהל פרויקט ← מנהל ארגון ← מנהל מערכת. מנהל פרויקט שולט רק
+  בפרויקטים שהוא מנהל.
+- **הרשאות דינמיות** – כל בדיקה נעשית לפי מפתח הרשאה. מנהל ארגון יכול לשנות מה כל תפקיד
+  רשאי לעשות, ולתת לעובד מסוים חריג (הוספה או שלילה), גם עד תאריך מסוים.
+- **פרויקטים ולוח Kanban** – עמודות שאפשר להגדיר, מגבלת WIP שנאכפת בשרת, תלויות בין משימות,
+  תתי-משימות, תגובות וקבצים מצורפים.
+- **התראות בזמן אמת** ב-Socket.IO, ושיחות קוליות / Zoom בין חברי צוות (אופציונלי, דורש
+  פרטי התחברות ל-Zoom).
+- **תובנות** – צפי סיום, דיוק הערכות, צווארי בקבוק, ציון סיכון לעיכוב ומגמתו – מוסברים
+  בשפה פשוטה.
+- **מרכז ההחלטות** – המלצות, סימולטור "מה אם" ויומן החלטות (אז ← נחזה ← עכשיו).
+- **חוקי אוטומציה** ("כאשר X – בצע Y") ו**יומן ביקורת** לכל פעולה חשובה.
 
-## Tech stack
+## טכנולוגיות
 
-**Frontend:** React 19 (JavaScript) + Vite, React Router 7, MUI 7, TanStack Query 5, Axios,
+**צד לקוח:** React 19 (JavaScript) עם Vite, React Router 7, MUI 7, TanStack Query 5, Axios,
 dnd-kit, Recharts, socket.io-client.
 
-**Backend:** Node.js + Express 5 (JavaScript), Prisma 7 + PostgreSQL 16, zod, JWT
-(access + rotating refresh token in an httpOnly cookie), bcrypt, helmet, express-rate-limit,
-multer, Socket.IO.
+**צד שרת:** Node.js עם Express 5 (JavaScript), Prisma 7 ו-PostgreSQL 16, zod, JWT (אסימון
+גישה + אסימון רענון מתחלף בעוגיית httpOnly), bcrypt, helmet, express-rate-limit, multer,
+Socket.IO.
 
-**Tests:** Vitest + Testing Library, Playwright (including an automated WCAG scan), and
-API smoke tests for permissions and planning.
+**בדיקות:** Vitest ו-Testing Library, Playwright (כולל בדיקת נגישות אוטומטית), ובדיקות API
+להרשאות ולמרכז ההחלטות.
 
-## Repository layout
+## מבנה התיקיות
 
 ```
 flowboard/
-  frontend/          React app (27 screens)
-  backend-express/   REST API + Socket.IO (see backend-express/README.md)
-  scripts/           database backup / restore, role-level check
-  docs/              use cases, accessibility, user guide (Hebrew)
-  start-dev.ps1      starts PostgreSQL, the API and the frontend
-  stop-dev.ps1       stops them
+  frontend/          אפליקציית React (27 מסכים)
+  backend-express/   REST API + Socket.IO (ראו backend-express/README.md)
+  scripts/           גיבוי ושחזור של מסד הנתונים, בדיקת התאמת רמות התפקידים
+  docs/              מקרי שימוש, נגישות, מדריך למשתמש
+  start-dev.ps1      מפעיל את PostgreSQL, השרת והאתר
+  stop-dev.ps1       עוצר אותם
 ```
 
-## Running locally (Windows, no Docker)
+## הרצה מקומית (Windows, בלי Docker)
 
-Prerequisites: Node.js 22+, and the portable PostgreSQL 16 in `C:\flowboard-pg`.
+דרישות: Node.js בגרסה 22 ומעלה, ו-PostgreSQL 16 נייד בתיקייה `C:\flowboard-pg`.
 
 ```powershell
-.\start-dev.ps1          # add -Seed to reload the demo data
+.\start-dev.ps1          # עם -Seed: טעינה מחדש של נתוני הדמו
 .\stop-dev.ps1
 ```
 
-`start-dev.ps1` starts PostgreSQL on port 5433, creates the `flowboard_express` database if
-needed, applies the migrations, starts the API on `http://localhost:3000/api` and the frontend
-on `http://127.0.0.1:5173`.
+`start-dev.ps1` מפעיל את PostgreSQL על פורט 5433, יוצר את מסד הנתונים `flowboard_express`
+אם צריך, מחיל את ה-migrations, ומפעיל את השרת בכתובת `http://localhost:3000/api` ואת האתר
+בכתובת `http://127.0.0.1:5173`.
 
-Manually:
+הרצה ידנית:
 
 ```bash
 cd backend-express
 cp .env.example .env
 npm install
-npm run prisma:migrate     # create the tables
-npm run prisma:seed        # demo data (wipes existing data!)
+npm run prisma:migrate     # יצירת הטבלאות
+npm run prisma:seed        # נתוני דמו (מוחק את הנתונים הקיימים!)
 npm start
 
 cd ../frontend
@@ -79,73 +75,72 @@ npm install
 npm run dev
 ```
 
-### Demo accounts
+### חשבונות דמו
 
-Password for every demo account: `password123` (local development only).
+הסיסמה לכל חשבונות הדמו: `password123` (לפיתוח מקומי בלבד).
 
-**Demo mode** - with `VITE_DEMO_MODE=true` (already set in `frontend/.env.development`) the
-sign-in page lists these accounts for one-click sign-in, which is handy when presenting the
-system. Set it to `false` to hide them. A production build (`npm run build`) never includes
-them.
+**מצב הדגמה** – כש-`VITE_DEMO_MODE=true` (כבר מוגדר בקובץ `frontend/.env.development`),
+במסך ההתחברות מופיעים החשבונות האלה להתחברות בלחיצה – נוח בהצגת המערכת. כדי להסתיר אותם
+משנים ל-`false`. בגרסת הפצה (`npm run build`) הם לא נכללים בכלל.
 
-| Email | Roles | Organization |
+| אימייל | תפקידים | ארגון |
 |---|---|---|
-| ava.reynolds@nimbusdigital.io | Employee, Project Manager, Org Admin, System Admin | Nimbus Digital |
-| daniel.cho@nimbusdigital.io | Employee, Project Manager | Nimbus Digital |
-| priya.sharma@nimbusdigital.io | Employee | Nimbus Digital |
-| marcus.webb@nimbusdigital.io | Employee | Nimbus Digital |
-| grace.kim@harborline.com | Employee, Project Manager, Org Admin | Harborline Logistics |
+| ava.reynolds@nimbusdigital.io | עובד, מנהל פרויקט, מנהל ארגון, מנהל מערכת | Nimbus Digital |
+| daniel.cho@nimbusdigital.io | עובד, מנהל פרויקט | Nimbus Digital |
+| priya.sharma@nimbusdigital.io | עובד | Nimbus Digital |
+| marcus.webb@nimbusdigital.io | עובד | Nimbus Digital |
+| grace.kim@harborline.com | עובד, מנהל פרויקט, מנהל ארגון | Harborline Logistics |
 
-## Tests
+## בדיקות
 
 ```bash
-# frontend
+# צד לקוח
 cd frontend
 npm run lint
-npm test                     # unit tests (Vitest)
-npm run test:e2e             # Playwright: golden path + accessibility, on its own API and database
+npm test                     # בדיקות יחידה (Vitest)
+npm run test:e2e             # Playwright: תרחיש מלא + נגישות, עם שרת ומסד נתונים משלו
 
-# backend - against a running, freshly seeded API
+# צד שרת – מול שרת פועל עם נתוני דמו טריים
 cd backend-express
-npm run test:permissions     # 34 permission checks
-npm run test:planning        # recommendations / simulation / decisions
+npm run test:permissions     # 34 בדיקות הרשאות
+npm run test:planning        # המלצות, סימולציה וביצוע החלטות
 ```
 
-## Backup and restore
+## גיבוי ושחזור
 
 ```powershell
 .\scripts\backup.ps1                                       # -> backups\flowboard-<date>.sql
 .\scripts\restore.ps1 -BackupFile .\backups\flowboard-....sql
 ```
 
-## Screens
+## מסכים
 
-**Public:** Sign In · Sign Up / Join Organization · Forgot Password · Reset Password
+**ציבוריים:** התחברות · הרשמה / הצטרפות לארגון · שכחתי סיסמה · איפוס סיסמה
 
-**All roles:** Personal Dashboard · My Projects · Project Overview · Kanban Board · My Tasks ·
-Task Details · Notification Center · Profile & Settings
+**כל התפקידים:** הדשבורד שלי · הפרויקטים שלי · סקירת פרויקט · לוח Kanban · המשימות שלי ·
+פרטי משימה · מרכז התראות · פרופיל והגדרות
 
-**Project Manager:** Management Dashboard · Project Management · Project Team · Team Workload ·
-Decision Center (recommendations, what-if simulator, decision log) · Reports & Analytics
+**מנהל פרויקט:** דשבורד ניהולי · ניהול פרויקטים · צוות הפרויקט · עומס צוות · מרכז ההחלטות
+(המלצות, סימולטור "מה אם", יומן החלטות) · דוחות ותובנות
 
-**Organization Admin:** User Management (incl. per-employee permissions) · Roles & Permissions ·
-Organization Settings (incl. automation rules) · Audit Log
+**מנהל ארגון:** ניהול משתמשים (כולל הרשאות לכל עובד) · תפקידים והרשאות · הגדרות ארגון (כולל
+חוקי אוטומציה) · יומן ביקורת
 
-**System Admin:** Organizations & System Management
+**מנהל מערכת:** ארגונים וניהול מערכת
 
-Plus 403, 404 and a top-level error boundary.
+ובנוסף: מסכי 403 ו-404, ומנגנון שתופס קריסות בממשק (error boundary).
 
-## Documentation
+## תיעוד
 
-- [Backend - structure, request flow, permissions, insights, Decision Center](backend-express/README.md)
-- [Frontend](frontend/README.md)
-- [Main use cases](docs/use-cases.md)
-- [Accessibility](docs/accessibility.md)
+- [צד השרת – מבנה, זרימת בקשה, הרשאות, תובנות, מרכז ההחלטות](backend-express/README.md)
+- [צד הלקוח](frontend/README.md)
+- [מקרי שימוש עיקריים](docs/use-cases.md)
+- [נגישות](docs/accessibility.md)
 
-## Known limitations
+## מגבלות ידועות
 
-- Forgot-password returns the reset token in the API response instead of emailing it - no
-  external email provider is configured, so the project runs locally with no paid services.
-- Attachments are stored on the server's local disk (`backend-express/uploads`).
-- Voice / Zoom calls need Zoom Server-to-Server OAuth credentials in `backend-express/.env`;
-  until then the call buttons explain that calls are not configured.
+- "שכחתי סיסמה" מחזיר את אסימון האיפוס בתשובה של השרת במקום לשלוח מייל – לא מוגדר ספק דואר,
+  כדי שהפרויקט ירוץ מקומית בלי שירותים בתשלום.
+- קבצים מצורפים נשמרים בדיסק המקומי של השרת (`backend-express/uploads`).
+- שיחות קוליות / Zoom דורשות פרטי Server-to-Server OAuth של Zoom בקובץ `backend-express/.env`;
+  עד אז, כפתורי השיחה מסבירים שהשיחות לא מוגדרות.

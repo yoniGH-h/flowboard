@@ -1,172 +1,178 @@
 # FlowBoard API — Node.js + Express
 
-The FlowBoard REST API written with plain **Node.js + Express** (JavaScript, no build step),
-using **Prisma** for PostgreSQL and **Socket.IO** for real-time notifications. The React app in
-`../frontend` talks to it over REST (`/api/*`) and Socket.IO.
+ה-REST API של FlowBoard, כתוב ב-**Node.js + Express** (JavaScript, בלי שלב בנייה), עם
+**Prisma** לעבודה מול PostgreSQL ו-**Socket.IO** להתראות בזמן אמת. אפליקציית ה-React שבתיקייה
+`../frontend` מדברת איתו דרך REST (`/api/*`) ודרך Socket.IO.
 
-## Run it
+## הרצה
 
-Easiest (from the `flowboard` folder — starts Postgres, this API and the frontend):
+הדרך הקלה (מתוך התיקייה `flowboard` – מפעיל את PostgreSQL, את השרת ואת האתר):
 
 ```powershell
-.\start-dev.ps1          # add -Seed to reload the demo data
+.\start-dev.ps1          # עם -Seed: טעינה מחדש של נתוני הדמו
 .\stop-dev.ps1
 ```
 
-Manually:
+הרצה ידנית:
 
 ```bash
 cd backend-express
 cp .env.example .env
-npm install                 # also runs `prisma generate`
-npm run prisma:migrate      # create the tables in the flowboard_express database
-npm run prisma:seed         # demo data (wipes existing data!)
-npm start                   # http://localhost:3000/api   (npm run dev = restart on file changes)
+npm install                 # מריץ גם prisma generate
+npm run prisma:migrate      # יצירת הטבלאות במסד flowboard_express
+npm run prisma:seed         # נתוני דמו (מוחק את הנתונים הקיימים!)
+npm start                   # http://localhost:3000/api   (npm run dev = הפעלה מחדש בכל שינוי)
 
 cd ../frontend
-npm run dev                 # the React app, pointed at this API
+npm run dev                 # אפליקציית ה-React, מחוברת לשרת הזה
 ```
 
-Demo login: `daniel.cho@nimbusdigital.io` / `password123` (all seeded users share that password).
+התחברות לדמו: `daniel.cho@nimbusdigital.io` / `password123` (לכל משתמשי הדמו אותה סיסמה).
 
-## Folder layout
+## מבנה התיקיות
 
 ```
 backend-express/
   prisma/
-    schema.prisma        database model
-    migrations/          SQL migrations, applied by `prisma migrate deploy`
-    seed.js              demo data
+    schema.prisma        מבנה מסד הנתונים
+    migrations/          קובצי SQL שבונים את המסד (prisma migrate deploy)
+    seed.js              נתוני דמו
+  test/                  בדיקות הרשאות ומרכז ההחלטות מול שרת פועל
   src/
-    server.js            entry point: HTTP server + Socket.IO + the 15-minute automation scan
-    app.js               the Express app: global middleware and every /api route
-    config.js            settings from .env
-    db.js                the shared Prisma client
+    server.js            נקודת הכניסה: שרת HTTP + Socket.IO + משימות רקע
+                         (סריקת אוטומציה כל 15 דקות, שמירת ציון סיכון כל שעה)
+    app.js               אפליקציית Express: middleware גלובלי וכל נתיבי /api
+    config.js            ההגדרות מקובץ .env
+    db.js                ה-Prisma client המשותף
     middleware/
-      auth.js            requireAuth (JWT) and requireRole('PROJECT_MANAGER')
-      errorHandler.js    every error -> { statusCode, path, timestamp, message }
-    realtime/socket.js   Socket.IO: authenticates connections, emitToUser()
-    utils/               HttpError helpers, zod validation, role levels, slugify
-    modules/             one folder per feature
-      auth/              sign-up, join, sign-in, refresh-token rotation, password reset
-      users/             profile, org user management
-      organizations/     org settings, System Admin org list/suspend
-      roles/  labels/    read-only lists
-      projects/          projects, members, Kanban board and columns, risk.js (delay-risk score)
-      tasks/             task CRUD, move (WIP limits), dependencies, tasks.reports.js (dashboards)
+      auth.js            requireAuth (בדיקת JWT), requirePermission, requireRole
+      errorHandler.js    כל שגיאה ← { statusCode, path, timestamp, message }
+    permissions/
+      catalog.js         כל ההרשאות, ברירת המחדל לכל תפקיד וההיקף של כל הרשאה
+      effective.js       חישוב ההרשאות בפועל (3 שכבות)
+    realtime/socket.js   Socket.IO: אימות חיבורים, emitToUser()
+    utils/               שגיאות HTTP, בדיקת קלט עם zod, רמות תפקידים, slugify
+    modules/             תיקייה לכל נושא
+      auth/              הרשמה, הצטרפות, התחברות, רענון אסימונים, איפוס סיסמה
+      users/             פרופיל, ניהול משתמשים בארגון
+      organizations/     הגדרות ארגון; רשימת ארגונים והשעיה למנהל מערכת
+      roles/  labels/    רשימות לקריאה בלבד
+      projects/          פרויקטים, חברי צוות, לוח ועמודות, risk.js (ציון הסיכון)
+      tasks/             משימות, הזזה בלוח (WIP), תלויות, tasks.reports.js (דשבורדים)
       comments/  attachments/  notifications/  audit-log/
-      automation-rules/  the "when X, do Y" engine
+      automation-rules/  מנוע "כאשר X – בצע Y"
+      permissions/       עריכת מטריצת ההרשאות וחריגים לעובד
+      insights/          תובנות ומסקנות
+      planning/          מרכז ההחלטות: מודל, סימולציה, המלצות, יומן
+      meetings/          שיחות קוליות / Zoom
 ```
 
-Each module has a `*.routes.js` file (URLs, validation, required role) and, for the larger
-ones, a `*.service.js` file (the business logic and database queries).
+בכל מודול יש קובץ `*.routes.js` (כתובות, בדיקת קלט והרשאה), ובמודולים הגדולים גם קובץ
+`*.service.js` (הלוגיקה העסקית והשאילתות למסד הנתונים).
 
-## How a request flows
+## איך בקשה עוברת במערכת
 
-`PATCH /api/tasks/:id/move` as an example:
+לדוגמה, `PATCH /api/tasks/:id/move` (הזזת משימה בלוח):
 
-1. `app.js` global middleware: security headers (helmet), CORS, JSON body parsing, rate limit.
-2. `requireAuth` verifies the `Authorization: Bearer <token>` JWT, re-checks the user is still
-   ACTIVE, and puts `{ userId, organizationId, email, roles }` on `req.user`.
-3. `tasks.routes.js` validates the body with zod (`parse(moveSchema, req.body)`).
-4. `tasks.service.js` `move()` checks organization/project access, that an Employee only moves
-   their own card, the column's WIP limit (409), and blocking dependencies; then updates the
-   task, writes history + audit rows, notifies the assignee, and runs automation rules.
-5. Any `throw notFound(...)` / `conflict(...)` on the way is turned into the JSON error response
-   by `errorHandler.js` (Express 5 forwards errors from async handlers automatically).
+1. **`app.js`** – middleware גלובלי: כותרות אבטחה (helmet), CORS, קריאת גוף ה-JSON והגבלת קצב.
+2. **`requireAuth`** – בודק את אסימון ה-JWT שבכותרת `Authorization: Bearer <token>`, מוודא
+   שהמשתמש עדיין פעיל, ושם ב-`req.user` את `{ userId, organizationId, email, roles, permissions }`.
+3. **`tasks.routes.js`** – בודק את גוף הבקשה עם zod.
+4. **`tasks.service.js` – `move()`** – בודק גישה לארגון ולפרויקט, שעובד מזיז רק משימה שלו,
+   את מגבלת ה-WIP של העמודה (שגיאה 409) ומשימות חוסמות; אחר כך מעדכן את המשימה, רושם
+   היסטוריה ויומן ביקורת, שולח התראה לאחראי ומריץ את חוקי האוטומציה.
+5. כל `throw notFound(...)` או `conflict(...)` בדרך הופך לתשובת שגיאה ב-JSON בעזרת
+   `errorHandler.js` (Express 5 מעביר אוטומטית שגיאות מפונקציות async).
 
-## Permissions: role defaults + organization changes + personal exceptions
+## הרשאות: ברירת מחדל לתפקיד + שינויי הארגון + חריגים אישיים
 
-Every check uses a permission key (`tasks.manage`, `audit.view`, ...), not a role. What a user
-may do is computed on every request in three layers (`src/permissions/effective.js`):
+כל בדיקה נעשית לפי מפתח הרשאה (`tasks.manage`, `audit.view` וכו'), ולא לפי תפקיד. מה שמשתמש
+רשאי לעשות מחושב בכל בקשה בשלוש שכבות (`src/permissions/effective.js`):
 
 ```
-effective permissions = defaults of the user's roles        (src/permissions/catalog.js)
-                      + the organization's changes to those roles   (OrganizationRolePermission)
-                      + the user's personal exceptions: allow / deny, optional expiry
-                                                                    (UserPermissionOverride)
+ההרשאות בפועל = ברירת המחדל של התפקידים של המשתמש        (src/permissions/catalog.js)
+              + השינויים של הארגון בתפקידים האלה         (OrganizationRolePermission)
+              + חריגים אישיים: הוספה / שלילה, עם תוקף אופציונלי
+                                                         (UserPermissionOverride)
 ```
 
-- **Catalog** (`catalog.js`): every permission, its role defaults, and its **scope** -
-  `organization`, `member-project` (projects you belong to), `managed-project` (only projects you
-  manage), or `system` (platform, never changeable).
-- **Enforcement**: `requirePermission('audit.view')` on routes for organization-wide permissions;
-  `assertProjectPermission(actor, projectId, 'tasks.manage')` in services for project-scoped ones,
-  so a permission never overrides project ownership.
-- **Editing** (`/api/permissions/*`, needs `permissions.manage`): the Roles & Permissions matrix,
-  and User Management → Permissions for exceptions. Guard rails: platform permissions are
-  unchangeable; you can only grant what you have yourself; no editing your own permissions or
-  those of a higher role; `users.manage` / `permissions.manage` can't be removed from Org Admins
-  (no lock-out); project-management permissions only for Project Managers; every change is
-  audited.
-- Each project in a response carries `can` (update, manageTasks, createTasks, comment, upload...)
-  and `/users/me` carries `permissions`, so the frontend shows only what is allowed.
-- `npm run test:permissions` runs 34 checks against a running, freshly seeded server.
+- **הקטלוג** (`catalog.js`): כל הרשאה, ברירת המחדל שלה לכל תפקיד, וה**היקף** שלה –
+  `organization` (כל הארגון), `member-project` (פרויקטים שהמשתמש חבר בהם), `managed-project`
+  (רק פרויקטים שהוא מנהל), או `system` (פלטפורמה, אי אפשר לשנות).
+- **אכיפה**: `requirePermission('audit.view')` בנתיבים להרשאות ברמת הארגון;
+  `assertProjectPermission(actor, projectId, 'tasks.manage')` בשירותים להרשאות ברמת פרויקט –
+  כך הרשאה אף פעם לא עוקפת את הבעלות על הפרויקט.
+- **עריכה** (`/api/permissions/*`, דורש `permissions.manage`): מטריצת התפקידים וההרשאות, וחריגים
+  לעובד מתוך ניהול משתמשים ← Permissions. הגנות: אי אפשר לשנות הרשאות פלטפורמה; אפשר לתת רק
+  הרשאה שיש לך; אי אפשר לשנות לעצמך או למי שבתפקיד גבוה ממך; אי אפשר להסיר ממנהלי הארגון את
+  `users.manage` / `permissions.manage` (כדי שאף אחד לא יינעל בחוץ); הרשאות ניהול פרויקט רק
+  למנהלי פרויקטים; כל שינוי נרשם ביומן הביקורת.
+- כל פרויקט בתשובה של השרת כולל `can` (עדכון, ניהול משימות, יצירת משימות, תגובה, העלאה...),
+  ו-`/users/me` כולל `permissions` – כך האתר מציג רק מה שמותר.
+- `npm run test:permissions` מריץ 34 בדיקות מול שרת פועל עם נתוני דמו טריים.
 
-## Who controls which project
+## מי שולט באיזה פרויקט
 
-| Role | Controls |
+| תפקיד | שולט ב- |
 | --- | --- |
-| Org Admin / System Admin | every project in the organization |
-| Project Manager | only the projects they manage (`project.managerId`, or a member with `roleOnProject = MANAGER`) |
-| Project Manager in someone else's project | the same as an employee: they can see it only if they are a member, and move only their own tasks |
+| מנהל ארגון / מנהל מערכת | כל הפרויקטים בארגון |
+| מנהל פרויקט | רק בפרויקטים שהוא מנהל (`project.managerId`, או חבר צוות עם `roleOnProject = MANAGER`) |
+| מנהל פרויקט בפרויקט של מישהו אחר | כמו עובד: רואה אותו רק אם הוא חבר בו, ומזיז רק את המשימות שלו |
 
-- The rule lives in one place: `managesProject()` / `managedProjectsWhere()` in
-  `modules/projects/projects.service.js`. Every management action goes through
+- הכלל נמצא במקום אחד: `managesProject()` / `managedProjectsWhere()` בקובץ
+  `modules/projects/projects.service.js`. כל פעולה ניהולית עוברת דרך
   `assertAccessible(actor, projectId, { requireManager: true })`.
-- A Project Manager creates projects only with themselves as manager. Assigning a different
-  manager or a co-manager (`MANAGER` member) is reserved for Org Admins.
-- Management Dashboard / Team Workload / Reports cover only the caller's managed projects.
-- Every project in an API response carries `canManage`, which the frontend uses to show or
-  hide management controls (the server enforces the rule either way).
+- מנהל פרויקט יוצר פרויקט רק כשהוא עצמו המנהל. מינוי מנהל אחר או מנהל-שותף (חבר צוות
+  `MANAGER`) שמור למנהלי ארגון.
+- הדשבורד הניהולי, עומס הצוות והדוחות מכסים רק את הפרויקטים שהמשתמש מנהל.
+- כל פרויקט בתשובה כולל `canManage`, והאתר משתמש בו כדי להציג או להסתיר פעולות ניהול (השרת
+  אוכף את הכלל בכל מקרה).
 
-## Insights (Reports & Analytics → "Key conclusions")
+## תובנות (דוחות ותובנות ← "Key conclusions")
 
-`GET /api/insights?projectId=` (needs `reports.view`, covers only the projects the caller
-manages) turns data FlowBoard already collects into conclusions a manager can act on
+`GET /api/insights?projectId=` (דורש `reports.view`, ומכסה רק פרויקטים שהמשתמש מנהל) הופך
+נתונים ש-FlowBoard כבר אוספת למסקנות שמנהל יכול לפעול לפיהן
 (`modules/insights/insights.service.js`):
 
-| Insight | Computed from | Example conclusion |
+| תובנה | מחושבת מתוך | דוגמה למסקנה |
 | --- | --- | --- |
-| Delivery forecast | open tasks ÷ tasks completed in the last 4 weeks | "Atlas will finish around Nov 23 - 26 days after its target." (no date is claimed from fewer than 3 completed tasks) |
-| Estimate accuracy | `actualHours` vs `estimatedHours` of completed tasks | "The team underestimates: tasks take 30% longer than estimated." |
-| Where work waits | `TaskStatusChange` - every column a task entered, and when | "Work waits longest in In Review: 7.4 days on average." + the tasks stuck longest |
-| Risk trend | `ProjectRiskSnapshot` - one risk score per project per day, recorded hourly by `server.js` | "Nimbus Mobile Revamp's delay risk rose from 30 to 52 in two weeks." |
+| צפי סיום | משימות פתוחות ÷ משימות שהושלמו ב-4 השבועות האחרונים | "Atlas יסתיים בערך ב-23 בנובמבר – 26 ימים אחרי היעד." (לא מוצג תאריך כשהושלמו פחות מ-3 משימות) |
+| דיוק הערכות | `actualHours` מול `estimatedHours` של משימות שהושלמו | "הצוות מעריך בחסר: משימות לוקחות 30% יותר מההערכה." |
+| איפה העבודה ממתינה | `TaskStatusChange` – כל עמודה שמשימה נכנסה אליה, ומתי | "העבודה ממתינה הכי הרבה ב-In Review: 7.4 ימים בממוצע." + המשימות שתקועות הכי הרבה זמן |
+| מגמת סיכון | `ProjectRiskSnapshot` – ציון סיכון אחד לכל פרויקט לכל יום, נשמר כל שעה ב-`server.js` | "הסיכון של Nimbus Mobile Revamp עלה מ-30 ל-52 בשבועיים." |
 
-`GET /api/projects/:id/risk-history?days=30` feeds the risk chart on the project page. The seed
-builds 30 days of history by replaying the demo tasks' dates through the same risk formula.
+`GET /api/projects/:id/risk-history?days=30` מזין את גרף הסיכון בדף הפרויקט. נתוני הדמו בונים
+היסטוריה של 30 יום על ידי הרצת התאריכים של משימות הדמו דרך אותה נוסחת סיכון.
 
-## Decision Center (Management → Decision Center)
+## מרכז ההחלטות (Management ← Decision Center)
 
-Closes the loop from insight to action: **detect → recommend → simulate → apply → measure**.
-All of it runs on one small, transparent model (`modules/planning/model.js`) that turns a
-project's state into a forecast, a delay risk and everyone's workload, and applies what-if
-changes to a copy of that state.
+סוגר את המעגל מתובנה לפעולה: **זיהוי ← המלצה ← סימולציה ← ביצוע ← מדידה**. הכל רץ על מודל
+אחד, קטן ושקוף (`modules/planning/model.js`), שהופך את מצב הפרויקט לצפי סיום, לציון סיכון
+ולעומס של כל אחד, ומחיל שינויי "מה אם" על עותק של המצב.
 
-| Part | Endpoint | What it does |
+| חלק | כתובת | מה הוא עושה |
 | --- | --- | --- |
-| What-if simulator | `POST /api/planning/projects/:id/simulate` | Evaluates changes - reassign tasks, defer tasks, add people, resolve blockers, move the target date - **without saving anything**, and returns before / after (forecast, days late, risk and every risk factor, workload) plus the assumptions used. |
-| Recommendations | `GET /api/planning/projects/:id/recommendations` | Explainable rules: *rebalance* a stuck task or an over-capacity person's task to a member with clearly more room; *defer* not-started low-priority tasks when the project is late; *add* a free person when it is late. Each one is simulated, and only kept if it improves something. |
-| Apply | `POST /api/planning/projects/:id/decisions` | Carries the changes out through the normal task / project services (same permission checks, notifications and audit entries as doing it by hand) and records a `Decision` with the risk and forecast at that moment and what the model predicted. |
-| Decision log | `GET /api/planning/decisions` | Every decision with *then → predicted → now* for risk and days late - did it actually help? |
+| סימולטור "מה אם" | `POST /api/planning/projects/:id/simulate` | בודק שינויים – העברת משימות, דחיית משימות, הוספת אנשים, הסרת חסימות, הזזת תאריך היעד – **בלי לשמור כלום**, ומחזיר לפני / אחרי (צפי, ימי איחור, הסיכון וכל אחד מגורמיו, עומס) ואת ההנחות שבחישוב. |
+| המלצות | `GET /api/planning/projects/:id/recommendations` | כללים שאפשר להסביר: *איזון עומס* – העברת משימה תקועה או משימה של עובד עמוס לחבר צוות פנוי בבירור; *דחייה* – משימות בעדיפות נמוכה שלא התחילו, כשהפרויקט באיחור; *הוספה* – עובד פנוי, כשהפרויקט באיחור. כל המלצה עוברת סימולציה, ונשארת רק אם היא משפרת משהו. |
+| ביצוע | `POST /api/planning/projects/:id/decisions` | מבצע את השינויים דרך השירותים הרגילים של משימות ופרויקטים (אותן בדיקות הרשאה, התראות ורישום ביומן כמו בביצוע ידני), ושומר `Decision` עם הסיכון והצפי באותו רגע ומה שהמודל חזה. |
+| יומן החלטות | `GET /api/planning/decisions` | כל החלטה עם *אז ← נחזה ← עכשיו* לסיכון ולימי האיחור – האם היא באמת עזרה? |
 
-Scope: `reports.view`, plus `tasks.manage` in the project (so a Project Manager only plans
-their own projects); applying also checks `members.manage` / `projects.update` when needed.
-`npm run test:planning` exercises the whole flow against a running, freshly seeded server.
+היקף: דורש `reports.view`, וגם `tasks.manage` בפרויקט (כך מנהל פרויקט מתכנן רק את הפרויקטים
+שלו); בביצוע נבדקות גם `members.manage` / `projects.update` כשצריך. `npm run test:planning`
+בודק את כל התהליך מול שרת פועל עם נתוני דמו טריים.
 
-## Voice / Zoom calls
+## שיחות קוליות / Zoom
 
-`POST /api/meetings` `{ inviteeId, mode: 'voice' | 'video', projectId?, taskId? }` creates an
-instant Zoom meeting (`voice` = cameras off). The caller receives `startUrl` and joins as host;
-the invitee gets a real-time `MEETING_INVITE` notification with a "Join call" button.
+`POST /api/meetings` `{ inviteeId, mode: 'voice' | 'video', projectId?, taskId? }` יוצר פגישת Zoom
+מיידית (`voice` = מצלמות כבויות). המתקשר מקבל `startUrl` ונכנס כמארח; הנמען מקבל בזמן אמת
+התראה מסוג `MEETING_INVITE` עם כפתור "Join call".
 
-Setup: at https://marketplace.zoom.us create a **Server-to-Server OAuth** app with the
-`meeting:write` scope, activate it, and fill in `ZOOM_ACCOUNT_ID`, `ZOOM_CLIENT_ID` and
-`ZOOM_CLIENT_SECRET` in `.env`. Until then the endpoint answers 503 with an explanation, and
-the buttons show that message.
+הגדרה: באתר https://marketplace.zoom.us יוצרים אפליקציה מסוג **Server-to-Server OAuth** עם
+ההרשאה `meeting:write`, מפעילים אותה, וממלאים בקובץ `.env` את `ZOOM_ACCOUNT_ID`, `ZOOM_CLIENT_ID`
+ו-`ZOOM_CLIENT_SECRET`. עד אז השרת מחזיר 503 עם הסבר, והכפתורים מציגים את ההודעה הזו.
 
-## Notes
+## הערות
 
-- Database: `flowboard_express` on the local PostgreSQL (port 5433).
-- Attachments are stored on local disk in `uploads/`.
-- No Swagger page — every endpoint is defined in its module's `*.routes.js` file.
+- מסד הנתונים: `flowboard_express` ב-PostgreSQL המקומי (פורט 5433).
+- קבצים מצורפים נשמרים בדיסק המקומי בתיקייה `uploads/`.
+- אין דף Swagger – כל כתובת מוגדרת בקובץ `*.routes.js` של המודול שלה.
