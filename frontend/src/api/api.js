@@ -158,6 +158,36 @@ export async function fetchBoard(projectId) {
   }
 }
 
+// ---------- Board columns (Board settings - the project's manager) ----------
+// Each call returns the whole board again, so the screen can show it right away.
+
+export async function addBoardColumn(projectId, column) {
+  try {
+    const { data } = await http.post(`/projects/${projectId}/board/columns`, column);
+    return data;
+  } catch (error) {
+    throw new Error(getErrorMessage(error), { cause: error });
+  }
+}
+
+export async function updateBoardColumn(projectId, columnId, patch) {
+  try {
+    const { data } = await http.patch(`/projects/${projectId}/board/columns/${columnId}`, patch);
+    return data;
+  } catch (error) {
+    throw new Error(getErrorMessage(error), { cause: error });
+  }
+}
+
+export async function deleteBoardColumn(projectId, columnId) {
+  try {
+    const { data } = await http.delete(`/projects/${projectId}/board/columns/${columnId}`);
+    return data;
+  } catch (error) {
+    throw new Error(getErrorMessage(error), { cause: error });
+  }
+}
+
 export async function fetchProjectAttachments(projectId) {
   const { data } = await http.get(`/projects/${projectId}/attachments`);
   return data;

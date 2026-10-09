@@ -288,6 +288,30 @@ export function useAllAuditLog(filters = {}) {
 
 // ---------- Mutations ----------
 
+// Board settings: after any change to the columns, refresh the board and the tasks on it.
+function useBoardColumnMutation(mutationFn) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn,
+    onSuccess: (_data, { projectId }) => {
+      qc.invalidateQueries({ queryKey: ['board', projectId] });
+      qc.invalidateQueries({ queryKey: ['tasks'] });
+    },
+  });
+}
+
+export function useAddBoardColumn() {
+  return useBoardColumnMutation(({ projectId, column }) => realApi.addBoardColumn(projectId, column));
+}
+
+export function useUpdateBoardColumn() {
+  return useBoardColumnMutation(({ projectId, columnId, patch }) => realApi.updateBoardColumn(projectId, columnId, patch));
+}
+
+export function useDeleteBoardColumn() {
+  return useBoardColumnMutation(({ projectId, columnId }) => realApi.deleteBoardColumn(projectId, columnId));
+}
+
 export function useMoveTask() {
   const qc = useQueryClient();
   return useMutation({

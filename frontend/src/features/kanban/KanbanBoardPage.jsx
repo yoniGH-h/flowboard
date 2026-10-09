@@ -12,6 +12,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import SearchIcon from '@mui/icons-material/Search';
 import AddIcon from '@mui/icons-material/Add';
+import TuneIcon from '@mui/icons-material/Tune';
 import ChecklistOutlinedIcon from '@mui/icons-material/ChecklistOutlined';
 import WarningAmberOutlinedIcon from '@mui/icons-material/WarningAmberOutlined';
 import BlockOutlinedIcon from '@mui/icons-material/BlockOutlined';
@@ -24,6 +25,7 @@ import { LoadingState, EmptyState } from '../../components/common/States';
 import { KanbanColumn } from './KanbanColumn';
 import { resolveTaskMove } from './resolveTaskMove';
 import { TaskFormDialog } from '../tasks/TaskFormDialog';
+import { BoardSettingsDialog } from './BoardSettingsDialog';
 import { useAuth } from '../../auth/AuthContext';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
@@ -68,6 +70,8 @@ export function KanbanBoardPage() {
 
   // What the signed-in user may do on this board - decided by the server per project.
   const canManageTasks = projectAbility(activeRole, project, 'manageTasks');
+  const canConfigureBoard = projectAbility(activeRole, project, 'configureBoard');
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const canCreateTasks = projectAbility(activeRole, project, 'createTasks');
   const canMoveOwnTasks = projectAbility(activeRole, project, 'moveOwnTasks');
   const canDragTask = (task) => canManageTasks || (task.assigneeId === user?.id && canMoveOwnTasks);
@@ -103,11 +107,18 @@ export function KanbanBoardPage() {
       <PageHeader
         title={`${project.name} — Board`}
         actions={
-          canCreateTasks && (
-            <Button variant="contained" startIcon={<AddIcon />} onClick={() => setCreateOpen(true)}>
-              Add Task
-            </Button>
-          )
+          <Stack direction="row" spacing={1}>
+            {canConfigureBoard && (
+              <Button variant="outlined" startIcon={<TuneIcon />} onClick={() => setSettingsOpen(true)}>
+                Board settings
+              </Button>
+            )}
+            {canCreateTasks && (
+              <Button variant="contained" startIcon={<AddIcon />} onClick={() => setCreateOpen(true)}>
+                Add Task
+              </Button>
+            )}
+          </Stack>
         }
       />
 
@@ -228,6 +239,15 @@ export function KanbanBoardPage() {
         </Box>
       </DndContext>
 
+      {canConfigureBoard && (
+        <BoardSettingsDialog
+          open={settingsOpen}
+          onClose={() => setSettingsOpen(false)}
+          projectId={project.id}
+          columns={board.columns}
+          tasks={tasks}
+        />
+      )}
       {canCreateTasks && (
         <TaskFormDialog
           open={createOpen}
