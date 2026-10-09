@@ -65,8 +65,9 @@ function setRefreshCookie(res, token) {
 
 // ---------- Stricter rate limits for brute-force targets ----------
 
-const limit = (max) =>
-  rateLimit({
+const limit = (max) => {
+  if (!config.rateLimitEnabled) return (_req, _res, next) => next();
+  return rateLimit({
     windowMs: 60_000,
     limit: max,
     standardHeaders: 'draft-8',
@@ -79,6 +80,7 @@ const limit = (max) =>
         message: 'Too many requests. Please wait a minute and try again.',
       }),
   });
+};
 
 // ---------- Routes ----------
 

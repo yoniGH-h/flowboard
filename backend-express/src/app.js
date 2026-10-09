@@ -43,7 +43,9 @@ app.use((req, res, next) => {
   next();
 });
 // Basic protection against brute force / floods: 120 requests per minute per client.
-app.use(rateLimit({ windowMs: 60_000, limit: 120, standardHeaders: 'draft-8', legacyHeaders: false }));
+if (config.rateLimitEnabled) {
+  app.use(rateLimit({ windowMs: 60_000, limit: 120, standardHeaders: 'draft-8', legacyHeaders: false }));
+}
 
 // ---------- Routes ----------
 

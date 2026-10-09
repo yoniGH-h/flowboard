@@ -25,6 +25,8 @@ const backendEnv = {
   JWT_REFRESH_TTL: '7d',
   UPLOADS_DIR: './uploads-test',
   MAX_UPLOAD_SIZE_MB: '10',
+  // Several flows run back to back from one address - don't let the rate limiter interfere.
+  RATE_LIMIT: 'off',
 };
 
 export default defineConfig({
