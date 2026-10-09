@@ -16,6 +16,7 @@ import { PageHeader } from '../../components/common/PageHeader';
 import { UserAvatar } from '../../components/common/UserAvatar';
 import { useAuth, ROLE_LABELS } from '../../auth/AuthContext';
 import { useUpdateProfile } from '../../lib/queries';
+import { changePassword } from '../../api/authApi';
 import { fullName } from '../../lib/format';
 
 const NOTIFICATION_PREFS = [
@@ -41,6 +42,7 @@ export function ProfileSettingsPage() {
   const [newPassword, setNewPassword] = useState('');
   const [passwordSaved, setPasswordSaved] = useState(false);
   const [passwordError, setPasswordError] = useState(null);
+  const [passwordSaving, setPasswordSaving] = useState(false);
 
   if (!user) return null;
 
@@ -54,7 +56,7 @@ export function ProfileSettingsPage() {
     setTimeout(() => setSaved(false), 3000);
   };
 
-  const handleChangePassword = () => {
+  const handleChangePassword = async () => {
     setPasswordError(null);
     if (!currentPassword) {
       setPasswordError('Enter your current password.');
@@ -64,10 +66,18 @@ export function ProfileSettingsPage() {
       setPasswordError('New password must be at least 8 characters.');
       return;
     }
-    setPasswordSaved(true);
-    setCurrentPassword('');
-    setNewPassword('');
-    setTimeout(() => setPasswordSaved(false), 3000);
+    setPasswordSaving(true);
+    try {
+      await changePassword(currentPassword, newPassword);
+      setPasswordSaved(true);
+      setCurrentPassword('');
+      setNewPassword('');
+      setTimeout(() => setPasswordSaved(false), 4000);
+    } catch (err) {
+      setPasswordError(err instanceof Error ? err.message : 'Unable to change your password.');
+    } finally {
+      setPasswordSaving(false);
+    }
   };
 
   return (
@@ -127,7 +137,7 @@ export function ProfileSettingsPage() {
               </Typography>
               {passwordSaved && (
                 <Alert severity="success" sx={{ mb: 2 }}>
-                  Your password has been changed (prototype only).
+                  Your password has been changed. Other devices were signed out.
                 </Alert>
               )}
               {passwordError && (
@@ -152,8 +162,8 @@ export function ProfileSettingsPage() {
                   helperText="At least 8 characters."
                 />
                 <Box>
-                  <Button variant="outlined" onClick={handleChangePassword}>
-                    Change password
+                  <Button variant="outlined" onClick={handleChangePassword} disabled={passwordSaving}>
+                    {passwordSaving ? 'Changing…' : 'Change password'}
                   </Button>
                 </Box>
               </Stack>

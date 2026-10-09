@@ -37,6 +37,11 @@ const refreshTokenSchema = z.strictObject({
 
 const forgotPasswordSchema = z.strictObject({ email: z.email() });
 
+const changePasswordSchema = z.strictObject({
+  currentPassword: nonEmptyString,
+  newPassword: z.string().min(8),
+});
+
 const resetPasswordSchema = z.strictObject({
   token: nonEmptyString,
   newPassword: z.string().min(8),
@@ -124,7 +129,15 @@ authRouter.post('/reset-password', limit(5), async (req, res) => {
   res.status(204).end();
 });
 
-// The only auth route that needs a signed-in user.
+// A signed-in user changes their own password (Profile & Settings). Every other session is
+// signed out; this browser gets a fresh pair of tokens so it stays signed in.
+authRouter.post('/change-password', limit(5), requireAuth, async (req, res) => {
+  const tokens = await authService.changePassword(req.user, parse(changePasswordSchema, req.body));
+  setRefreshCookie(res, tokens.refreshToken);
+  res.json(tokens);
+});
+
+// Signs the user out everywhere.
 authRouter.post('/sessions/revoke-all', requireAuth, async (req, res) => {
   await authService.revokeAllSessions(req.user.userId);
   res.status(204).end();

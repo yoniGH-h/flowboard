@@ -62,6 +62,17 @@ export async function resetPassword(token, newPassword) {
   }
 }
 
+// Profile & Settings: change the signed-in user's password. The server signs out every other
+// session and returns new tokens for this one.
+export async function changePassword(currentPassword, newPassword) {
+  try {
+    const { data } = await http.post('/auth/change-password', { currentPassword, newPassword });
+    setTokens(data);
+  } catch (error) {
+    throw new Error(getErrorMessage(error, 'Unable to change your password.'), { cause: error });
+  }
+}
+
 export async function signOut() {
   clearTokens();
   await http.post('/auth/logout', {}).catch(() => undefined);

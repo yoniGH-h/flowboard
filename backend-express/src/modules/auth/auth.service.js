@@ -217,6 +217,33 @@ export async function logout(refreshToken) {
   }
 }
 
+// The current password must match. Wrong current password = 400 (not 401, which would make
+// the frontend try to refresh the session).
+export async function changePassword(actor, dto) {
+  const user = await prisma.user.findUnique({ where: { id: actor.userId } });
+  if (!user || !(await bcrypt.compare(dto.currentPassword, user.passwordHash))) {
+    throw badRequest('Current password is incorrect');
+  }
+  if (dto.currentPassword === dto.newPassword) {
+    throw badRequest('The new password must be different from the current one');
+  }
+
+  await prisma.user.update({
+    where: { id: user.id },
+    data: { passwordHash: await bcrypt.hash(dto.newPassword, PASSWORD_SALT_ROUNDS) },
+  });
+  await revokeAllSessions(user.id);
+  await recordAudit({
+    organizationId: user.organizationId,
+    actorId: user.id,
+    action: 'PASSWORD_CHANGED',
+    entityType: 'User',
+    entityId: user.id,
+  });
+
+  return issueSession(user.id, user.email, user.organizationId, actor.roles);
+}
+
 export async function revokeAllSessions(userId) {
   await prisma.refreshToken.updateMany({
     where: { userId, revokedAt: null },
