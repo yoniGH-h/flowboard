@@ -1,4 +1,4 @@
-import { prisma } from '../../db.js';
+import { afterCommit, prisma } from '../../db.js';
 import { emitToUser } from '../../realtime/socket.js';
 import { forbidden, notFound } from '../../utils/httpError.js';
 
@@ -9,7 +9,9 @@ import { forbidden, notFound } from '../../utils/httpError.js';
 // input: { organizationId, userId, type, title, body, relatedProjectId?, relatedTaskId? }
 export async function createNotification(input) {
   const notification = await prisma.notification.create({ data: input });
-  emitToUser(input.userId, 'notification:new', notification);
+  // Inside a transaction (e.g. applying a decision) the push waits until the data is saved,
+  // so nobody is told about a change that was then rolled back.
+  afterCommit(() => emitToUser(input.userId, 'notification:new', notification));
   return notification;
 }
 

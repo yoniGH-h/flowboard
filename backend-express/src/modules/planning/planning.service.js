@@ -8,7 +8,7 @@
 //                      so every permission check, notification and audit entry still happens)
 //                      and record the decision
 //   listDecisions      the decision log, with each decision's effect so far
-import { prisma } from '../../db.js';
+import { inTransaction, prisma } from '../../db.js';
 import { notFound } from '../../utils/httpError.js';
 import { recordAudit } from '../audit-log/audit-log.service.js';
 import * as projectsService from '../projects/projects.service.js';
@@ -219,47 +219,53 @@ export async function applyDecision(actor, projectId, { changes, note, source })
   const before = evaluate(state);
   const predicted = evaluate(next);
 
-  // Check every permission up front, so a decision is not left half-applied.
-  if (changes.addMemberIds?.length) await projectsService.assertProjectPermission(actor, projectId, 'members.manage');
-  if (changes.newTargetDate) await projectsService.assertProjectPermission(actor, projectId, 'projects.update');
+  // All or nothing: every change below, the Decision row and the audit entry run in ONE
+  // database transaction. If any step fails (e.g. a permission or a task that changed in the
+  // meantime), everything is rolled back and nothing is left half-applied. Notifications are
+  // pushed to browsers only after the transaction commits (see db.js).
+  return inTransaction(async () => {
+    // Checked first, so a decision that is not allowed fails before anything is written.
+    if (changes.addMemberIds?.length) await projectsService.assertProjectPermission(actor, projectId, 'members.manage');
+    if (changes.newTargetDate) await projectsService.assertProjectPermission(actor, projectId, 'projects.update');
 
-  // Carry it out through the normal services: same checks, notifications and audit trail as
-  // doing each step by hand.
-  for (const userId of changes.addMemberIds ?? []) await projectsService.addMember(actor, projectId, { userId });
-  for (const { taskId, toUserId } of changes.reassign ?? []) await tasksService.assign(actor, taskId, toUserId);
-  for (const taskId of changes.deferTaskIds ?? []) await tasksService.setArchived(actor, taskId, true);
-  for (const taskId of changes.unblockTaskIds ?? []) await tasksService.update(actor, taskId, { blocked: false });
-  if (changes.newTargetDate) await projectsService.update(actor, projectId, { targetDate: changes.newTargetDate });
+    // Carry it out through the normal services: same checks, notifications and audit trail as
+    // doing each step by hand.
+    for (const userId of changes.addMemberIds ?? []) await projectsService.addMember(actor, projectId, { userId });
+    for (const { taskId, toUserId } of changes.reassign ?? []) await tasksService.assign(actor, taskId, toUserId);
+    for (const taskId of changes.deferTaskIds ?? []) await tasksService.setArchived(actor, taskId, true);
+    for (const taskId of changes.unblockTaskIds ?? []) await tasksService.update(actor, taskId, { blocked: false });
+    if (changes.newTargetDate) await projectsService.update(actor, projectId, { targetDate: changes.newTargetDate });
 
-  const title = next.changes.length === 1 ? next.changes[0].text : `${next.changes[0].text} + ${next.changes.length - 1} more`;
-  const decision = await prisma.decision.create({
-    data: {
+    const title = next.changes.length === 1 ? next.changes[0].text : `${next.changes[0].text} + ${next.changes.length - 1} more`;
+    const decision = await prisma.decision.create({
+      data: {
+        organizationId: actor.organizationId,
+        projectId,
+        actorId: actor.userId,
+        source,
+        title,
+        changes: serializeChanges(changes),
+        summary: next.changes.map((c) => c.text),
+        note: note?.trim() || null,
+        riskBefore: before.riskScore,
+        riskPredicted: predicted.riskScore,
+        daysLateBefore: before.forecast.daysLate ?? null,
+        daysLatePredicted: predicted.forecast.daysLate ?? null,
+      },
+    });
+
+    await recordAudit({
       organizationId: actor.organizationId,
-      projectId,
       actorId: actor.userId,
-      source,
-      title,
-      changes: serializeChanges(changes),
-      summary: next.changes.map((c) => c.text),
-      note: note?.trim() || null,
-      riskBefore: before.riskScore,
-      riskPredicted: predicted.riskScore,
-      daysLateBefore: before.forecast.daysLate ?? null,
-      daysLatePredicted: predicted.forecast.daysLate ?? null,
-    },
-  });
+      action: 'DECISION_APPLIED',
+      entityType: 'Project',
+      entityId: projectId,
+      projectId,
+      metadata: { decisionId: decision.id, title, source },
+    });
 
-  await recordAudit({
-    organizationId: actor.organizationId,
-    actorId: actor.userId,
-    action: 'DECISION_APPLIED',
-    entityType: 'Project',
-    entityId: projectId,
-    projectId,
-    metadata: { decisionId: decision.id, title, source },
+    return decision;
   });
-
-  return decision;
 }
 
 const serializeChanges = (changes) => ({

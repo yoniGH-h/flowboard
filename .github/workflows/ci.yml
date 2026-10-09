@@ -38,6 +38,9 @@ jobs:
           npm run test:permissions
           npm run test:planning
         working-directory: backend-express
+      # Applying a decision is all-or-nothing: needs fresh demo data (the tests above changed it).
+      - run: node prisma/seed.js && npm run test:transaction
+        working-directory: backend-express
       - run: npm audit --omit=dev --audit-level=critical
         working-directory: backend-express
 

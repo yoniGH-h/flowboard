@@ -15,7 +15,8 @@
     "postinstall": "prisma generate",
     "test": "node --test",
     "test:permissions": "node test/permissions.smoke.mjs",
-    "test:planning": "node test/planning.smoke.mjs"
+    "test:planning": "node test/planning.smoke.mjs",
+    "test:transaction": "node test/transaction.smoke.mjs"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.10.0",
