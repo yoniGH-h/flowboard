@@ -9,8 +9,6 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
 import Alert from '@mui/material/Alert';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Switch from '@mui/material/Switch';
 import Chip from '@mui/material/Chip';
 import { PageHeader } from '../../components/common/PageHeader';
 import { UserAvatar } from '../../components/common/UserAvatar';
@@ -18,15 +16,6 @@ import { useAuth, ROLE_LABELS } from '../../auth/AuthContext';
 import { useUpdateProfile } from '../../lib/queries';
 import { changePassword } from '../../api/authApi';
 import { fullName } from '../../lib/format';
-
-const NOTIFICATION_PREFS = [
-  { key: 'taskAssigned', label: 'Task assigned to me' },
-  { key: 'statusChanged', label: 'Task status changes' },
-  { key: 'comments', label: 'New comments on my tasks' },
-  { key: 'dueSoon', label: 'Due date reminders' },
-  { key: 'overdue', label: 'Overdue task alerts' },
-  { key: 'memberAdded', label: 'Added to a project' },
-];
 
 export function ProfileSettingsPage() {
   const { user, organization, availableRoles, refreshUser } = useAuth();
@@ -36,7 +25,6 @@ export function ProfileSettingsPage() {
   const [lastName, setLastName] = useState(user?.lastName ?? '');
   const [title, setTitle] = useState(user?.title ?? '');
   const [saved, setSaved] = useState(false);
-  const [prefs, setPrefs] = useState(() => Object.fromEntries(NOTIFICATION_PREFS.map((p) => [p.key, true])));
 
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -82,7 +70,7 @@ export function ProfileSettingsPage() {
 
   return (
     <Box>
-      <PageHeader title="Profile & Settings" description="Manage your personal information, security, and notification preferences." />
+      <PageHeader title="Profile & Settings" description="Manage your personal information and password." />
 
       <Grid container spacing={2.5}>
         <Grid size={{ xs: 12, md: 8 }}>
@@ -130,7 +118,7 @@ export function ProfileSettingsPage() {
             </CardContent>
           </Card>
 
-          <Card sx={{ mb: 2.5 }}>
+          <Card>
             <CardContent>
               <Typography variant="h4" sx={{ mb: 2 }}>
                 Security
@@ -170,27 +158,6 @@ export function ProfileSettingsPage() {
             </CardContent>
           </Card>
 
-          <Card>
-            <CardContent>
-              <Typography variant="h4" sx={{ mb: 1 }}>
-                Notification preferences
-              </Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                Choose which events send you a notification.
-              </Typography>
-              <Stack spacing={0.5}>
-                {NOTIFICATION_PREFS.map((p) => (
-                  <FormControlLabel
-                    key={p.key}
-                    control={
-                      <Switch checked={prefs[p.key]} onChange={(e) => setPrefs((prev) => ({ ...prev, [p.key]: e.target.checked }))} />
-                    }
-                    label={p.label}
-                  />
-                ))}
-              </Stack>
-            </CardContent>
-          </Card>
         </Grid>
 
         <Grid size={{ xs: 12, md: 4 }}>
