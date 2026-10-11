@@ -1,7 +1,7 @@
 // תפקיד הקובץ: הקריאות לשרת בנושא התחברות: כניסה, הרשמה, סיסמאות והמשתמש הנוכחי.
 // משתמשים בו: AuthContext.jsx, ForgotPasswordPage.jsx, ResetPasswordPage.jsx, SignInPage.jsx +3
 
-// Authentication against the Express backend: sign-in, sign-up, session and password reset.
+// התחברות מול השרת (Express): כניסה, הרשמה, המשתמש הנוכחי ואיפוס סיסמה.
 import { http, getErrorMessage } from './http';
 import { setTokens, clearTokens } from './session';
 
@@ -77,8 +77,8 @@ export async function resetPassword(token, newPassword) {
   }
 }
 
-// Profile & Settings: change the signed-in user's password. The server signs out every other
-// session and returns new tokens for this one.
+// מסך הפרופיל: שינוי הסיסמה של המשתמש המחובר. השרת מנתק כל חיבור אחר
+// ומחזיר אסימונים חדשים לחיבור הזה.
 // משנה סיסמה למשתמש מחובר.
 // נקרא מ: ProfileSettingsPage.jsx
 export async function changePassword(currentPassword, newPassword) {

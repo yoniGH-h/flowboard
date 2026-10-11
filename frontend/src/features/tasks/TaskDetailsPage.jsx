@@ -100,8 +100,8 @@ export function TaskDetailsPage() {
   if (isLoading) return <LoadingState label="Loading task…" />;
   if (!task) return <EmptyState title="Task not found" description="This task may have been deleted or you may not have access." />;
 
-  // What the signed-in user may do with this task - decided by the server per project
-  // (role permissions + organization changes + personal exceptions + project ownership).
+  // מה מותר למשתמש המחובר לעשות במשימה הזו - נקבע בשרת לכל פרויקט
+  // (הרשאות התפקיד + שינויי הארגון + חריגים אישיים + בעלות על הפרויקט).
   const canManage = projectAbility(activeRole, project, 'manageTasks');
   const canCreateTasks = projectAbility(activeRole, project, 'createTasks');
   const canMoveOwnTasks = projectAbility(activeRole, project, 'moveOwnTasks');
@@ -281,7 +281,7 @@ export function TaskDetailsPage() {
                 {comments.map((c) => {
                   const author = userMap.get(c.authorId);
                   const canEditComment = c.authorId === user?.id;
-                  const canDeleteComment = canEditComment || canModerate; // moderation: delete others' comments
+                  const canDeleteComment = canEditComment || canModerate; // מודרציה: מחיקת תגובות של אחרים
                   const isEditing = editingCommentId === c.id;
                   return (
                     <Box key={c.id}>

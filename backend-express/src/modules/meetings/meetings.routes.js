@@ -16,21 +16,21 @@ import { createInstantMeeting, isZoomConfigured } from './zoom.js';
 
 const startMeetingSchema = z.strictObject({
   inviteeId: uuid,
-  mode: z.enum(['voice', 'video']), // voice = Zoom meeting with cameras off
-  projectId: uuid.optional(), // where the call was started from (for context and access checks)
+  mode: z.enum(['voice', 'video']), // voice = פגישת Zoom עם מצלמות כבויות
+  projectId: uuid.optional(), // מאיפה נפתחה השיחה (להקשר ולבדיקות גישה)
   taskId: uuid.optional(),
 });
 
-// Creating Zoom meetings costs API quota - a few calls per minute per client is plenty.
+// יצירת פגישות Zoom צורכת מכסת API - כמה שיחות בדקה לכל לקוח מספיקות בהחלט.
 const meetingLimit = rateLimit({ windowMs: 60_000, limit: 10, standardHeaders: 'draft-8', legacyHeaders: false });
 
 // הראוטר של הפגישות.
 // נקרא מ: app.js
 export const meetingsRouter = Router();
 
-// POST /api/meetings - start a voice / Zoom call with a teammate.
-// The caller gets { startUrl, joinUrl } and opens startUrl (joins as host); the invitee gets
-// a real-time MEETING_INVITE notification whose "Join call" button opens joinUrl.
+// POST /api/meetings - פתיחת שיחה קולית או פגישת Zoom עם חבר צוות.
+// הפותח מקבל { startUrl, joinUrl } ופותח את startUrl (נכנס כמארח); המוזמן מקבל
+// בזמן אמת התראת MEETING_INVITE, שהכפתור "Join call" שלה פותח את joinUrl.
 meetingsRouter.post('/', requirePermission('calls.start'), meetingLimit, async (req, res) => {
   const dto = parse(startMeetingSchema, req.body);
   const actor = req.user;
@@ -40,13 +40,13 @@ meetingsRouter.post('/', requirePermission('calls.start'), meetingLimit, async (
   }
   if (dto.inviteeId === actor.userId) throw badRequest('You cannot call yourself');
 
-  // The invitee must be an active user in the caller's organization.
+  // המוזמן חייב להיות משתמש פעיל בארגון של הפותח.
   const invitee = await prisma.user.findFirst({
     where: { id: dto.inviteeId, organizationId: actor.organizationId, status: 'ACTIVE', deletedAt: null },
   });
   if (!invitee) throw notFound('User not found in your organization');
 
-  // When started from a task or project, both people must belong to that project.
+  // כשהשיחה נפתחת ממשימה או מפרויקט, שני האנשים חייבים להיות חברים בפרויקט.
   let projectId = dto.projectId;
   let task = null;
   if (dto.taskId) {

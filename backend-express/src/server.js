@@ -1,7 +1,7 @@
 // תפקיד הקובץ: נקודת הכניסה של השרת: מפעיל את Express ואת Socket.IO, ושני טיימרים למשימות רקע.
 // משתמשים בו: מופעל על ידי npm start / npm run dev
 
-// Entry point: `npm start` (or `npm run dev` to restart on every file change).
+// נקודת הכניסה: npm start (או npm run dev, שמפעיל מחדש בכל שינוי בקובץ).
 import { createServer } from 'node:http';
 import { app } from './app.js';
 import { config } from './config.js';
@@ -10,11 +10,11 @@ import { runScans } from './modules/automation-rules/automation-rules.service.js
 import { recordRiskSnapshots } from './modules/projects/projects.service.js';
 import { initRealtime } from './realtime/socket.js';
 
-// Express and Socket.IO share one HTTP server (and one port).
+// Express ו-Socket.IO חולקים שרת HTTP אחד (ופורט אחד).
 const httpServer = createServer(app);
 initRealtime(httpServer);
 
-// Scan-based automation rules (overdue / due soon) run every 15 minutes.
+// חוקי האוטומציה שמבוססים על סריקה (באיחור / מועד מתקרב) רצים כל 15 דקות.
 const SCAN_INTERVAL_MS = 15 * 60 * 1000;
 const scanTimer = setInterval(async () => {
   try {
@@ -27,8 +27,8 @@ const scanTimer = setInterval(async () => {
   }
 }, SCAN_INTERVAL_MS);
 
-// Today's delay-risk score of every project is saved hourly (and once at startup), building
-// the history behind the risk trend chart.
+// ציון הסיכון של היום נשמר לכל פרויקט פעם בשעה (ופעם אחת בהפעלה), וכך נבנית
+// ההיסטוריה שמאחורי גרף מגמת הסיכון.
 async function snapshotRisk() {
   try {
     await recordRiskSnapshots();
@@ -44,7 +44,7 @@ httpServer.listen(config.port, () => {
   console.log(`FlowBoard API (Express) listening on http://localhost:${config.port}/api`);
 });
 
-// Ctrl+C: stop accepting requests and close the database connection cleanly.
+// Ctrl+C: מפסיקים לקבל בקשות וסוגרים את החיבור למסד בצורה מסודרת.
 async function shutdown() {
   clearInterval(scanTimer);
   clearInterval(riskTimer);

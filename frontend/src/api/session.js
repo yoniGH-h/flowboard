@@ -1,8 +1,8 @@
 // תפקיד הקובץ: שמירת אסימון הגישה בדפדפן, והודעה לאתר כשהחיבור פג.
 // משתמשים בו: authApi.js, http.js, AuthContext.jsx, socket.js
 
-// Token storage + a tiny pub-sub so AuthContext can react when the axios
-// interceptor decides a session is no longer valid (refresh failed).
+// שמירת האסימון, ומנגנון הודעות קטן שמאפשר ל-AuthContext להגיב כשה-interceptor
+// של axios מחליט שהחיבור כבר לא תקף (הרענון נכשל).
 const ACCESS_KEY = 'flowboard.accessToken';
 const LEGACY_REFRESH_KEY = 'flowboard.refreshToken';
 

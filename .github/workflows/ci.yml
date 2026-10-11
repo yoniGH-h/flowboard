@@ -26,8 +26,8 @@ jobs:
         with: { node-version: 22, cache: npm, cache-dependency-path: "**/package-lock.json" }
       - run: node scripts/check-role-levels.mjs
 
-      # Express API: migrations + demo data, then the permission and planning checks against a
-      # running server.
+      # השרת (Express): migrations ונתוני דמו, ואז בדיקות ההרשאות והתכנון מול
+      # שרת פועל.
       - run: npm ci
         working-directory: backend-express
       - run: npx prisma migrate deploy && node prisma/seed.js
@@ -38,13 +38,13 @@ jobs:
           npm run test:permissions
           npm run test:planning
         working-directory: backend-express
-      # Applying a decision is all-or-nothing: needs fresh demo data (the tests above changed it).
+      # ביצוע החלטה הוא "הכל או כלום": דורש נתוני דמו טריים (הבדיקות שלמעלה שינו אותם).
       - run: node prisma/seed.js && npm run test:transaction
         working-directory: backend-express
       - run: npm audit --omit=dev --audit-level=critical
         working-directory: backend-express
 
-      # Frontend: lint, build, unit tests, then the Playwright flow against its own API + database.
+      # האתר: lint, בנייה, בדיקות יחידה, ואז תרחישי Playwright מול API ומסד משלהם.
       - run: npm ci
         working-directory: frontend
       - run: npm run lint && npm run build && npm test

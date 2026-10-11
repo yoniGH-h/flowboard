@@ -20,7 +20,7 @@ const updateOrganizationSchema = z.strictObject({
 
 const updateStatusSchema = z.strictObject({ status: OrganizationStatus });
 
-// ---------- Service ----------
+// ---------- לוגיקה ----------
 
 async function withCounts(organizationId) {
   const [organization, memberCount, projectCount] = await prisma.$transaction([
@@ -32,7 +32,7 @@ async function withCounts(organizationId) {
   return { ...organization, memberCount, projectCount };
 }
 
-// ---------- Routes ----------
+// ---------- נתיבים ----------
 
 // הראוטר של הארגונים.
 // נקרא מ: app.js
@@ -58,7 +58,7 @@ organizationsRouter.patch('/current', requirePermission('organization.settings.m
   res.json(await withCounts(organizationId));
 });
 
-// System Administrator: every organization on the platform.
+// מנהל מערכת: כל הארגונים בפלטפורמה.
 organizationsRouter.get('/', requirePermission('organizations.manage'), async (_req, res) => {
   const organizations = await prisma.organization.findMany({ orderBy: { createdAt: 'asc' } });
   res.json(await Promise.all(organizations.map((org) => withCounts(org.id))));

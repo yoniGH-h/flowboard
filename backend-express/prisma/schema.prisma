@@ -1,6 +1,6 @@
-// FlowBoard - Prisma schema
-// Mirrors frontend/src/types/domain.ts. Every tenant-scoped table carries an
-// organizationId (directly or via its parent) to support multi-tenant isolation.
+// FlowBoard - סכמת Prisma
+// בכל טבלה ששייכת לארגון יש organizationId (ישירות או דרך טבלת האב),
+// כדי להפריד בין הנתונים של ארגונים שונים.
 
 generator client {
   provider = "prisma-client-js"
@@ -10,7 +10,7 @@ datasource db {
   provider = "postgresql"
 }
 
-// ---------- Enums ----------
+// ---------- ערכים סגורים (Enums) ----------
 
 enum OrganizationStatus {
   ACTIVE
@@ -87,7 +87,7 @@ enum NotificationType {
   MEETING_INVITE
 }
 
-// ---------- Organization ----------
+// ---------- ארגון ----------
 
 model Organization {
   id         String             @id @default(uuid())
@@ -114,7 +114,7 @@ model Organization {
   @@map("organizations")
 }
 
-// ---------- RBAC ----------
+// ---------- תפקידים והרשאות ----------
 
 model Permission {
   id          String @id @default(uuid())
@@ -149,8 +149,8 @@ model RolePermission {
   @@map("role_permissions")
 }
 
-// An organization's change to one of a role's default permissions (the defaults live in
-// src/permissions/catalog.js). granted = true adds the permission to the role, false removes it.
+// שינוי שארגון עשה באחת מהרשאות ברירת המחדל של תפקיד (ברירות המחדל נמצאות בקובץ
+// src/permissions/catalog.js). granted = true מוסיף את ההרשאה לתפקיד, false מסיר אותה.
 model OrganizationRolePermission {
   id             String   @id @default(uuid())
   organizationId String
@@ -166,8 +166,8 @@ model OrganizationRolePermission {
   @@map("organization_role_permissions")
 }
 
-// A permission exception for one employee, on top of their roles: granted = true gives an
-// extra permission, false takes one away. Ignored after expiresAt (when set).
+// חריג הרשאה לעובד אחד, מעבר לתפקידים שלו: granted = true נותן הרשאה נוספת,
+// false שולל הרשאה. לא בתוקף אחרי expiresAt (אם הוגדר).
 model UserPermissionOverride {
   id             String    @id @default(uuid())
   organizationId String
@@ -204,7 +204,7 @@ model UserRole {
   @@map("user_roles")
 }
 
-// ---------- Users & auth ----------
+// ---------- משתמשים והתחברות ----------
 
 model User {
   id                  String     @id @default(uuid())
@@ -262,7 +262,7 @@ model RefreshToken {
   @@map("refresh_tokens")
 }
 
-// ---------- Projects ----------
+// ---------- פרויקטים ----------
 
 model Project {
   id             String        @id @default(uuid())
@@ -346,7 +346,7 @@ model Label {
   @@map("labels")
 }
 
-// ---------- Tasks ----------
+// ---------- משימות ----------
 
 model Task {
   id             String       @id @default(uuid())
@@ -394,9 +394,9 @@ model Task {
   @@map("tasks")
 }
 
-// Every time a task enters a board column (including the column it was created in), so we
-// can measure how long work waits in each stage. Column names are copied in, so the history
-// survives renaming or deleting a column.
+// כל כניסה של משימה לעמודה בלוח (כולל העמודה שבה נוצרה), כדי שאפשר יהיה למדוד
+// כמה זמן עבודה ממתינה בכל שלב. שמות העמודות מועתקים לכאן, כך שההיסטוריה
+// נשמרת גם אם משנים שם של עמודה או מוחקים אותה.
 model TaskStatusChange {
   id             String             @id @default(uuid())
   taskId         String
@@ -414,9 +414,9 @@ model TaskStatusChange {
   @@map("task_status_changes")
 }
 
-// A management decision taken through the planning screen (simulator or a recommendation):
-// what was changed, and the project's risk / forecast at that moment plus what the model
-// predicted - so its real effect can be measured later.
+// החלטת ניהול שהתקבלה במסך התכנון (סימולטור או המלצה):
+// מה השתנה, מה היו הסיכון והצפי של הפרויקט באותו רגע, ומה המודל חזה -
+// כדי שאפשר יהיה למדוד מאוחר יותר את ההשפעה בפועל.
 model Decision {
   id                String   @id @default(uuid())
   organizationId    String
@@ -424,8 +424,8 @@ model Decision {
   actorId           String
   source            String // 'SIMULATOR' | 'RECOMMENDATION'
   title             String
-  changes           Json // the what-if changes that were applied
-  summary           Json // human-readable list of the changes
+  changes           Json // שינויי ה"מה אם" שבוצעו
+  summary           Json // רשימת השינויים בניסוח קריא
   note              String?
   riskBefore        Int
   riskPredicted     Int
@@ -442,7 +442,7 @@ model Decision {
   @@map("decisions")
 }
 
-// One delay-risk score per project per day, so the risk can be shown as a trend.
+// ציון סיכון אחד לכל פרויקט לכל יום, כדי להציג את הסיכון כמגמה.
 model ProjectRiskSnapshot {
   id        String    @id @default(uuid())
   projectId String
@@ -529,7 +529,7 @@ model ActivityEntry {
   @@map("activity_entries")
 }
 
-// ---------- Notifications ----------
+// ---------- התראות ----------
 
 model Notification {
   id               String           @id @default(uuid())
@@ -542,7 +542,7 @@ model Notification {
   createdAt        DateTime         @default(now())
   relatedProjectId String?
   relatedTaskId    String?
-  // A link the notification points to, e.g. the Zoom join URL of a meeting invite.
+  // קישור שההתראה מפנה אליו, למשל קישור ההצטרפות לפגישת Zoom.
   actionUrl        String?
 
   organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
@@ -554,7 +554,7 @@ model Notification {
   @@map("notifications")
 }
 
-// ---------- Automation ----------
+// ---------- אוטומציה ----------
 
 model AutomationRule {
   id             String   @id @default(uuid())
@@ -590,10 +590,10 @@ model AutomationRuleExecution {
   @@map("automation_rule_executions")
 }
 
-// Records that a rule has already fired for a task, so the periodic scan-based triggers
-// (TASK_OVERDUE, DUE_DATE_APPROACHING) fire once per task instead of re-notifying on every
-// scan for as long as the task stays overdue/approaching. Event-driven triggers (STATUS_ENTERED)
-// don't need this - each move is its own distinct occurrence.
+// רושם שחוק כבר רץ על משימה, כדי שטריגרים של סריקה תקופתית
+// (TASK_OVERDUE, DUE_DATE_APPROACHING) ירוצו פעם אחת לכל משימה ולא ישלחו התראה בכל
+// סריקה כל עוד המשימה באיחור. טריגרים של אירוע (STATUS_ENTERED)
+// לא צריכים את זה - כל הזזה היא אירוע נפרד.
 model AutomationRuleFiring {
   id      String   @id @default(uuid())
   ruleId  String
@@ -607,7 +607,7 @@ model AutomationRuleFiring {
   @@map("automation_rule_firings")
 }
 
-// ---------- Audit log ----------
+// ---------- יומן ביקורת ----------
 
 model AuditLogEntry {
   id             String   @id @default(uuid())
@@ -619,7 +619,7 @@ model AuditLogEntry {
   createdAt      DateTime @default(now())
   metadata       Json     @default("{}")
 
-  // Optional scoping relations for convenient joins - not required for the log itself.
+  // קשרים אופציונליים לנוחות השליפה - היומן עצמו לא תלוי בהם.
   projectId String?
   taskId    String?
 

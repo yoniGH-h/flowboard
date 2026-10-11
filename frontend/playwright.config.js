@@ -2,14 +2,14 @@ import { defineConfig, devices } from '@playwright/test';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-// Runs the golden path against a dedicated, disposable stack so it never touches the dev
-// database: the Express API (port 3001) uses its own database, flowboard_e2e, which
-// e2e/global-setup.js re-creates before every run, and the frontend (port 5175) is pointed at
-// that API via VITE_API_URL. Both ports are distinct from the normal dev ports (3000/5173) so
-// this can run alongside a developer's own `npm run dev`.
+// מריץ את התרחיש המרכזי מול סביבה ייעודית וזמנית, כך שהוא אף פעם לא נוגע במסד
+// הפיתוח: ה-API של Express (פורט 3001) משתמש במסד משלו, flowboard_e2e,
+// ש-e2e/global-setup.js יוצר מחדש לפני כל הרצה, והאתר (פורט 5175) מופנה אל
+// ה-API הזה דרך VITE_API_URL. שני הפורטים שונים מפורטי הפיתוח הרגילים (3000/5173), כך
+// שאפשר להריץ את זה במקביל ל-npm run dev של המפתח.
 const BACKEND_PORT = 3001;
 const FRONTEND_PORT = 5175;
-// frontend/package.json has "type": "module", so this file runs as ESM - no __dirname.
+// ב-frontend/package.json מוגדר "type": "module", ולכן הקובץ הזה רץ כ-ESM - אין __dirname.
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const backendDir = path.resolve(dirname, '../backend-express');
 
@@ -25,7 +25,7 @@ const backendEnv = {
   JWT_REFRESH_TTL: '7d',
   UPLOADS_DIR: './uploads-test',
   MAX_UPLOAD_SIZE_MB: '10',
-  // Several flows run back to back from one address - don't let the rate limiter interfere.
+  // כמה תרחישים רצים ברצף מאותה כתובת - לא נותנים למגבלת הקצב להפריע.
   RATE_LIMIT: 'off',
 };
 

@@ -12,7 +12,7 @@ notificationsRouter.get('/', async (req, res) => {
   res.json(await notificationsService.findForUser(req.user.userId));
 });
 
-// Express matches routes in the order they are declared, so fixed paths go before ':id' ones.
+// Express מתאים נתיבים לפי סדר ההגדרה, ולכן כתובות קבועות באות לפני כתובות עם :id.
 notificationsRouter.patch('/read-all', async (req, res) => {
   res.json(await notificationsService.markAllRead(req.user));
 });

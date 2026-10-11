@@ -13,27 +13,27 @@ import { badRequest, forbidden, notFound } from '../../utils/httpError.js';
 import { recordAudit } from '../audit-log/audit-log.service.js';
 import { assertAccessible, assertProjectPermission } from '../projects/projects.service.js';
 
-// Files are stored on local disk under a random name (never the user's file name, which
-// could contain "../" and escape the folder). The original name is kept only in the database.
+// הקבצים נשמרים בדיסק המקומי בשם אקראי (אף פעם לא בשם שהמשתמש נתן, שעלול
+// להכיל "../" ולצאת מהתיקייה). השם המקורי נשמר רק במסד הנתונים.
 const UPLOADS_DIR = config.uploadsDir;
 mkdirSync(UPLOADS_DIR, { recursive: true });
 
 const MAX_SIZE_BYTES = config.maxUploadSizeMb * 1024 * 1024;
 
-// Executables and scripts are rejected outright.
+// קובצי הרצה וסקריפטים נדחים מיד.
 const ALLOWED_EXTENSIONS = new Set([
   'png', 'jpg', 'jpeg', 'gif', 'webp', 'svg',
   'pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx',
   'txt', 'md', 'csv', 'json', 'zip', 'fig',
 ]);
 
-// multer parses multipart/form-data uploads. memoryStorage keeps the file in req.file.buffer
-// until we have validated it; `limits` makes multer abort oversized uploads early.
+// multer מפענח העלאות בפורמט multipart/form-data. memoryStorage מחזיק את הקובץ ב-req.file.buffer
+// עד שבדקנו אותו; limits גורם ל-multer לעצור מוקדם העלאה גדולה מדי.
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: MAX_SIZE_BYTES } });
 
 const UPLOADED_BY = { select: { id: true, firstName: true, lastName: true, avatarColor: true } };
 
-// multer decodes the original file name as latin1; convert it back so Hebrew names survive.
+// multer מפענח את שם הקובץ המקורי כ-latin1; ממירים אותו חזרה כדי ששמות בעברית יישמרו.
 const decodeFileName = (name) => Buffer.from(name, 'latin1').toString('utf8');
 
 function extensionOf(fileName) {
@@ -44,8 +44,8 @@ function extensionOf(fileName) {
   return ext;
 }
 
-// The task must be in a project the actor can access - and, when `permission` is given,
-// they must hold that permission in that project.
+// המשימה חייבת להיות בפרויקט שלמשתמש יש גישה אליו - וכשניתן permission,
+// חייבת להיות לו ההרשאה הזו בפרויקט.
 async function requireAccessibleTask(actor, taskId, permission) {
   const task = await prisma.task.findFirst({
     where: { id: taskId, project: { organizationId: actor.organizationId } },
@@ -66,11 +66,11 @@ async function requireAccessibleAttachment(actor, attachmentId) {
   return { attachment, canModerate: project.can('content.moderate') };
 }
 
-// ---------- Routes ----------
-// Mounted at /api:
-//   /api/tasks/:taskId/attachments      (list, upload)
-//   /api/attachments/:id/download       (download)
-//   /api/attachments/:id                (delete)
+// ---------- נתיבים ----------
+// מחוברים תחת /api:
+//   /api/tasks/:taskId/attachments      (רשימה, העלאה)
+//   /api/attachments/:id/download       (הורדה)
+//   /api/attachments/:id                (מחיקה)
 
 // הראוטר של הקבצים המצורפים.
 // נקרא מ: app.js
@@ -87,7 +87,7 @@ attachmentsRouter.get('/tasks/:taskId/attachments', async (req, res) => {
   );
 });
 
-// The form field must be called "file".
+// שדה הטופס חייב להיקרא "file".
 attachmentsRouter.post('/tasks/:taskId/attachments', upload.single('file'), async (req, res) => {
   const actor = req.user;
   const taskId = req.params.taskId;
@@ -96,7 +96,7 @@ attachmentsRouter.post('/tasks/:taskId/attachments', upload.single('file'), asyn
 
   const fileName = decodeFileName(file.originalname);
   const ext = extensionOf(fileName);
-  const task = await requireAccessibleTask(actor, taskId, 'attachments.upload'); // check before writing to disk
+  const task = await requireAccessibleTask(actor, taskId, 'attachments.upload'); // בודקים לפני שכותבים לדיסק
 
   const storageKey = `${randomUUID()}.${ext}`;
   await writeFile(path.join(UPLOADS_DIR, storageKey), file.buffer);
@@ -130,7 +130,7 @@ attachmentsRouter.post('/tasks/:taskId/attachments', upload.single('file'), asyn
   res.status(201).json(attachment);
 });
 
-// Downloads need the Authorization header, so the frontend fetches this as a blob.
+// הורדה דורשת את הכותרת Authorization, ולכן האתר שולף את הקובץ כ-blob.
 attachmentsRouter.get('/attachments/:id/download', async (req, res) => {
   const { attachment } = await requireAccessibleAttachment(req.user, req.params.id);
 
@@ -146,7 +146,7 @@ attachmentsRouter.get('/attachments/:id/download', async (req, res) => {
   res.send(body);
 });
 
-// The uploader, or the project's manager, can delete an attachment.
+// מי שהעלה את הקובץ, או מנהל הפרויקט, רשאים למחוק אותו.
 attachmentsRouter.delete('/attachments/:id', async (req, res) => {
   const { attachment, canModerate } = await requireAccessibleAttachment(req.user, req.params.id);
   if (attachment.uploadedById !== req.user.userId && !canModerate) {

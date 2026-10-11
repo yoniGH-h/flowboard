@@ -1,11 +1,11 @@
 // תפקיד הקובץ: כל ההגדרות שהשרת קורא מקובץ ‎.env‏, במקום אחד.
 // משתמשים בו: app.js, db.js, auth.js, errorHandler.js +6
 
-// Every setting the server reads from the environment (.env), in one place.
+// כל ההגדרות שהשרת קורא מהסביבה (.env), במקום אחד.
 import 'dotenv/config';
 import path from 'node:path';
 
-// The backend-express folder, so relative paths in .env don't depend on where `node` was started.
+// התיקייה backend-express, כדי שנתיבים יחסיים ב-.env לא יהיו תלויים במקום שממנו הופעל node.
 const ROOT = path.resolve(import.meta.dirname, '..');
 
 function required(name) {
@@ -34,10 +34,10 @@ export const config = {
   uploadsDir: path.resolve(ROOT, process.env.UPLOADS_DIR ?? './uploads'),
   maxUploadSizeMb: Number(process.env.MAX_UPLOAD_SIZE_MB ?? 10),
   isProduction: process.env.NODE_ENV === 'production',
-  // RATE_LIMIT=off only for the automated browser tests, which run many flows in a minute
-  // from one address. Always on otherwise.
+  // RATE_LIMIT=off רק בבדיקות הדפדפן האוטומטיות, שמריצות הרבה תרחישים בדקה
+  // מאותה כתובת. בכל מצב אחר המגבלה פעילה.
   rateLimitEnabled: process.env.RATE_LIMIT !== 'off',
-  // Optional - voice / Zoom calls are disabled until these are set (see modules/meetings/zoom.js).
+  // אופציונלי - שיחות קוליות ופגישות Zoom כבויות עד שמגדירים את אלה (ראו modules/meetings/zoom.js).
   zoom: {
     accountId: process.env.ZOOM_ACCOUNT_ID ?? '',
     clientId: process.env.ZOOM_CLIENT_ID ?? '',

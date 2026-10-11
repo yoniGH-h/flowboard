@@ -1,5 +1,5 @@
-/* FlowBoard resets nothing itself — MUI's CssBaseline (see main.tsx) handles the
-   cross-browser reset. This file only sets things CssBaseline doesn't own. */
+/* FlowBoard לא מאפס עיצוב בעצמו - CssBaseline של MUI (ראו main.jsx) מטפל באיפוס
+   בין הדפדפנים. הקובץ הזה קובע רק מה ש-CssBaseline לא מטפל בו. */
 
 html {
   color-scheme: light;

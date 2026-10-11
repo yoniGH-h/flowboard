@@ -17,7 +17,7 @@ const updateProfileSchema = z.strictObject({
 
 const queryUsersSchema = z.strictObject({
   ...paginationShape,
-  search: z.string().optional(), // first name, last name, or email
+  search: z.string().optional(), // שם פרטי, שם משפחה או אימייל
   status: UserStatus.optional(),
 });
 
@@ -33,8 +33,8 @@ const updateRolesSchema = z.strictObject({
 // נקרא מ: app.js
 export const usersRouter = Router();
 
-// Includes `permissions` - the effective permission keys (role defaults + organization
-// changes + personal exceptions) - so the frontend can show only what the user may do.
+// כולל את permissions - מפתחות ההרשאה בפועל (ברירות המחדל של התפקיד + שינויי
+// הארגון + חריגים אישיים) - כדי שהאתר יציג רק מה שמותר למשתמש.
 usersRouter.get('/me', async (req, res) => {
   const me = await usersService.findById(req.user.userId, req.user.organizationId);
   res.json({ ...me, permissions: [...req.user.permissions].sort() });
@@ -45,8 +45,8 @@ usersRouter.patch('/me', async (req, res) => {
   res.json({ ...me, permissions: [...req.user.permissions].sort() });
 });
 
-// Any org member can list teammates (to show assignee/manager names and avatars);
-// the actions below it need users.manage.
+// כל חבר בארגון יכול לראות את רשימת חברי הצוות (כדי להציג שמות ואווטארים של אחראים ומנהלים);
+// הפעולות שמתחת דורשות users.manage.
 usersRouter.get('/', async (req, res) => {
   res.json(await usersService.listForOrganization(req.user.organizationId, parse(queryUsersSchema, req.query)));
 });

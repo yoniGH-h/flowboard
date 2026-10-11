@@ -25,9 +25,9 @@ const MODES = {
   video: { title: 'Zoom meeting', verb: 'Start Zoom meeting', description: 'a Zoom video meeting' },
 };
 
-// Voice call + Zoom meeting buttons for contacting a teammate (hidden for yourself).
-// Both create a real Zoom meeting through the backend (POST /api/meetings): the caller joins
-// as host in a new tab, and the teammate gets a real-time notification with a join link.
+// כפתורי שיחה קולית ופגישת Zoom ליצירת קשר עם חבר צוות (מוסתרים מול עצמך).
+// שניהם יוצרים פגישת Zoom אמיתית דרך השרת (POST /api/meetings): הפותח נכנס
+// כמארח בלשונית חדשה, וחבר הצוות מקבל התראה בזמן אמת עם קישור הצטרפות.
 // כפתורי שיחה ו-Zoom מול משתמש מסוים.
 // נקרא מ: ProjectOverviewPage.jsx, ProjectTeamManagementPage.jsx, TaskDetailsPage.jsx
 export function ContactButtons({ user, projectId, taskId, size = 'small' }) {
@@ -36,7 +36,7 @@ export function ContactButtons({ user, projectId, taskId, size = 'small' }) {
   const [status, setStatus] = useState('idle'); // idle | loading | error
   const [error, setError] = useState(null);
 
-  // Hidden for yourself, and for users without the calls.start permission.
+  // מוסתר מול עצמך, ולמשתמשים בלי ההרשאה calls.start.
   if (!user || user.id === me?.id || !hasPermission(me, 'calls.start')) return null;
 
   const name = fullName(user);

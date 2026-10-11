@@ -18,8 +18,8 @@ http.interceptors.request.use((config) => {
   return config;
 });
 
-// Bare axios instance (no interceptors) used only for the refresh call itself,
-// to avoid an infinite loop if the refresh endpoint ever 401s.
+// מופע axios נקי (בלי interceptors) שמשמש רק את קריאת הרענון עצמה,
+// כדי למנוע לולאה אינסופית אם נתיב הרענון יחזיר 401.
 const refreshClient = axios.create({ baseURL, withCredentials: true });
 
 let refreshPromise = null;

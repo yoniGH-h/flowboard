@@ -20,8 +20,8 @@ import { useSimulation } from '../../lib/queries';
 import { ImpactSummary } from './ImpactSummary';
 import { ApplyDecisionDialog } from './ApplyDecisionDialog';
 
-// The what-if simulator: pick changes on the left, see their predicted effect on the right.
-// Nothing is saved until "Apply" - the server only calculates.
+// סימולטור "מה אם": בוחרים שינויים בצד אחד ורואים את ההשפעה החזויה שלהם בצד השני.
+// שום דבר לא נשמר עד "Apply" - השרת רק מחשב.
 // בחירת שינויים והצגת ההשפעה שלהם, בלי לשמור.
 // נקרא מ: DecisionCenterPage.jsx
 export function SimulatorPanel({ projectId, view, initialChanges }) {
@@ -42,7 +42,7 @@ export function SimulatorPanel({ projectId, view, initialChanges }) {
   const taskLabel = (t) => `${t.title} · ${t.columnName}${t.assigneeId ? ` · ${people.get(t.assigneeId)?.name ?? ''}` : ''}`;
   const personLabel = (p) => `${p.name} (${p.openTotal} open)`;
 
-  // The changes in the server's format; incomplete reassign rows are ignored.
+  // השינויים במבנה שהשרת מצפה לו; שורות שיוך לא מלאות לא נשלחות.
   const changes = useMemo(() => {
     const c = {};
     const rows = reassign.filter((r) => r.taskId && r.toUserId);
@@ -56,7 +56,7 @@ export function SimulatorPanel({ projectId, view, initialChanges }) {
   const hasChanges = Object.keys(changes).length > 0;
   const changesKey = JSON.stringify(changes);
 
-  // Re-simulate shortly after every edit.
+  // מריצים סימולציה מחדש זמן קצר אחרי כל עריכה.
   const { mutate } = simulation;
   useEffect(() => {
     if (!hasChanges) return undefined;
@@ -77,7 +77,7 @@ export function SimulatorPanel({ projectId, view, initialChanges }) {
 
   return (
     <Grid container spacing={3}>
-      {/* ---------- The changes ---------- */}
+      {/* ---------- השינויים ---------- */}
       <Grid size={{ xs: 12, md: 5 }}>
         <Stack spacing={2.5}>
           <Box>
@@ -169,7 +169,7 @@ export function SimulatorPanel({ projectId, view, initialChanges }) {
         </Stack>
       </Grid>
 
-      {/* ---------- The predicted effect ---------- */}
+      {/* ---------- ההשפעה החזויה ---------- */}
       <Grid size={{ xs: 12, md: 7 }}>
         {!hasChanges && (
           <Stack alignItems="center" spacing={1} sx={{ py: 6, color: 'text.secondary', textAlign: 'center' }}>

@@ -1,8 +1,7 @@
-// Development seed data. Mirrors frontend/src/mock/seedData.ts so the same
-// demo accounts and sample projects exist once the backend is the source of truth.
-// All data is fictional. Password for every seeded user is "password123".
+// נתוני דמו לפיתוח: חשבונות דמו ופרויקטים לדוגמה.
+// כל הנתונים בדויים. הסיסמה של כל משתמשי הדמו היא "password123".
 //
-// Run with: npm run prisma:seed   (wipes the existing data first - dev databases only!)
+// הרצה: npm run prisma:seed   (מוחק קודם את הנתונים הקיימים - רק למסד פיתוח!)
 import 'dotenv/config';
 import { randomBytes } from 'node:crypto';
 import { mkdirSync, writeFileSync } from 'node:fs';
@@ -10,7 +9,7 @@ import { join, resolve } from 'node:path';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
-// Role permissions come from the same catalog the server enforces.
+// הרשאות התפקידים מגיעות מאותו קטלוג שהשרת אוכף.
 import { PERMISSION_BY_KEY, ROLE_DEFAULTS } from '../src/permissions/catalog.js';
 import { calculateRisk } from '../src/modules/projects/risk.js';
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
@@ -165,7 +164,7 @@ const USERS = [
     title: 'Support Engineer',
     roles: ['EMPLOYEE'],
   },
-  // --- Additional Nimbus Digital team members ---
+  // --- חברי צוות נוספים ב-Nimbus Digital ---
   {
     key: 'olivia',
     org: 'nimbus',
@@ -216,7 +215,7 @@ const USERS = [
     title: 'Frontend Developer',
     roles: ['EMPLOYEE'],
   },
-  // --- Additional Harborline Logistics team members ---
+  // --- חברי צוות נוספים ב-Harborline Logistics ---
   {
     key: 'isabella',
     org: 'harborline',
@@ -696,7 +695,7 @@ function t(project, title, description, assignee, creator, priority, startOffset
 }
 async function main() {
   console.log('Seeding FlowBoard database...');
-  // --- Reset (dev only) ---
+  // --- איפוס (פיתוח בלבד) ---
   await prisma.$transaction([
     prisma.auditLogEntry.deleteMany(),
     prisma.decision.deleteMany(),
@@ -725,7 +724,7 @@ async function main() {
     prisma.role.deleteMany(),
     prisma.organization.deleteMany(),
   ]);
-  // --- Roles & permissions ---
+  // --- תפקידים והרשאות ---
   const roleIds = new Map();
   for (const def of ROLE_DEFINITIONS) {
     const role = await prisma.role.create({ data: { name: def.name, label: def.label, description: def.description } });
@@ -739,7 +738,7 @@ async function main() {
       await prisma.rolePermission.create({ data: { roleId: role.id, permissionId: permission.id } });
     }
   }
-  // --- Organizations ---
+  // --- ארגונים ---
   const orgIds = new Map();
   for (const org of ORGANIZATIONS) {
     const created = await prisma.organization.create({
@@ -747,7 +746,7 @@ async function main() {
     });
     orgIds.set(org.key, created.id);
   }
-  // --- Users ---
+  // --- משתמשים ---
   const userIds = new Map();
   const avatarPalette = ['#3454D1', '#1B998B', '#E1701A', '#7A5CFA', '#C4406A', '#2E7D32'];
   for (const u of USERS) {
@@ -768,12 +767,12 @@ async function main() {
     });
     userIds.set(u.key, created.id);
   }
-  // One INVITED user for realism (Harborline)
+  // משתמש אחד בסטטוס INVITED, כדי שהנתונים ייראו מציאותיים (Harborline)
   await prisma.user.update({
     where: { id: userIds.get('ethan') },
     data: { status: 'ACTIVE' },
   });
-  // --- Labels (per organization) ---
+  // --- תוויות (לכל ארגון) ---
   const labelIds = new Map();
   for (const orgKey of orgIds.keys()) {
     const map = new Map();
@@ -785,7 +784,7 @@ async function main() {
     }
     labelIds.set(orgKey, map);
   }
-  // --- Projects, boards, columns, members ---
+  // --- פרויקטים, לוחות, עמודות וחברי צוות ---
   const projectIds = new Map();
   const columnIds = new Map();
   for (const p of PROJECTS) {
@@ -822,12 +821,12 @@ async function main() {
     }
     columnIds.set(p.key, colMap);
   }
-  // --- Tasks ---
+  // --- משימות ---
   const taskIds = [];
-  const seededTasks = []; // kept in memory to rebuild the risk history below
+  const seededTasks = []; // נשמר בזיכרון כדי לבנות בהמשך את היסטוריית הסיכון
   for (const [index, task] of TASKS.entries()) {
     const projectOrg = PROJECTS.find((p) => p.key === task.project).org;
-    // A task exists before it starts, is due, or is completed - and never in the future.
+    // משימה קיימת לפני שהיא מתחילה, לפני המועד שלה ולפני שהושלמה - ואף פעם לא בעתיד.
     const plannedStart = task.startOffset ?? (task.dueOffset !== null ? task.dueOffset - 14 : -10);
     const createdAt = iso(Math.min(plannedStart, task.completedOffset ?? 0, 0) - 2, 8);
     const completedAt = task.completedOffset === null ? null : iso(task.completedOffset);
@@ -854,16 +853,16 @@ async function main() {
     taskIds.push(created.id);
     seededTasks.push({ ...task, createdAt, completedAt, assigneeId: created.assigneeId, dueDate: created.dueDate });
 
-    // Column history (TaskStatusChange): the task walked the board from Backlog / To Do to the
-    // column it is in now. The time is split between the stages by weight - "In Review" is
-    // made the slowest stage, so the "where work waits" insight has something to find.
+    // היסטוריית עמודות (TaskStatusChange): המשימה עברה בלוח מ-Backlog / To Do עד
+    // העמודה הנוכחית שלה. הזמן מחולק בין השלבים לפי משקל - "In Review" הוא
+    // השלב האיטי ביותר, כדי שלתובנה "איפה העבודה ממתינה" יהיה מה למצוא.
     const STAGE_WEIGHT = { Backlog: 1.2, 'To Do': 1, 'In Progress': 2, 'In Review': 3 };
     const names = COLUMN_DEFS.map((c) => c.name);
     const path = names.slice(task.column === 'Backlog' ? 0 : 1, names.indexOf(task.column) + 1);
     const end = completedAt ?? NOW;
-    // Open tasks are still in their last column, so it takes part of the span too.
+    // משימות פתוחות עדיין בעמודה האחרונה שלהן, אז גם היא מקבלת חלק מהזמן.
     const timed = completedAt ? path.slice(0, -1) : path;
-    const jitter = (i) => 0.7 + (((index + 1) * (i + 3) * 37) % 7) / 10; // deterministic variety
+    const jitter = (i) => 0.7 + (((index + 1) * (i + 3) * 37) % 7) / 10; // גיוון קבוע (לא אקראי)
     const weights = timed.map((name, i) => (STAGE_WEIGHT[name] ?? 1) * jitter(i));
     const totalWeight = weights.reduce((a, b) => a + b, 0) || 1;
     let at = createdAt.getTime();
@@ -883,8 +882,8 @@ async function main() {
     await prisma.taskStatusChange.createMany({ data: history });
   }
 
-  // --- Risk history: the last 30 days, reconstructed by replaying the tasks' dates ---
-  // (From today on, the server records a real snapshot every hour.)
+  // --- היסטוריית סיכון: 30 הימים האחרונים, משוחזרת לפי תאריכי המשימות ---
+  // (מהיום והלאה השרת שומר ציון אמיתי כל שעה.)
   for (const p of PROJECTS.filter((proj) => !proj.archived)) {
     const tasks = seededTasks.filter((t) => t.project === p.key);
     const doneNow = tasks.filter((t) => t.completedAt).length || 1;
@@ -908,7 +907,7 @@ async function main() {
     }
     await prisma.projectRiskSnapshot.createMany({ data: snapshots });
   }
-  // --- Comments ---
+  // --- תגובות ---
   const commentSeeds = [
     {
       taskIndex: 1,
@@ -1040,7 +1039,7 @@ async function main() {
       },
     });
   }
-  // --- Attachments (with tiny placeholder files on disk so downloads work) ---
+  // --- קבצים מצורפים (עם קבצים קטנים בדיסק, כדי שההורדה תעבוד) ---
   const uploadsDir = join(UPLOADS_DIR, 'seed');
   mkdirSync(uploadsDir, { recursive: true });
   const attachmentSeeds = [
@@ -1108,7 +1107,7 @@ async function main() {
       },
     });
   }
-  // --- Notifications (for Ava) ---
+  // --- התראות (עבור Ava) ---
   const notificationSeeds = [
     {
       type: 'OVERDUE',
@@ -1216,7 +1215,7 @@ async function main() {
       },
     });
   }
-  // --- Audit log ---
+  // --- יומן ביקורת ---
   const auditSeeds = [
     { org: 'nimbus', actor: 'ava', action: 'USER_SIGNED_IN', entityType: 'User', entityId: 'ava', offsetDays: 0 },
     { org: 'nimbus', actor: 'ava', action: 'USER_ROLES_CHANGED', entityType: 'User', entityId: 'sam', offsetDays: -15 },
@@ -1348,7 +1347,7 @@ async function main() {
       },
     });
   }
-  // --- Automation rules (data model only - engine ships in a later phase) ---
+  // --- חוקי אוטומציה ---
   await prisma.automationRule.createMany({
     data: [
       {
@@ -1385,7 +1384,7 @@ async function main() {
       },
     ],
   });
-  // --- Decision log: one past decision, so the log shows how a decision played out ---
+  // --- יומן החלטות: החלטה אחת מהעבר, כדי שהיומן יראה איך החלטה התפתחה ---
   const billingId = projectIds.get('billing');
   const riskThen = await prisma.projectRiskSnapshot.findFirst({
     where: { projectId: billingId, day: { lte: iso(-12, 12) } },
@@ -1409,7 +1408,7 @@ async function main() {
       createdAt: iso(-12, 10),
     },
   });
-  // --- Permission exceptions (examples for the per-employee permissions screen) ---
+  // --- חריגי הרשאה (דוגמאות למסך ההרשאות האישיות) ---
   await prisma.userPermissionOverride.createMany({
     data: [
       {

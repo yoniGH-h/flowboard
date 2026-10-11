@@ -34,8 +34,8 @@ function ProjectFormFields({ onClose, managers, project }) {
   const updateProject = useUpdateProject();
   const isEdit = !!project;
 
-  // Only an Org Admin picks who manages a project. A Project Manager creates projects for
-  // themselves and can't hand a project over (the server enforces the same rule).
+  // רק מנהל ארגון בוחר מי מנהל פרויקט. מנהל פרויקט יוצר פרויקטים
+  // לעצמו ולא יכול להעביר פרויקט למישהו אחר (השרת אוכף את אותו כלל).
   const canChooseManager = isOrgAdmin(activeRole);
   const managerOptions = canChooseManager ? managers : managers.filter((m) => m.id === (project?.managerId ?? user?.id));
 

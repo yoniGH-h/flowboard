@@ -7,7 +7,7 @@ import { requirePermission } from '../../middleware/auth.js';
 import { nonEmptyString, parse, uuid } from '../../utils/validate.js';
 import * as rulesService from './automation-rules.service.js';
 
-// trigger / condition / action all share this shape.
+// ל-trigger, ל-condition ול-action יש אותו מבנה.
 const tagSchema = z.strictObject({
   type: nonEmptyString,
   label: nonEmptyString,
@@ -25,12 +25,12 @@ const createRuleSchema = z.strictObject({
   action: tagSchema,
 });
 
-// Same fields, all optional. projectId: null means "all projects".
+// אותם שדות, כולם אופציונליים. projectId: null פירושו "כל הפרויקטים".
 const updateRuleSchema = createRuleSchema.partial();
 
 const toggleSchema = z.strictObject({ enabled: z.boolean() });
 
-// ---------- Routes (automation.manage - Org Admins by default) ----------
+// ---------- נתיבים (automation.manage - כברירת מחדל מנהלי ארגון) ----------
 
 // הראוטר של חוקי האוטומציה.
 // נקרא מ: app.js
@@ -45,8 +45,8 @@ automationRulesRouter.post('/', async (req, res) => {
   res.status(201).json(await rulesService.create(req.user, parse(createRuleSchema, req.body)));
 });
 
-// Runs the scan triggers (overdue / due soon) right now for the caller's organization,
-// instead of waiting for the next 15-minute scan.
+// מריץ עכשיו את טריגרי הסריקה (באיחור / מועד מתקרב) לארגון של המשתמש,
+// בלי לחכות לסריקה הבאה בעוד 15 דקות.
 automationRulesRouter.post('/run-now', async (req, res) => {
   res.status(201).json(await rulesService.runScans(req.user.organizationId));
 });

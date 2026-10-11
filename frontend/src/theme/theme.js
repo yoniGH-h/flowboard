@@ -3,8 +3,8 @@
 
 import { createTheme } from '@mui/material/styles';
 
-// FlowBoard design language: calm light surface, one restrained brand blue,
-// semantic colors reserved strictly for status meaning (never decoration).
+// שפת העיצוב של FlowBoard: רקע בהיר ורגוע, כחול מותג אחד ומאופק,
+// וצבעים סמנטיים שמורים רק למשמעות של סטטוס (אף פעם לא לקישוט).
 // ערכת העיצוב שכל רכיבי MUI משתמשים בה.
 // נקרא מ: main.jsx
 export const theme = createTheme({
@@ -91,8 +91,8 @@ export const theme = createTheme({
           fontSize: '0.72rem',
           textTransform: 'uppercase',
           letterSpacing: 0.4,
-          // Was #8A8F9C (~3.2:1 on white - below WCAG AA's 4.5:1 for text this size).
-          // text.secondary is already used everywhere else for muted labels and passes at ~4.9:1.
+          // היה #8A8F9C (בערך 3.2:1 על לבן - מתחת ל-4.5:1 ש-WCAG AA דורש לטקסט בגודל הזה).
+          // text.secondary כבר משמש בכל מקום אחר לתוויות מעומעמות, ועובר עם 4.9:1 בערך.
           color: '#6B7080',
           backgroundColor: 'transparent',
           borderBottom: '1px solid #E7E7EB',

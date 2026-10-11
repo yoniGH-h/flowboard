@@ -1,15 +1,15 @@
 // תפקיד הקובץ: חוקי אוטומציה: ניהול החוקים, והמנוע שמפעיל אותם באירוע או בסריקה.
 // משתמשים בו: automation-rules.routes.js, tasks.service.js, server.js
 
-// "When X happens, do Y" rules. A rule stores three small JSON tags - trigger, optional
-// condition, and action - each shaped { type, label } (plus e.g. userId for ASSIGN_TO_USER).
+// חוקים מסוג "כש-X קורה, עשה Y". חוק שומר שלושה אובייקטי JSON קטנים - trigger, condition
+// (אופציונלי) ו-action - כל אחד במבנה { type, label } (ועוד למשל userId עבור ASSIGN_TO_USER).
 //
-// Triggers:
-//   STATUS_ENTERED          event: a task was moved into a REVIEW column
-//   ALL_SUBTASKS_COMPLETED  event: the last open subtask of a task was completed
-//   TASK_OVERDUE            scan:  a task is past its due date
-//   DUE_DATE_APPROACHING    scan:  a task is due within the next 2 days
-// Actions:
+// טריגרים:
+//   STATUS_ENTERED          אירוע: משימה הועברה לעמודה מסוג REVIEW
+//   ALL_SUBTASKS_COMPLETED  אירוע: תת-המשימה הפתוחה האחרונה של משימה הושלמה
+//   TASK_OVERDUE            סריקה: משימה עברה את המועד שלה
+//   DUE_DATE_APPROACHING    סריקה: המועד של משימה בתוך יומיים
+// פעולות:
 //   NOTIFY_ASSIGNEE_AND_MANAGER, CREATE_NOTIFICATION, MOVE_TO_COLUMN, ASSIGN_TO_USER
 import { Prisma } from '@prisma/client';
 import { prisma } from '../../db.js';
@@ -20,10 +20,10 @@ import { recordStatusChange } from '../tasks/status-history.js';
 const DUE_SOON_WINDOW_DAYS = 2;
 const TASK_FOR_ACTION_INCLUDE = { project: { select: { organizationId: true, managerId: true } } };
 
-// Prisma needs Prisma.DbNull (not plain null) to clear a nullable Json column.
+// Prisma דורש Prisma.DbNull (ולא null רגיל) כדי לרוקן עמודת Json שיכולה להיות ריקה.
 const jsonOrNull = (value) => (value === null ? Prisma.DbNull : value);
 
-// ---------- CRUD ----------
+// ---------- יצירה, קריאה, עדכון ומחיקה ----------
 
 // שולף את כל החוקים של הארגון.
 // נקרא מ: automation-rules.routes.js
@@ -46,7 +46,7 @@ export async function create(actor, dto) {
   return prisma.automationRule.create({
     data: {
       organizationId: actor.organizationId,
-      projectId: dto.projectId ?? null, // null = applies to every project
+      projectId: dto.projectId ?? null, // null = חל על כל הפרויקטים
       name: dto.name,
       enabled: dto.enabled ?? true,
       trigger: dto.trigger,
@@ -89,7 +89,7 @@ export async function remove(actor, ruleId) {
   return { deleted: true };
 }
 
-// The rule's run history (success / failure per task).
+// היסטוריית ההרצות של החוק (הצלחה או כישלון לכל משימה).
 // שולף את היסטוריית ההרצות של חוק.
 // נקרא מ: automation-rules.routes.js
 export async function executions(actor, ruleId) {
@@ -109,10 +109,10 @@ async function requireRule(actor, ruleId) {
   return rule;
 }
 
-// ---------- Execution engine: event triggers ----------
+// ---------- מנוע ההרצה: טריגרים של אירוע ----------
 
-// Called by tasks.service move() after a card changes column. Fires on every entry into
-// the column (each move is its own event, so there is no "fire once" bookkeeping here).
+// נקראת מ-move() ב-tasks.service אחרי שכרטיס עבר עמודה. רצה בכל כניסה
+// לעמודה (כל הזזה היא אירוע בפני עצמו, אז אין כאן רישום של "רץ פעם אחת").
 // מפעיל חוקים של "משימה נכנסה לעמודה".
 // נקרא מ: tasks.service.js
 export async function handleTaskMoved(taskId, newCategory) {
@@ -125,7 +125,7 @@ export async function handleTaskMoved(taskId, newCategory) {
   for (const rule of rules) await executeAction(rule, task);
 }
 
-// Called by tasks.service move() when a subtask reaches Done.
+// נקראת מ-move() ב-tasks.service כשתת-משימה מגיעה ל-Done.
 // מפעיל חוקים של "כל תת-המשימות הושלמו".
 // נקרא מ: tasks.service.js
 export async function handleSubtaskCompleted(parentTaskId) {
@@ -139,11 +139,11 @@ export async function handleSubtaskCompleted(parentTaskId) {
   for (const rule of rules) await executeAction(rule, parent);
 }
 
-// ---------- Execution engine: scan triggers ----------
+// ---------- מנוע ההרצה: טריגרים של סריקה ----------
 
-// Run every 15 minutes by the scheduler (server.js), and on demand by POST /run-now.
-// Each (rule, task) pair fires at most once - recorded in AutomationRuleFiring - so a task
-// that stays overdue for days doesn't notify on every scan.
+// רצה כל 15 דקות מהטיימר (server.js), ולפי דרישה דרך POST /run-now.
+// כל צמד (חוק, משימה) רץ פעם אחת לכל היותר - נרשם ב-AutomationRuleFiring - כך שמשימה
+// שנשארת באיחור במשך ימים לא שולחת התראה בכל סריקה.
 // סריקה תקופתית: חוקים של משימה באיחור ושל מועד מתקרב.
 // נקרא מ: automation-rules.routes.js, server.js
 export async function runScans(organizationId) {
@@ -174,7 +174,7 @@ async function fireForTasks(rule, dueDateFilter) {
         organizationId: rule.organizationId,
         ...(rule.projectId ? { id: rule.projectId } : {}),
       },
-      automationFirings: { none: { ruleId: rule.id } }, // not fired for this task yet
+      automationFirings: { none: { ruleId: rule.id } }, // החוק עוד לא רץ על המשימה הזו
     },
     include: TASK_FOR_ACTION_INCLUDE,
   });
@@ -185,14 +185,14 @@ async function fireForTasks(rule, dueDateFilter) {
   return tasks.length;
 }
 
-// Enabled rules with this trigger type. A rule with projectId = null applies to all projects.
+// חוקים פעילים עם סוג הטריגר הזה. חוק עם projectId = null חל על כל הפרויקטים.
 function findMatchingRules(organizationId, projectId, triggerType) {
   return prisma.automationRule.findMany({
     where: {
       enabled: true,
       ...(organizationId ? { organizationId } : {}),
       ...(projectId ? { OR: [{ projectId: null }, { projectId }] } : {}),
-      trigger: { path: ['type'], equals: triggerType }, // query inside the JSON column
+      trigger: { path: ['type'], equals: triggerType }, // שאילתה בתוך עמודת ה-JSON
     },
   });
 }
@@ -201,13 +201,13 @@ async function recordFiring(ruleId, taskId) {
   try {
     await prisma.automationRuleFiring.create({ data: { ruleId, taskId } });
   } catch (error) {
-    // P2002 = unique constraint: a concurrent scan already recorded this firing. Fine.
+    // P2002 = אילוץ ייחודיות: סריקה מקבילה כבר רשמה את ההרצה הזו. תקין.
     if (!(error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002')) throw error;
   }
 }
 
-// Runs the rule's action and records the outcome. A failing rule never breaks the request
-// that triggered it (e.g. moving a card) - the failure is logged in the rule's history.
+// מריץ את הפעולה של החוק ורושם את התוצאה. חוק שנכשל לא שובר את הבקשה
+// שהפעילה אותו (למשל הזזת כרטיס) - הכישלון נרשם בהיסטוריית החוק.
 async function executeAction(rule, task) {
   try {
     await executeActionBody(rule, task);
@@ -257,7 +257,7 @@ async function executeActionBody(rule, task) {
       break;
     }
     default:
-      // Unknown action type - nothing to do.
+      // סוג פעולה לא מוכר - אין מה לעשות.
       break;
   }
 }

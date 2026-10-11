@@ -1,8 +1,8 @@
-// Decision Center smoke test - runs against a RUNNING server with freshly seeded demo data:
-//   npm run prisma:seed && npm start      (in another terminal)
+// בדיקת מרכז ההחלטות - רצה מול שרת פועל עם נתוני דמו טריים:
+//   npm run prisma:seed && npm start      (בחלון נפרד)
 //   npm run test:planning
-// Prints the recommendations, a simulation, validation / permission checks, applies one
-// decision and shows the decision log. It changes data - re-seed afterwards for a clean demo.
+// מדפיסה את ההמלצות, סימולציה, בדיקות קלט והרשאה, מבצעת החלטה
+// אחת ומציגה את יומן ההחלטות. הבדיקה משנה נתונים - יש לטעון מחדש את נתוני הדמו אחריה.
 
 const B = process.env.API_URL ?? 'http://localhost:3000/api';
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -29,11 +29,11 @@ const projects = (await ava('GET', '/projects?scope=all')).data;
 const atlas = projects.find((p) => p.name === 'Atlas Customer Portal');
 const billing = projects.find((p) => p.name === 'Billing Platform Migration');
 
-// --- view ---
+// --- תמונת מצב ---
 const view = (await daniel('GET', `/planning/projects/${atlas.id}`)).data;
 console.log('ATLAS now:', fmt(view.evaluation), '| people:', view.people.length, '| open tasks:', view.openTasks.length);
 
-// --- recommendations ---
+// --- המלצות ---
 for (const p of [atlas, billing]) {
   const recs = await ava('GET', `/planning/projects/${p.id}/recommendations`);
   console.log(`\nRECOMMENDATIONS ${p.name} (${recs.status}):`);
@@ -42,7 +42,7 @@ for (const p of [atlas, billing]) {
   }
 }
 
-// --- simulate a combination ---
+// --- סימולציה של שילוב שינויים ---
 const low = view.openTasks.filter((t) => t.priority === 'LOW');
 const nonMember = view.people.find((p) => !p.isMember && p.openTotal <= 2);
 const sim = await daniel('POST', `/planning/projects/${atlas.id}/simulate`, {
@@ -52,7 +52,7 @@ console.log('\nSIMULATE defer+add:', sim.status, '\n  before:', fmt(sim.data.bef
 console.log('  changes:', sim.data.changes.map((c) => c.text));
 console.log('  assumptions:', sim.data.assumptions.length);
 
-// --- validation / permissions ---
+// --- בדיקות קלט והרשאות ---
 const outsider = view.people.find((p) => !p.isMember);
 const bad = await daniel('POST', `/planning/projects/${atlas.id}/simulate`, { changes: { reassign: [{ taskId: view.openTasks[0].id, toUserId: outsider.userId }] } });
 console.log('\nreassign to non-member ->', bad.status, bad.data.message);
@@ -60,7 +60,7 @@ console.log('empty changes ->', (await daniel('POST', `/planning/projects/${atla
 console.log("Daniel plans someone else's project ->", (await daniel('GET', `/planning/projects/${billing.id}`)).status);
 console.log('Priya (employee) ->', (await priya('GET', `/planning/projects/${atlas.id}`)).status);
 
-// --- apply a decision (Daniel defers one low task on his own project) ---
+// --- ביצוע החלטה (Daniel דוחה משימה אחת בעדיפות נמוכה בפרויקט שלו) ---
 if (low[0]) {
   const dec = await daniel('POST', `/planning/projects/${atlas.id}/decisions`, { changes: { deferTaskIds: [low[0].id] }, source: 'SIMULATOR', note: 'Cut from v1' });
   console.log('\nAPPLY decision ->', dec.status, dec.data.title, '| risk', dec.data.riskBefore, '-> predicted', dec.data.riskPredicted);
@@ -68,7 +68,7 @@ if (low[0]) {
   console.log('  task archived now:', task.data.archived);
 }
 
-// --- decision log ---
+// --- יומן ההחלטות ---
 const log = await ava('GET', '/planning/decisions');
 console.log('\nDECISION LOG (Ava):', log.status);
 for (const d of log.data) console.log(` - ${d.project.name}: ${d.title} | ${d.daysAgo}d ago by ${d.actor.firstName} | risk ${d.riskBefore} -> predicted ${d.riskPredicted} -> now ${d.riskNow}`);

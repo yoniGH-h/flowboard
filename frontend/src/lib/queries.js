@@ -2,8 +2,8 @@
 // משתמשים בו: AuditLogPage.jsx, AutomationRulesPanel.jsx, OrganizationSettingsPage.jsx, RolesPermissionsPage.jsx +29
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-// TanStack Query hooks for every screen: each one wraps a function from api/api.js (the
-// Express backend), caches the result, and refreshes the related data after a change.
+// ה-hooks של TanStack Query לכל המסכים: כל אחד עוטף פונקציה מ-api/api.js,
+// שומר את התוצאה במטמון, ומרענן את הנתונים הקשורים אחרי שינוי.
 import * as realApi from '../api/api';
 import { useAuth } from '../auth/AuthContext';
 
@@ -128,7 +128,7 @@ export function useNotifications() {
     queryKey: ['notifications', user?.id],
     queryFn: () => realApi.fetchNotifications(user.id),
     enabled: !!user,
-    // No refetchInterval - useNotificationsSocket keeps this cache fresh via real-time push.
+    // בלי refetchInterval - useNotificationsSocket שומר על המטמון הזה מעודכן בזמן אמת.
   });
 }
 
@@ -184,7 +184,7 @@ export function useUpdateAutomationRule() {
   });
 }
 
-// ---------- Insights ----------
+// ---------- תובנות ----------
 
 // קריאה: התובנות של פרויקט.
 // נקרא מ: InsightsSection.jsx
@@ -207,7 +207,7 @@ export function useRiskHistory(projectId) {
   });
 }
 
-// ---------- Decision Center ----------
+// ---------- מרכז ההחלטות ----------
 
 // קריאה: תמונת המצב למרכז ההחלטות.
 // נקרא מ: DecisionCenterPage.jsx
@@ -229,7 +229,7 @@ export function useRecommendations(projectId) {
   });
 }
 
-// What-if: nothing is saved, so this is a mutation only in the "call on demand" sense.
+// "מה אם": שום דבר לא נשמר, ולכן זו mutation רק במובן של "קריאה לפי דרישה".
 // חישוב סימולציה בשרת; לא שומר דבר.
 // נקרא מ: SimulatorPanel.jsx
 export function useSimulation() {
@@ -248,7 +248,7 @@ export function useDecisions(projectId) {
   });
 }
 
-// Applying a decision really changes tasks / members / dates - refresh everything they feed.
+// ביצוע החלטה באמת משנה משימות, חברי צוות ותאריכים - מרעננים את כל מה שניזון מהם.
 // שינוי: ביצוע החלטה, ורענון כל מה שהושפע.
 // נקרא מ: ApplyDecisionDialog.jsx
 export function useApplyDecision() {
@@ -263,12 +263,12 @@ export function useApplyDecision() {
   });
 }
 
-// ---------- Dynamic permissions ----------
+// ---------- הרשאות דינמיות ----------
 
 // קריאה: טבלת ההרשאות לפי תפקיד.
 // נקרא מ: RolesPermissionsPage.jsx, UserPermissionsDialog.jsx
 export function usePermissionMatrix() {
-  // retry: false - on a backend without this endpoint (404) the page falls back right away.
+  // retry: false - אם הנתיב לא קיים בשרת (404), העמוד עובר מיד לתצוגה החלופית.
   return useQuery({ queryKey: ['permission-matrix'], queryFn: realApi.fetchPermissionMatrix, retry: false });
 }
 
@@ -280,7 +280,7 @@ export function useSetRolePermission() {
     mutationFn: ({ roleName, key, granted }) => realApi.setRolePermission(roleName, key, granted),
     onSuccess: (matrix) => {
       qc.setQueryData(['permission-matrix'], matrix);
-      qc.invalidateQueries({ queryKey: ['user-permissions'] }); // explanations depend on the roles
+      qc.invalidateQueries({ queryKey: ['user-permissions'] }); // ההסברים תלויים בתפקידים
     },
   });
 }
@@ -357,9 +357,9 @@ export function useAllAuditLog(filters = {}) {
   return useQuery({ queryKey: ['audit-all', filters], queryFn: () => realApi.fetchSystemAuditLog(filters) });
 }
 
-// ---------- Mutations ----------
+// ---------- שינויים (Mutations) ----------
 
-// Board settings: after any change to the columns, refresh the board and the tasks on it.
+// הגדרות הלוח: אחרי כל שינוי בעמודות, מרעננים את הלוח ואת המשימות שבו.
 function useBoardColumnMutation(mutationFn) {
   const qc = useQueryClient();
   return useMutation({

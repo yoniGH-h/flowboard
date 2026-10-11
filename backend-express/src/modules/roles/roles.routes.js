@@ -9,7 +9,7 @@ import { requirePermission } from '../../middleware/auth.js';
 // נקרא מ: app.js
 export const rolesRouter = Router();
 
-// The four fixed roles and their permissions (read-only; drives the Roles & Permissions screen).
+// ארבעת התפקידים הקבועים וההרשאות שלהם (לקריאה בלבד; משמש את מסך התפקידים וההרשאות).
 rolesRouter.get('/', requirePermission('permissions.manage'), async (_req, res) => {
   res.json(
     await prisma.role.findMany({

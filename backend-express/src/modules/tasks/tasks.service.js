@@ -18,7 +18,7 @@ const PRIORITY_RANK = { LOW: 0, MEDIUM: 1, HIGH: 2, URGENT: 3 };
 
 const USER_BRIEF = { select: { id: true, firstName: true, lastName: true, avatarColor: true } };
 
-// Everything the Task Details screen needs, loaded with the task in one query.
+// כל מה שמסך פרטי המשימה צריך, נטען יחד עם המשימה בשאילתה אחת.
 // מה נטען יחד עם משימה: אחראי, תוויות, תלויות, תת-משימות.
 // נקרא מ: הקובץ הזה בלבד
 export const TASK_INCLUDE = {
@@ -36,7 +36,7 @@ export const TASK_INCLUDE = {
   _count: { select: { comments: true, attachments: true } },
 };
 
-// Flattens the Prisma result into the shape the frontend expects.
+// משטח את התוצאה של Prisma למבנה שהאתר מצפה לו.
 function toDetail(task) {
   const { labels, dependsOn, _count, ...rest } = task;
   return {
@@ -48,9 +48,9 @@ function toDetail(task) {
   };
 }
 
-// Tasks visible to the actor: in projects they can see (Org Admins: the whole organization;
-// everyone else: projects they belong to). Pass a projectId that was already checked with
-// assertAccessible to narrow it to that one project.
+// המשימות שהמשתמש רואה: בפרויקטים שגלויים לו (מנהל ארגון: כל הארגון;
+// כל השאר: הפרויקטים שהם חברים בהם). מעבירים projectId שכבר נבדק עם
+// assertAccessible כדי לצמצם לפרויקט האחד הזה.
 // תנאי שאילתה: המשימות שהמשתמש רשאי לראות.
 // נקרא מ: הקובץ הזה בלבד
 export function taskScope(actor, projectId) {
@@ -60,8 +60,8 @@ export function taskScope(actor, projectId) {
   };
 }
 
-// Tasks in the projects the actor manages - the scope of the management screens (Management
-// Dashboard, Team Workload, Reports). A Project Manager sees only their own projects there.
+// המשימות בפרויקטים שהמשתמש מנהל - ההיקף של מסכי הניהול (דשבורד
+// ניהולי, עומס צוות, דוחות). מנהל פרויקט רואה שם רק את הפרויקטים שלו.
 // תנאי שאילתה: המשימות בפרויקטים שהמשתמש מנהל.
 // נקרא מ: tasks.reports.js
 export function managedTaskScope(actor, projectId) {
@@ -71,8 +71,8 @@ export function managedTaskScope(actor, projectId) {
   };
 }
 
-// Loads a task and checks it belongs to the actor's organization. Used by Comments and
-// Attachments too. A task from another organization is reported as "not found".
+// טוען משימה ובודק שהיא שייכת לארגון של המשתמש. משמש גם את התגובות ואת
+// הקבצים. משימה מארגון אחר מדווחת כ"לא נמצאה".
 // שולף משימה ומוודא שהיא בארגון של המשתמש (אחרת 404).
 // נקרא מ: meetings.routes.js
 export async function requireTaskInOrg(actor, id) {
@@ -91,13 +91,13 @@ async function requireProjectMember(projectId, userId) {
   if (!membership) throw notFound('Selected assignee is not a member of this project');
 }
 
-// A row in the task's own history (the Activity tab on Task Details).
+// שורה בהיסטוריה של המשימה עצמה (הלשונית Activity במסך פרטי המשימה).
 function logActivity(taskId, actorId, action, detail) {
   return prisma.activityEntry.create({ data: { taskId, actorId, action, detail } });
 }
 
 async function notifyAssignment(actor, task) {
-  if (!task.assigneeId || task.assigneeId === actor.userId) return; // don't notify yourself
+  if (!task.assigneeId || task.assigneeId === actor.userId) return; // לא שולחים התראה לעצמך
   await createNotification({
     organizationId: actor.organizationId,
     userId: task.assigneeId,
@@ -109,13 +109,13 @@ async function notifyAssignment(actor, task) {
   });
 }
 
-// ---------- CRUD ----------
+// ---------- יצירה, קריאה, עדכון ומחיקה ----------
 
 // יוצר משימה אחרי בדיקת הרשאה, עמודה ואחראי.
 // נקרא מ: tasks.routes.js
 export async function create(actor, dto) {
-  // Allowed with tasks.manage (the project's manager) or tasks.create (e.g. an employee who
-  // got it as a permission exception). The latter may only assign the task to themselves.
+  // מותר עם tasks.manage (מנהל הפרויקט) או עם tasks.create (למשל עובד
+  // שקיבל אותה כחריג הרשאה). האחרון רשאי לשייך את המשימה רק לעצמו.
   const project = await assertAccessible(actor, dto.projectId);
   const managesTasks = project.can('tasks.manage');
   if (!managesTasks && !project.can('tasks.create')) {
@@ -132,7 +132,7 @@ export async function create(actor, dto) {
 
   if (dto.assigneeId) await requireProjectMember(dto.projectId, dto.assigneeId);
 
-  // Subtasks are one level deep: the parent must be a top-level task in the same project.
+  // תת-משימות הן ברמה אחת בלבד: משימת האב חייבת להיות משימה ראשית באותו פרויקט.
   if (dto.parentTaskId) {
     const parent = await prisma.task.findFirst({
       where: { id: dto.parentTaskId, projectId: dto.projectId, parentTaskId: null },
@@ -194,7 +194,7 @@ export async function findAll(actor, query) {
       : undefined,
   };
 
-  // "Status" is the category of the column the task sits in.
+  // "סטטוס" הוא הקטגוריה של העמודה שבה המשימה נמצאת.
   const columnWhere = {};
   if (query.status) columnWhere.category = query.status;
   if (query.overdue === true) columnWhere.NOT = { category: 'DONE' };
@@ -203,8 +203,8 @@ export async function findAll(actor, query) {
   const sortBy = query.sortBy ?? 'createdAt';
   const sortDir = query.sortDir ?? 'desc';
 
-  // Priority is an enum, and the database would sort it alphabetically (HIGH < LOW <
-  // MEDIUM < URGENT), so this one sort is done in JavaScript by rank.
+  // העדיפות היא enum, והמסד היה ממיין אותה לפי האלפבית (HIGH < LOW <
+  // MEDIUM < URGENT), ולכן המיון הזה נעשה ב-JavaScript לפי דירוג.
   if (sortBy === 'priority') {
     const all = await prisma.task.findMany({ where, include: TASK_INCLUDE });
     all.sort((a, b) => {
@@ -261,12 +261,12 @@ export async function update(actor, id, dto) {
       title: dto.title,
       description: dto.description,
       priority: dto.priority,
-      startDate: dto.startDate, // undefined = unchanged, null = cleared
+      startDate: dto.startDate, // undefined = ללא שינוי, null = ריקון השדה
       dueDate: dto.dueDate,
       estimatedHours: dto.estimatedHours,
       actualHours: dto.actualHours,
       blocked: dto.blocked,
-      // Replace the whole label set.
+      // מחליפים את כל קבוצת התוויות.
       labels: dto.labelIds
         ? { deleteMany: {}, create: dto.labelIds.map((labelId) => ({ labelId })) }
         : undefined,
@@ -340,7 +340,7 @@ export async function getActivity(actor, id) {
   });
 }
 
-// ---------- Moving a card on the Kanban board ----------
+// ---------- הזזת כרטיס בלוח ה-Kanban ----------
 
 // מעביר משימה לעמודה: הרשאה, מגבלת WIP, חסימות, התראה ואוטומציה.
 // נקרא מ: tasks.routes.js
@@ -348,19 +348,19 @@ export async function move(actor, id, dto) {
   const task = await requireTaskInOrg(actor, id);
   const project = await assertAccessible(actor, task.projectId);
 
-  // tasks.manage (the project's manager) moves any card; tasks.move.own only your own cards.
+  // עם tasks.manage (מנהל הפרויקט) מזיזים כל כרטיס; עם tasks.move.own רק את הכרטיסים שלך.
   if (!project.can('tasks.manage')) {
     if (task.assigneeId !== actor.userId) throw forbidden('You can only move tasks assigned to you');
     if (!project.can('tasks.move.own')) throw forbidden('You do not have permission to move tasks');
   }
 
-  // Never trust a bare column id: it must be on this same project's board.
+  // לא סומכים על מזהה עמודה כמו שהוא: העמודה חייבת להיות בלוח של אותו פרויקט.
   const targetColumn = await prisma.boardColumn.findFirst({
     where: { id: dto.columnId, board: { projectId: task.projectId } },
   });
   if (!targetColumn) throw notFound('Column not found on this project board');
 
-  // WIP limit = the maximum number of cards allowed in the column at once.
+  // מגבלת WIP = המספר המרבי של כרטיסים שמותר בעמודה בו-זמנית.
   if (targetColumn.wipLimit) {
     const currentCount = await prisma.task.count({
       where: { columnId: targetColumn.id, archived: false, id: { not: id } },
@@ -373,7 +373,7 @@ export async function move(actor, id, dto) {
   const wasDone = task.column.category === 'DONE';
   const willBeDone = targetColumn.category === 'DONE';
 
-  // A task can't be completed while a task that blocks it is still open.
+  // אי אפשר להשלים משימה כל עוד משימה שחוסמת אותה עדיין פתוחה.
   if (willBeDone) {
     const unfinishedBlockers = await prisma.taskDependency.count({
       where: { taskId: id, type: 'BLOCKS', dependsOnTask: { completedAt: null } },
@@ -387,7 +387,7 @@ export async function move(actor, id, dto) {
     where: { id },
     data: {
       columnId: dto.columnId,
-      // Entering Done stamps completedAt; leaving Done clears it.
+      // כניסה ל-Done קובעת את completedAt; יציאה מ-Done מרוקנת אותו.
       completedAt: willBeDone && !wasDone ? new Date() : !willBeDone ? null : undefined,
     },
     include: TASK_INCLUDE,
@@ -420,7 +420,7 @@ export async function move(actor, id, dto) {
     });
   }
 
-  // Event-driven automation rules.
+  // חוקי אוטומציה שמופעלים באירוע.
   await handleTaskMoved(id, targetColumn.category);
   if (updated.parentTaskId && willBeDone) {
     await handleSubtaskCompleted(updated.parentTaskId);
@@ -464,7 +464,7 @@ export async function assign(actor, id, assigneeId) {
   return toDetail(updated);
 }
 
-// ---------- Dependencies ("task A is blocked by task B") ----------
+// ---------- תלויות ("משימה א חסומה על ידי משימה ב") ----------
 
 // מוסיף תלות בין שתי משימות.
 // נקרא מ: tasks.routes.js
@@ -487,9 +487,9 @@ export async function addDependency(actor, id, dto) {
     throw conflict('This dependency already exists');
   }
 
-  // Cycle check (depth-first search): starting from the new dependency, follow the existing
-  // "depends on" edges. If we can reach this task again, the new edge would close a loop
-  // (A waits for B, B waits for A) and nothing in the loop could ever be completed.
+  // בדיקת מעגל (חיפוש לעומק): מתחילים מהתלות החדשה ועוקבים אחרי קשרי
+  // ה"תלויה ב-" הקיימים. אם מגיעים שוב למשימה הזו, הקשר החדש היה סוגר מעגל
+  // (א מחכה ל-ב, ב מחכה ל-א) ואי אפשר היה להשלים אף משימה במעגל.
   const graph = new Map();
   for (const e of edges) {
     graph.set(e.taskId, [...(graph.get(e.taskId) ?? []), e.dependsOnTaskId]);

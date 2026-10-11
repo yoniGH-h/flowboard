@@ -40,9 +40,9 @@ export function MyProjectsPage() {
   const navigate = useNavigate();
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState('ALL');
-  // Unfiltered fetch for the KPI cards and the "not part of any project" empty state
-  // (they summarize every project you're a member of, not the current filter selection);
-  // a separately-filtered, server-side query for the grid.
+  // שליפה לא מסוננת לכרטיסי המדדים ולמצב הריק "לא חבר באף פרויקט"
+  // (הם מסכמים את כל הפרויקטים שאתה חבר בהם, לא את הסינון הנוכחי);
+  // ושאילתה נפרדת, מסוננת בשרת, לרשת הכרטיסים.
   const { data: projects, isLoading } = useProjects({ memberId: user?.id });
   const { data: filtered = [] } = useProjects({
     memberId: user?.id,

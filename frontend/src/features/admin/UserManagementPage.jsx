@@ -56,8 +56,8 @@ export function UserManagementPage() {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');
 
-  // Unfiltered fetch for the KPI cards (they summarize the whole org, not the current
-  // search/status selection); a separately-filtered, server-side query for the table rows.
+  // שליפה לא מסוננת לכרטיסי המדדים (הם מסכמים את כל הארגון, לא את
+  // החיפוש או הסטטוס שנבחרו); ושאילתה נפרדת, מסוננת בשרת, לשורות הטבלה.
   const { data: allUsers } = useOrganizationUsers();
   const { data: filtered = [], isLoading } = useOrganizationUsers({
     search: search.trim() || undefined,
@@ -73,8 +73,8 @@ export function UserManagementPage() {
   const [confirmRemove, setConfirmRemove] = useState(null);
   const [permissionsUser, setPermissionsUser] = useState(null);
   const { user: me } = useAuth();
-  // Only with permissions.manage, and only on a backend that supports per-user permissions
-  // (it sends `permissions` in /users/me - the Express one).
+  // רק עם permissions.manage, ורק כשהשרת תומך בהרשאות אישיות
+  // (הוא שולח את permissions ב-/users/me).
   const canManagePermissions = !!me?.permissions?.includes('permissions.manage');
 
   const summary = useMemo(() => {

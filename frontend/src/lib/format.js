@@ -13,8 +13,8 @@ export function fullName(user) {
   return `${user.firstName} ${user.lastName}`;
 }
 
-// Picks black or white text so it always meets WCAG AA (4.5:1) against an arbitrary
-// avatar background color, per the relative-luminance formula in WCAG 2.1 SC 1.4.3.
+// בוחר טקסט שחור או לבן כך שיעמוד תמיד ב-WCAG AA (4.5:1) מול צבע רקע
+// כלשהו של אווטאר, לפי נוסחת הבהירות היחסית ב-WCAG 2.1 SC 1.4.3.
 // בוחר צבע טקסט קריא על רקע נתון.
 // נקרא מ: UserAvatar.jsx
 export function contrastTextColor(hexColor) {

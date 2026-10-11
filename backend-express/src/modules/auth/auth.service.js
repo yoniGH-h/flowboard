@@ -18,7 +18,7 @@ const AVATAR_COLORS = ['#2563EB', '#7C3AED', '#DB2777', '#059669', '#D97706', '#
 
 const randomAvatarColor = () => AVATAR_COLORS[Math.floor(Math.random() * AVATAR_COLORS.length)];
 
-// Sign up = create a brand-new organization with the caller as its first Org Admin.
+// הרשמה = יצירת ארגון חדש, כשהנרשם הוא מנהל הארגון הראשון שלו.
 // הרשמה: יוצר ארגון חדש ואת המשתמש הראשון שלו כמנהל הארגון.
 // נקרא מ: auth.routes.js
 export async function signUp(dto) {
@@ -27,7 +27,7 @@ export async function signUp(dto) {
     throw conflict('An account with this email already exists');
   }
 
-  // "Nimbus Digital" -> "nimbus-digital", then "nimbus-digital-2" if that is taken.
+  // "Nimbus Digital" -> "nimbus-digital", ואם תפוס אז "nimbus-digital-2".
   const baseSlug = slugify(dto.organizationName) || 'organization';
   let slug = baseSlug;
   let suffix = 1;
@@ -42,7 +42,7 @@ export async function signUp(dto) {
   ]);
   const passwordHash = await bcrypt.hash(dto.password, PASSWORD_SALT_ROUNDS);
 
-  // Both rows or neither.
+  // שתי השורות או אף אחת.
   const { user, organization } = await prisma.$transaction(async (tx) => {
     const organization = await tx.organization.create({
       data: { name: dto.organizationName, slug },
@@ -86,7 +86,7 @@ export async function signUp(dto) {
   return issueSession(user.id, user.email, organization.id, ['EMPLOYEE', 'ORG_ADMIN']);
 }
 
-// Join an existing organization (by its slug) as an Employee.
+// הצטרפות לארגון קיים (לפי ה-slug שלו) כעובד.
 // הרשמה לארגון קיים כעובד.
 // נקרא מ: auth.routes.js
 export async function joinOrganization(dto) {
@@ -140,7 +140,7 @@ export async function signIn(dto) {
   }
 
   if (!user || !(await bcrypt.compare(dto.password, user.passwordHash))) {
-    // Lock the account for 15 minutes after 5 wrong passwords in a row.
+    // נועלים את החשבון ל-15 דקות אחרי 5 סיסמאות שגויות ברצף.
     if (user) {
       const attempts = (user.failedLoginAttempts ?? 0) + 1;
       await prisma.user.update({
@@ -151,7 +151,7 @@ export async function signIn(dto) {
         },
       });
     }
-    // Same message whether the email exists or not, so it can't be used to discover accounts.
+    // אותה הודעה בין אם האימייל קיים ובין אם לא, כדי שאי אפשר יהיה לגלות כך חשבונות.
     throw unauthorized('Invalid email or password');
   }
   if (user.status !== 'ACTIVE') {
@@ -178,8 +178,8 @@ export async function signIn(dto) {
   );
 }
 
-// Refresh-token rotation: a refresh token works exactly once. Using it revokes it and issues
-// a brand-new pair, so a stolen-and-replayed token is rejected.
+// רוטציה של אסימון הרענון: אסימון רענון תקף לשימוש אחד בדיוק. השימוש מבטל אותו ומנפיק
+// זוג חדש, כך שאסימון שנגנב ונשלח שוב נדחה.
 // מחליף אסימון רענון תקף בזוג אסימונים חדש.
 // נקרא מ: auth.routes.js
 export async function refresh(refreshToken) {
@@ -226,12 +226,12 @@ export async function logout(refreshToken) {
       data: { revokedAt: new Date() },
     });
   } catch {
-    // Already invalid/expired - logging out is idempotent either way.
+    // כבר לא תקף או שפג - יציאה מצליחה בכל מקרה.
   }
 }
 
-// The current password must match. Wrong current password = 400 (not 401, which would make
-// the frontend try to refresh the session).
+// הסיסמה הנוכחית חייבת להתאים. סיסמה נוכחית שגויה = 400 (ולא 401, שהיה גורם
+// לאתר לנסות לחדש את החיבור).
 // שינוי סיסמה למשתמש מחובר, וביטול שאר החיבורים שלו.
 // נקרא מ: auth.routes.js
 export async function changePassword(actor, dto) {
@@ -268,14 +268,14 @@ export async function revokeAllSessions(userId) {
   });
 }
 
-// Dev-only: there is no email provider, so the reset token is returned in the response
-// instead of being emailed (see docs/security.md).
+// לפיתוח בלבד: אין ספק דואר, ולכן אסימון האיפוס מוחזר בתשובה
+// במקום להישלח באימייל.
 // יוצר אסימון חד-פעמי לאיפוס סיסמה.
 // נקרא מ: auth.routes.js
 export async function forgotPassword(dto) {
   const user = await prisma.user.findUnique({ where: { email: dto.email } });
   if (!user) {
-    return {}; // Do not reveal whether the email exists.
+    return {}; // לא לחשוף אם האימייל קיים.
   }
 
   const rawToken = randomBytes(32).toString('hex');
@@ -328,9 +328,9 @@ export async function resetPassword(dto) {
   });
 }
 
-// Access token: short-lived (15m), sent as "Authorization: Bearer ...".
-// Refresh token: long-lived (7d), stored only as a bcrypt hash so a database leak can't be
-// replayed; its row id (jti) lets a single token be revoked.
+// אסימון גישה: קצר מועד (15 דקות), נשלח כ-"Authorization: Bearer ...".
+// אסימון רענון: ארוך מועד (7 ימים), נשמר רק כגיבוב bcrypt כך שדליפה של המסד לא מאפשרת
+// להשתמש בו; מזהה השורה שלו (jti) מאפשר לבטל אסימון יחיד.
 async function issueSession(userId, email, organizationId, roles) {
   const accessToken = jwt.sign({ sub: userId, email, organizationId, roles }, config.jwt.accessSecret, {
     expiresIn: config.jwt.accessTtl,
@@ -350,7 +350,7 @@ async function issueSession(userId, email, organizationId, roles) {
   return { accessToken, refreshToken };
 }
 
-// "7d" -> a Date 7 days from now.
+// "7d" -> תאריך בעוד 7 ימים.
 function refreshExpiryDate() {
   const match = /^(\d+)([smhd])$/.exec(config.jwt.refreshTtl);
   const amount = match ? Number(match[1]) : 7;

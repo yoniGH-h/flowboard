@@ -22,9 +22,9 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import AddIcon from '@mui/icons-material/Add';
 import { useAddBoardColumn, useDeleteBoardColumn, useUpdateBoardColumn } from '../../lib/queries';
 
-// Board settings (the project's manager): add, rename, reorder and delete columns, and set
-// each column's WIP limit. Every change is saved right away; the server checks the
-// board.configure permission and refuses to delete a column that still has tasks.
+// הגדרות הלוח (מנהל הפרויקט): הוספה, שינוי שם, שינוי סדר ומחיקה של עמודות, וקביעת
+// מגבלת WIP לכל עמודה. כל שינוי נשמר מיד; השרת בודק את
+// ההרשאה board.configure ומסרב למחוק עמודה שעדיין יש בה משימות.
 
 const CATEGORIES = [
   { value: 'TODO', label: 'To do' },
@@ -33,7 +33,7 @@ const CATEGORIES = [
   { value: 'DONE', label: 'Done' },
 ];
 
-// '' = no limit; otherwise a whole number of at least 1.
+// '' = בלי מגבלה; אחרת מספר שלם, 1 לפחות.
 const parseWip = (text) => (text.trim() === '' ? null : Number(text));
 const isValidWip = (text) => text.trim() === '' || (Number.isInteger(Number(text)) && Number(text) >= 1);
 
@@ -104,7 +104,7 @@ export function BoardSettingsDialog({ open, onClose, projectId, columns, tasks }
   const sorted = [...(columns ?? [])].sort((a, b) => a.order - b.order);
   const tasksIn = (columnId) => (tasks ?? []).filter((t) => t.columnId === columnId && !t.archived).length;
 
-  // Shows the server's message (e.g. "Move or archive the tasks in this column...") on failure.
+  // מציג את ההודעה של השרת (למשל "Move or archive the tasks in this column...") בכישלון.
   const run = async (action) => {
     setError(null);
     try {
@@ -114,7 +114,7 @@ export function BoardSettingsDialog({ open, onClose, projectId, columns, tasks }
     }
   };
 
-  // Moving a column swaps its order with the neighbour's.
+  // הזזת עמודה מחליפה את הסדר שלה עם השכנה.
   const move = (index, direction) =>
     run(async () => {
       const a = sorted[index];

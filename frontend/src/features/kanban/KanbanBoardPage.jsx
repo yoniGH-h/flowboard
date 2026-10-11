@@ -73,7 +73,7 @@ export function KanbanBoardPage() {
     return list;
   }, [tasks, search, assigneeFilter, priorityFilter, myTasksOnly, user]);
 
-  // What the signed-in user may do on this board - decided by the server per project.
+  // מה מותר למשתמש המחובר בלוח הזה - נקבע בשרת לכל פרויקט.
   const canManageTasks = projectAbility(activeRole, project, 'manageTasks');
   const canConfigureBoard = projectAbility(activeRole, project, 'configureBoard');
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -260,7 +260,7 @@ export function KanbanBoardPage() {
           projectId={project.id}
           columns={board.columns}
           defaultColumnId={board.columns[0]?.id ?? ''}
-          // Without tasks.manage you may only assign new tasks to yourself.
+          // בלי tasks.manage אפשר לשייך משימות חדשות רק לעצמך.
           members={canManageTasks ? members : members.filter((m) => m.id === user?.id)}
           labels={labels}
         />

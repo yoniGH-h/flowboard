@@ -1,13 +1,13 @@
 // תפקיד הקובץ: לקוח מינימלי ל-Zoom API בשיטת Server-to-Server OAuth.
 // משתמשים בו: meetings.routes.js
 
-// A minimal Zoom API client (Server-to-Server OAuth app).
+// לקוח מינימלי ל-Zoom API (אפליקציית Server-to-Server OAuth).
 //
-// Setup: create a "Server-to-Server OAuth" app at https://marketplace.zoom.us, give it the
-// meeting:write:meeting:admin (or meeting:write) scope, activate it, and put its three
-// credentials in .env: ZOOM_ACCOUNT_ID, ZOOM_CLIENT_ID, ZOOM_CLIENT_SECRET.
+// הגדרה: יוצרים אפליקציית "Server-to-Server OAuth" באתר https://marketplace.zoom.us, נותנים לה
+// את ההרשאה meeting:write:meeting:admin (או meeting:write), מפעילים אותה, ושמים את שלושת
+// המפתחות שלה ב-.env: ZOOM_ACCOUNT_ID, ZOOM_CLIENT_ID, ZOOM_CLIENT_SECRET.
 //
-// Meetings are created on the Zoom account that owns the app ("users/me").
+// הפגישות נוצרות בחשבון ה-Zoom שהאפליקציה שייכת לו ("users/me").
 import { config } from '../../config.js';
 import { HttpError } from '../../utils/httpError.js';
 
@@ -18,7 +18,7 @@ const API_URL = 'https://api.zoom.us/v2';
 // נקרא מ: meetings.routes.js
 export const isZoomConfigured = () => Boolean(config.zoom.accountId && config.zoom.clientId && config.zoom.clientSecret);
 
-// Zoom access tokens live for an hour; reuse one until shortly before it expires.
+// אסימון גישה של Zoom תקף לשעה; משתמשים באותו אסימון עד קצת לפני שהוא פג.
 let cachedToken = null;
 
 async function getAccessToken() {
@@ -37,9 +37,9 @@ async function getAccessToken() {
   return cachedToken.value;
 }
 
-// Creates an instant meeting. mode 'voice' starts with every camera off.
-// Returns { id, joinUrl, startUrl } - startUrl lets the host in without signing in to
-// Zoom, so it must only ever be given to the person who started the call.
+// יוצר פגישה מיידית. במצב 'voice' כל המצלמות כבויות בהתחלה.
+// מחזיר { id, joinUrl, startUrl } - startUrl מכניס את המארח בלי התחברות
+// ל-Zoom, ולכן מותר לתת אותו רק למי שפתח את השיחה.
 // יוצר פגישה מיידית ב-Zoom ומחזיר את הקישורים.
 // נקרא מ: meetings.routes.js
 export async function createInstantMeeting({ topic, mode }) {
@@ -51,7 +51,7 @@ export async function createInstantMeeting({ topic, mode }) {
     headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({
       topic,
-      type: 1, // 1 = instant meeting
+      type: 1, // 1 = פגישה מיידית
       settings: {
         host_video: video,
         participant_video: video,

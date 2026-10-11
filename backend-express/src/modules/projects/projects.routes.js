@@ -15,7 +15,7 @@ import {
 } from '../../utils/validate.js';
 import * as projectsService from './projects.service.js';
 
-// ---------- Validation ----------
+// ---------- בדיקת קלט ----------
 
 const createProjectSchema = z.strictObject({
   name: nonEmptyString,
@@ -63,14 +63,14 @@ const createColumnSchema = z.strictObject({
 const updateColumnSchema = z.strictObject({
   name: nonEmptyString.optional(),
   order: z.number().int().min(0).optional(),
-  wipLimit: z.number().int().min(1).nullable().optional(), // null = remove the limit
+  wipLimit: z.number().int().min(1).nullable().optional(), // null = הסרת המגבלה
 });
 
-// ---------- Routes ----------
+// ---------- נתיבים ----------
 
-// Only creating a project is checked here. Every other action depends on WHICH project it is
-// (you may manage your own projects but not someone else's), so the service checks it per
-// project with assertProjectPermission.
+// כאן נבדקת רק יצירת פרויקט. כל פעולה אחרת תלויה באיזה פרויקט מדובר
+// (מותר לך לנהל את הפרויקטים שלך אבל לא של מישהו אחר), ולכן ה-service בודק אותה לכל
+// פרויקט עם assertProjectPermission.
 // הראוטר של הפרויקטים.
 // נקרא מ: app.js
 export const projectsRouter = Router();
@@ -96,7 +96,7 @@ projectsRouter.patch('/:id/archive', async (req, res) => {
   res.json(await projectsService.setArchived(req.user, req.params.id, archived));
 });
 
-// Members
+// חברי צוות
 projectsRouter.post('/:id/members', async (req, res) => {
   res.status(201).json(await projectsService.addMember(req.user, req.params.id, parse(addMemberSchema, req.body)));
 });
@@ -110,7 +110,7 @@ projectsRouter.delete('/:id/members/:userId', async (req, res) => {
   res.json(await projectsService.removeMember(req.user, req.params.id, req.params.userId));
 });
 
-// Project-wide files and activity
+// קבצים ופעילות ברמת הפרויקט
 projectsRouter.get('/:id/attachments', async (req, res) => {
   res.json(await projectsService.getAttachments(req.user, req.params.id));
 });
@@ -119,13 +119,13 @@ projectsRouter.get('/:id/activity', async (req, res) => {
   res.json(await projectsService.getActivity(req.user, req.params.id));
 });
 
-// Daily delay-risk scores (for the trend chart). ?days=30 by default, at most a year.
+// ציוני הסיכון היומיים (לגרף המגמה). ברירת המחדל ?days=30, ולכל היותר שנה.
 projectsRouter.get('/:id/risk-history', async (req, res) => {
   const { days } = parse(z.strictObject({ days: z.coerce.number().int().min(1).max(365).default(30) }), req.query);
   res.json(await projectsService.getRiskHistory(req.user, req.params.id, days));
 });
 
-// Kanban board and its columns
+// לוח ה-Kanban והעמודות שלו
 projectsRouter.get('/:id/board', async (req, res) => {
   res.json(await projectsService.getBoard(req.user, req.params.id));
 });

@@ -1,8 +1,8 @@
 import { test, expect } from '@playwright/test';
 
-// Profile & Settings -> Change password, end to end: a wrong current password is rejected,
-// a valid change works, and afterwards only the new password signs in. Uses a fresh sign-up
-// in the e2e database, so no demo account's password is touched.
+// פרופיל -> שינוי סיסמה, מקצה לקצה: סיסמה נוכחית שגויה נדחית,
+// שינוי תקין עובד, ואחריו רק הסיסמה החדשה מכניסה. משתמש בהרשמה חדשה
+// במסד הבדיקות, כך שלא נוגעים בסיסמה של אף חשבון דמו.
 
 async function signIn(page, email, password) {
   await page.goto('/sign-in');
@@ -30,13 +30,13 @@ test('change password from the profile page', async ({ page }) => {
   const current = page.getByLabel('Current password');
   const next = page.getByLabel('New password');
 
-  // Wrong current password -> the server's message is shown, nothing changes.
+  // סיסמה נוכחית שגויה -> ההודעה של השרת מוצגת, ושום דבר לא משתנה.
   await current.fill('not-my-password');
   await next.fill('BrandNew456');
   await page.getByRole('button', { name: 'Change password' }).click();
   await expect(page.getByText('Current password is incorrect')).toBeVisible();
 
-  // Correct current password -> changed.
+  // סיסמה נוכחית נכונה -> הסיסמה שונתה.
   await current.fill('password123');
   await next.fill('BrandNew456');
   await page.getByRole('button', { name: 'Change password' }).click();
@@ -46,10 +46,10 @@ test('change password from the profile page', async ({ page }) => {
   await page.getByRole('menuitem', { name: 'Sign out' }).click();
   await expect(page).toHaveURL(/\/sign-in$/);
 
-  // The old password no longer works; the new one does.
+  // הסיסמה הישנה כבר לא עובדת; החדשה עובדת.
   await signIn(page, email, 'password123');
   await expect(page.getByText('Invalid email or password')).toBeVisible();
   await signIn(page, email, 'BrandNew456');
-  // Signed in: the app returns to the page the user was on before signing out.
+  // אחרי הכניסה: האתר חוזר לעמוד שבו המשתמש היה לפני היציאה.
   await expect(page).toHaveURL(/\/profile$/);
 });

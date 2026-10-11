@@ -5,7 +5,7 @@ import multer from 'multer';
 import { config } from '../config.js';
 import { HttpError } from '../utils/httpError.js';
 
-// Unknown route under /api -> 404 in the same JSON shape as every other error.
+// כתובת לא מוכרת תחת /api -> 404 באותו מבנה JSON של כל שגיאה אחרת.
 // מחזיר 404 לכתובת שלא קיימת תחת /api.
 // נקרא מ: app.js
 export function notFoundHandler(req, res) {
@@ -17,10 +17,10 @@ export function notFoundHandler(req, res) {
   });
 }
 
-// Express recognizes an error handler by its 4 parameters. Express 5 forwards errors thrown
-// in async route handlers here automatically, so routes don't need try/catch.
-// Every error response has the shape { statusCode, path, timestamp, message } - the
-// frontend reads `message` (a string or an array of strings) to show to the user.
+// Express מזהה מטפל שגיאות לפי 4 הפרמטרים שלו. Express 5 מעביר לכאן אוטומטית
+// שגיאות שנזרקו בנתיבים אסינכרוניים, ולכן הנתיבים לא צריכים try/catch.
+// לכל תשובת שגיאה יש המבנה { statusCode, path, timestamp, message } -
+// האתר קורא את message (מחרוזת או מערך מחרוזות) ומציג אותו למשתמש.
 // מטפל השגיאות המרכזי: קובע קוד והודעה ומחזיר JSON.
 // נקרא מ: app.js
 // eslint-disable-next-line no-unused-vars

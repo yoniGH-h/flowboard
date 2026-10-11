@@ -18,9 +18,9 @@ import { AuthLayout } from '../AuthLayout';
 import { useAuth } from '../AuthContext';
 import { signIn } from '../../api/authApi';
 
-// Demo mode (VITE_DEMO_MODE=true, set in .env.development): one-click sign-in with the demo
-// accounts. The check is written right here so a production build drops DemoAccounts.jsx -
-// and with it the accounts and the password - entirely.
+// מצב דמו (VITE_DEMO_MODE=true, מוגדר ב-.env.development): כניסה בלחיצה אחת לחשבונות
+// הדמו. הבדיקה כתובה ממש כאן, כדי שבנייה להפצה תשמיט לגמרי את DemoAccounts.jsx -
+// ואיתו את החשבונות ואת הסיסמה.
 const DemoAccounts = import.meta.env.VITE_DEMO_MODE === 'true' ? lazy(() => import('../DemoAccounts')) : null;
 
 // טופס אימייל וסיסמה, עם בדיקת שדות והודעות שגיאה.

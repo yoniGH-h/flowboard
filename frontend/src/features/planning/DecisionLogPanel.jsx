@@ -15,7 +15,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { useDecisions } from '../../lib/queries';
 import { formatDate } from '../../lib/format';
 
-// "then -> predicted -> now" for one number where lower is better (risk, days late).
+// "אז -> נחזה -> עכשיו" למספר אחד שבו נמוך יותר טוב יותר (סיכון, ימי איחור).
 function Trajectory({ before, predicted, now, unit = '' }) {
   if (before == null && now == null) return <Typography variant="body2">—</Typography>;
   const show = (v) => (v == null ? '—' : `${v}${unit}`);
@@ -38,7 +38,7 @@ function Trajectory({ before, predicted, now, unit = '' }) {
   );
 }
 
-// Every decision taken in the Decision Center, and how the project developed afterwards.
+// כל החלטה שהתקבלה במרכז ההחלטות, ואיך הפרויקט התפתח אחריה.
 // ההחלטות שבוצעו: מה נחזה ומה קרה בפועל.
 // נקרא מ: DecisionCenterPage.jsx
 export function DecisionLogPanel({ projectId }) {

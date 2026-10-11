@@ -1,8 +1,8 @@
 // תפקיד הקובץ: שגיאה שנושאת קוד HTTP, ופונקציות קיצור ליצירתה.
 // משתמשים בו: auth.js, errorHandler.js, attachments.routes.js, auth.routes.js +14
 
-// An error that carries an HTTP status code. Services throw these; the error-handler
-// middleware (middleware/errorHandler.js) turns them into the JSON error response.
+// שגיאה שנושאת קוד סטטוס של HTTP. ה-services זורקים אותה; מטפל השגיאות
+// (middleware/errorHandler.js) הופך אותה לתשובת שגיאה ב-JSON.
 //
 //   throw notFound('Task not found')   ->   404 { statusCode: 404, message: 'Task not found', ... }
 // מחלקת שגיאה עם קוד סטטוס והודעה.

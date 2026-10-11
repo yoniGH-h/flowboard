@@ -1,8 +1,8 @@
 // תפקיד הקובץ: החיבור היחיד למסד הנתונים (Prisma), ותמיכה בטרנזקציה שעוברת בין כמה services.
 // משתמשים בו: app.js, auth.js, attachments.routes.js, audit-log.service.js +19
 
-// One shared Prisma client for the whole app. Prisma 7 always talks to Postgres through an
-// explicit driver adapter (@prisma/adapter-pg), not a URL inside schema.prisma.
+// לקוח Prisma אחד משותף לכל האפליקציה. Prisma 7 מתחבר ל-Postgres דרך
+// מתאם (@prisma/adapter-pg) ולא דרך כתובת בתוך schema.prisma.
 import { AsyncLocalStorage } from 'node:async_hooks';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '@prisma/client';
@@ -11,13 +11,13 @@ import { config } from './config.js';
 const adapter = new PrismaPg({ connectionString: config.databaseUrl });
 const client = new PrismaClient({ adapter });
 
-// ---------- Transactions that span several services ----------
-// inTransaction(fn) runs fn inside one database transaction: if anything in it throws, every
-// change it made is rolled back ("all or nothing"). The services don't need to know about it -
-// while fn runs, `prisma` below points at the transaction, so every query made by any service
-// called from fn joins it automatically (AsyncLocalStorage follows the async calls).
-// Work that must only happen once the data is really saved (pushing a notification to a
-// browser) is queued with afterCommit() and runs only if the transaction commits.
+// ---------- טרנזקציות שעוברות בין כמה services ----------
+// inTransaction(fn) מריץ את fn בתוך טרנזקציה אחת: אם משהו בה זורק שגיאה, כל
+// שינוי שנעשה מתבטל ("הכל או כלום"). ה-services לא צריכים לדעת על זה -
+// בזמן ש-fn רץ, המשתנה prisma שלמטה מפנה אל הטרנזקציה, כך שכל שאילתה של כל service
+// שנקרא מתוך fn מצטרפת אליה אוטומטית (AsyncLocalStorage עוקב אחרי הקריאות האסינכרוניות).
+// עבודה שמותר לבצע רק אחרי שהנתונים באמת נשמרו (שליחת התראה לדפדפן)
+// נכנסת לתור דרך afterCommit() ורצה רק אם הטרנזקציה הצליחה.
 const context = new AsyncLocalStorage();
 
 // מריץ פונקציה בתוך טרנזקציה אחת: הכל נשמר או הכל מתבטל.
@@ -31,7 +31,7 @@ export async function inTransaction(fn) {
   return result;
 }
 
-// Runs `task` now, or - inside inTransaction - right after the transaction commits.
+// מריץ את task עכשיו, או - בתוך inTransaction - מיד אחרי שהטרנזקציה נשמרה.
 // מריץ פעולה רק אחרי שהטרנזקציה נשמרה (או מיד, אם אין טרנזקציה).
 // נקרא מ: notifications.service.js
 export function afterCommit(task) {
@@ -49,7 +49,7 @@ export const prisma = new Proxy(client, {
       const value = Reflect.get(target, prop);
       return typeof value === 'function' ? value.bind(target) : value;
     }
-    // Inside a transaction a batch ($transaction([...])) simply runs on the same transaction.
+    // בתוך טרנזקציה, אצווה ($transaction([...])) פשוט רצה על אותה טרנזקציה.
     if (prop === '$transaction') return (arg) => (Array.isArray(arg) ? Promise.all(arg) : arg(tx));
     const value = Reflect.get(tx, prop);
     return typeof value === 'function' ? value.bind(tx) : value;

@@ -1,27 +1,27 @@
 // תפקיד הקובץ: מחשב תובנות למנהל מתוך הנתונים הקיימים: צפי, צווארי בקבוק ומגמת סיכון.
 // משתמשים בו: insights.routes.js
 
-// Insights: conclusions a manager can act on, computed from data FlowBoard already collects.
+// תובנות: מסקנות שמנהל יכול לפעול לפיהן, מחושבות מנתונים ש-FlowBoard כבר אוסף.
 //
-//   1. Delivery forecast  - at the pace of the last 4 weeks, when will each project finish,
-//                           and how does that compare with its target date?
-//   2. Estimate accuracy  - completed tasks' actual hours vs. estimated hours.
-//   3. Where work waits   - how long tasks stay in each board stage (TaskStatusChange history),
-//                           and which open tasks have been stuck the longest.
-//   4. Risk trend         - projects whose delay risk rose sharply (ProjectRiskSnapshot).
+//   1. צפי סיום        - בקצב של 4 השבועות האחרונים, מתי כל פרויקט יסתיים,
+//                         ואיך זה ביחס לתאריך היעד שלו?
+//   2. דיוק הערכות     - שעות בפועל מול שעות מוערכות, במשימות שהושלמו.
+//   3. איפה העבודה ממתינה - כמה זמן משימות נשארות בכל שלב בלוח (היסטוריית TaskStatusChange),
+//                         ואילו משימות פתוחות תקועות הכי הרבה זמן.
+//   4. מגמת סיכון      - פרויקטים שהסיכון לעיכוב שלהם עלה בחדות (ProjectRiskSnapshot).
 //
-// Everything is scoped to the projects the caller MANAGES (an Org Admin: the whole org).
-// Each section is turned into plain-language `conclusions`, e.g.
+// הכל מוגבל לפרויקטים שהמשתמש מנהל (מנהל ארגון: כל הארגון).
+// כל חלק מתורגם למסקנות בשפה פשוטה (conclusions), למשל:
 //   "At the current pace, Billing Platform Migration will finish around Dec 2 - 20 days late."
 import { prisma } from '../../db.js';
 import { assertProjectPermission, managedProjectsWhere } from '../projects/projects.service.js';
 
 const DAY_MS = 86_400_000;
-const THROUGHPUT_WINDOW_DAYS = 28; // "current pace" = tasks completed in the last 4 weeks
-const MIN_ESTIMATE_SAMPLE = 3; // don't draw conclusions from 1-2 tasks
-const MIN_PACE_SAMPLE = 3; // fewer completed tasks than this = too little data for a forecast date
-const STUCK_AFTER_DAYS = 7; // an active task in one stage longer than this counts as stuck
-const ACTIVE_CATEGORIES = new Set(['IN_PROGRESS', 'REVIEW']); // stages where work should be moving
+const THROUGHPUT_WINDOW_DAYS = 28; // "הקצב הנוכחי" = משימות שהושלמו ב-4 השבועות האחרונים
+const MIN_ESTIMATE_SAMPLE = 3; // לא מסיקים מסקנות ממשימה או שתיים
+const MIN_PACE_SAMPLE = 3; // פחות משימות שהושלמו מזה = מעט מדי נתונים לתאריך צפוי
+const STUCK_AFTER_DAYS = 7; // משימה פעילה שנמצאת בשלב אחד יותר מזה נחשבת תקועה
+const ACTIVE_CATEGORIES = new Set(['IN_PROGRESS', 'REVIEW']); // שלבים שבהם העבודה אמורה להתקדם
 const CATEGORY_ORDER = { TODO: 0, IN_PROGRESS: 1, REVIEW: 2, DONE: 3 };
 
 const days = (ms) => ms / DAY_MS;
@@ -59,7 +59,7 @@ export async function getInsights(actor, projectId) {
   };
 }
 
-// ---------- 1. Delivery forecast ----------
+// ---------- 1. צפי סיום ----------
 
 async function deliveryForecast(projects, now) {
   const ids = projects.map((p) => p.id);
@@ -88,12 +88,12 @@ async function deliveryForecast(projects, now) {
     if (open === 0) return { ...base, status: 'done', forecastDate: null, daysLate: null };
     if (doneRecently === 0) return { ...base, status: 'stalled', forecastDate: null, daysLate: null };
 
-    // Remaining work / recent pace = days still needed.
+    // העבודה שנותרה חלקי הקצב האחרון = מספר הימים שעוד נדרשים.
     const perDay = doneRecently / THROUGHPUT_WINDOW_DAYS;
     const forecastDate = new Date(now.getTime() + Math.ceil(open / perDay) * DAY_MS);
     const daysLate = Math.round(days(forecastDate - p.targetDate));
-    // With only 1-2 completed tasks the "pace" is noise - report that it's too slow, but don't
-    // pretend to know the finish date.
+    // עם משימה או שתיים שהושלמו ה"קצב" הוא רעש - מדווחים שהוא איטי מדי, אבל לא
+    // מעמידים פנים שיודעים את תאריך הסיום.
     const confident = doneRecently >= MIN_PACE_SAMPLE;
     return {
       ...base,
@@ -105,7 +105,7 @@ async function deliveryForecast(projects, now) {
   });
 }
 
-// ---------- 2. Estimate accuracy ----------
+// ---------- 2. דיוק הערכות ----------
 
 async function estimateAccuracy(projectIds) {
   const where = {
@@ -130,7 +130,7 @@ async function estimateAccuracy(projectIds) {
     sampleSize: totals._count._all,
     estimatedHours: round1(estimated),
     actualHours: round1(actual),
-    // 1.25 = work took 25% longer than estimated; 0.8 = 20% shorter.
+    // 1.25 = העבודה ארכה 25% יותר מההערכה; 0.8 = 20% פחות.
     ratio: estimated > 0 ? Math.round((actual / estimated) * 100) / 100 : null,
     byAssignee: byAssignee
       .map((r) => ({
@@ -144,7 +144,7 @@ async function estimateAccuracy(projectIds) {
   };
 }
 
-// ---------- 3. Where work waits ----------
+// ---------- 3. איפה העבודה ממתינה ----------
 
 async function whereWorkWaits(projectIds, now) {
   const changes = await prisma.taskStatusChange.findMany({
@@ -157,26 +157,26 @@ async function whereWorkWaits(projectIds, now) {
     },
   });
 
-  // Group the history by task: [enter column A, enter column B, ...]
+  // מקבצים את ההיסטוריה לפי משימה: [כניסה לעמודה א, כניסה לעמודה ב, ...]
   const byTask = new Map();
   for (const c of changes) {
     if (!byTask.has(c.taskId)) byTask.set(c.taskId, []);
     byTask.get(c.taskId).push(c);
   }
 
-  const stages = new Map(); // column name -> { category, totalDays, visits }
+  const stages = new Map(); // שם עמודה -> { category, totalDays, visits }
   const stuck = [];
   for (const visits of byTask.values()) {
     visits.forEach((visit, i) => {
       const next = visits[i + 1];
       if (next) {
-        // A finished stay: from entering this column until entering the next one.
+        // שהייה שהסתיימה: מהכניסה לעמודה הזו ועד הכניסה לעמודה הבאה.
         const stage = stages.get(visit.toColumnName) ?? { category: visit.toCategory, totalDays: 0, visits: 0 };
         stage.totalDays += days(next.changedAt - visit.changedAt);
         stage.visits += 1;
         stages.set(visit.toColumnName, stage);
       } else if (!visit.task.completedAt && ACTIVE_CATEGORIES.has(visit.toCategory)) {
-        // The task is still in this (active) column - how long has it been waiting?
+        // המשימה עדיין בעמודה הזו (פעילה) - כמה זמן היא ממתינה?
         const waiting = days(now - visit.changedAt);
         if (waiting >= STUCK_AFTER_DAYS) {
           stuck.push({
@@ -198,7 +198,7 @@ async function whereWorkWaits(projectIds, now) {
     .map(([name, s]) => ({ name, category: s.category, avgDays: round1(s.totalDays / s.visits), visits: s.visits }))
     .sort((a, b) => CATEGORY_ORDER[a.category] - CATEGORY_ORDER[b.category] || a.name.localeCompare(b.name));
 
-  // The bottleneck = the active stage (in progress / review) where work waits longest.
+  // צוואר הבקבוק = השלב הפעיל (בעבודה / בבדיקה) שבו העבודה ממתינה הכי הרבה.
   const bottleneck = stageList
     .filter((s) => ACTIVE_CATEGORIES.has(s.category) && s.visits >= 2)
     .sort((a, b) => b.avgDays - a.avgDays)[0] ?? null;
@@ -211,7 +211,7 @@ async function whereWorkWaits(projectIds, now) {
   };
 }
 
-// ---------- 4. Risk trend ----------
+// ---------- 4. מגמת סיכון ----------
 
 async function riskTrend(projects, now) {
   const since = new Date(now.getTime() - 14 * DAY_MS);
@@ -230,7 +230,7 @@ async function riskTrend(projects, now) {
     .filter(Boolean);
 }
 
-// ---------- Plain-language conclusions ----------
+// ---------- מסקנות בשפה פשוטה ----------
 
 function buildConclusions({ forecast, estimates, bottlenecks, riskTrends }) {
   const out = [];

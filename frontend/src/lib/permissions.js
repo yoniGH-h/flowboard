@@ -22,28 +22,28 @@ export function isManager(role) {
   return hasAtLeastLevel(role, ROLE_LEVEL.PROJECT_MANAGER);
 }
 
-// May the current user manage this particular project? The server decides per project
-// (`project.canManage`: Org Admins manage every project, Project Managers only their own),
-// and the active role must be a manager role too, so switching to "Employee" hides the
-// management controls.
+// האם המשתמש הנוכחי רשאי לנהל את הפרויקט הזה? השרת מחליט לכל פרויקט
+// (project.canManage: מנהל ארגון מנהל כל פרויקט, מנהל פרויקט רק את שלו),
+// וגם התפקיד הפעיל חייב להיות תפקיד ניהולי, כך שמעבר ל-"Employee" מסתיר את
+// אמצעי הניהול.
 // האם המשתמש רשאי לנהל את הפרויקט הזה.
 // נקרא מ: אין שימוש כרגע
 export function canManageProject(role, project) {
   return isManager(role) && !!project?.canManage;
 }
 
-// Does the signed-in user have this permission? `user.permissions` comes from /users/me
-// (role defaults + organization changes + personal exceptions).
+// האם למשתמש המחובר יש את ההרשאה הזו? user.permissions מגיע מ-/users/me
+// (ברירות המחדל של התפקיד + שינויי הארגון + חריגים אישיים).
 // האם למשתמש יש הרשאה מסוימת.
 // נקרא מ: ContactButtons.jsx, ProjectManagementPage.jsx
 export function hasPermission(user, key) {
   return !!user?.permissions?.includes(key);
 }
 
-// Project-level abilities, computed by the server per project (`project.can`):
-//   update, manageMembers, configureBoard, manageTasks, moderate  -> managing the project
-//   createTasks, moveOwnTasks, comment, upload                     -> working in the project
-// Managing abilities also need a manager active role, so "view as Employee" hides them.
+// יכולות ברמת הפרויקט, מחושבות בשרת לכל פרויקט (project.can):
+//   update, manageMembers, configureBoard, manageTasks, moderate  -> ניהול הפרויקט
+//   createTasks, moveOwnTasks, comment, upload                     -> עבודה בפרויקט
+// יכולות ניהול דורשות גם תפקיד פעיל ניהולי, כך ש"צפייה כעובד" מסתירה אותן.
 const MANAGING_ABILITIES = new Set(['update', 'manageMembers', 'configureBoard', 'manageTasks', 'moderate']);
 
 // האם למשתמש יש יכולת מסוימת בפרויקט (לפי מה שהשרת שלח).
@@ -66,7 +66,7 @@ export function isSystemAdmin(role) {
   return role === 'SYSTEM_ADMIN';
 }
 
-// Where a permission applies (the `scope` of each permission in the server's catalog).
+// איפה הרשאה חלה (ה-scope של כל הרשאה בקטלוג של השרת).
 // השם המוצג של כל היקף הרשאה.
 // נקרא מ: RolesPermissionsPage.jsx, UserPermissionsDialog.jsx
 export const SCOPE_LABELS = {

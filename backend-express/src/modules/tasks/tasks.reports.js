@@ -1,12 +1,12 @@
 // תפקיד הקובץ: סיכומים למסכי הניהול: עומס צוות, דשבורד ודוחות.
 // משתמשים בו: tasks.routes.js
 
-// Server-side rollups for the management screens (Team Workload, Management Dashboard,
-// Reports & Analytics). Counting and summing is done by the database (count / groupBy)
-// instead of sending every task to the browser and adding them up there.
+// סיכומים בצד השרת למסכי הניהול (עומס צוות, דשבורד ניהולי,
+// דוחות). הספירה והסיכום נעשים במסד הנתונים (count / groupBy),
+// במקום לשלוח כל משימה לדפדפן ולחשב שם.
 //
-// All three cover only the projects the caller manages: a Project Manager sees their own
-// projects, an Org Admin the whole organization.
+// שלושתם מכסים רק את הפרויקטים שהמשתמש מנהל: מנהל פרויקט רואה את
+// הפרויקטים שלו, ומנהל ארגון את כל הארגון.
 import { prisma } from '../../db.js';
 import { assertProjectPermission } from '../projects/projects.service.js';
 import { managedTaskScope } from './tasks.service.js';
@@ -14,11 +14,11 @@ import { managedTaskScope } from './tasks.service.js';
 const DAY_MS = 24 * 60 * 60 * 1000;
 const TREND_WEEKS = 8;
 
-// Completion trend for the Management Dashboard, one point per week for the last 8 weeks,
-// from the tasks' real dates:
-//   planned   = % of the tasks that were due by the end of that week
-//   completed = % of the tasks that were actually completed by the end of that week
-// When "completed" stays under "planned", work is falling behind its due dates.
+// מגמת ההשלמה לדשבורד הניהולי: נקודה לכל שבוע ב-8 השבועות האחרונים,
+// לפי התאריכים האמיתיים של המשימות:
+//   planned   = אחוז המשימות שהמועד שלהן היה עד סוף אותו שבוע
+//   completed = אחוז המשימות שהושלמו בפועל עד סוף אותו שבוע
+// כש-"completed" נשאר מתחת ל-"planned", העבודה מפגרת אחרי המועדים.
 function buildCompletionTrend(tasks, now) {
   const total = tasks.length;
   const percent = (n) => (total > 0 ? Math.round((n / total) * 100) : 0);
@@ -34,12 +34,12 @@ function buildCompletionTrend(tasks, now) {
   return points;
 }
 
-// A report for one specific project requires managing that project.
+// דוח על פרויקט מסוים דורש לנהל את הפרויקט הזה.
 async function assertManagedProject(actor, projectId) {
   if (projectId) await assertProjectPermission(actor, projectId, 'tasks.manage');
 }
 
-// Team Workload: per assignee - open tasks, overdue tasks, estimated hours.
+// עומס צוות: לכל אחראי - משימות פתוחות, משימות באיחור ושעות מוערכות.
 // מחשב לכל עובד משימות פתוחות, איחורים ושעות.
 // נקרא מ: tasks.routes.js
 export async function getWorkloadSummary(actor, projectId) {
@@ -75,8 +75,8 @@ export async function getWorkloadSummary(actor, projectId) {
   }));
 }
 
-// Management Dashboard: status counts, this week's completion, the completion trend and the
-// top priority tasks.
+// דשבורד ניהולי: ספירה לפי סטטוס, ההשלמה של השבוע, מגמת ההשלמה
+// והמשימות בעדיפות הגבוהה ביותר.
 // מחשב את נתוני הדשבורד הניהולי, כולל גרף ההתקדמות.
 // נקרא מ: tasks.routes.js
 export async function getDashboardSummary(actor, projectId) {
@@ -116,9 +116,9 @@ export async function getDashboardSummary(actor, projectId) {
       where: { ...scope, completedAt: null, blocked: true },
       select: { title: true },
     }),
-    // Only URGENT and HIGH are requested, and sorting the enum 'desc' happens to put URGENT
-    // before HIGH (U > H alphabetically). Don't add more priorities here without switching
-    // to an explicit rank like PRIORITY_RANK in tasks.service.js.
+    // מבקשים רק URGENT ו-HIGH, ומיון ה-enum בסדר 'desc' שם במקרה את URGENT
+    // לפני HIGH (U אחרי H באלפבית). לא להוסיף כאן עדיפויות נוספות בלי לעבור
+    // לדירוג מפורש כמו PRIORITY_RANK בקובץ tasks.service.js.
     prisma.task.findMany({
       where: { ...scope, completedAt: null, priority: { in: ['URGENT', 'HIGH'] } },
       orderBy: [{ priority: 'desc' }, { dueDate: 'asc' }],
@@ -165,9 +165,9 @@ export async function getDashboardSummary(actor, projectId) {
   };
 }
 
-// Reports & Analytics. Two scopes on purpose: the KPI numbers follow the assignee and
-// date-range filters, while `userActivity` always covers the whole project scope (every
-// member's overall numbers), which is what the "User activity report" table shows.
+// דוחות. שני היקפים בכוונה: מספרי המדדים מושפעים מהסינון לפי אחראי
+// ולפי טווח תאריכים, ואילו userActivity מכסה תמיד את כל הפרויקטים שבהיקף (המספרים
+// הכוללים של כל חבר צוות), וזה מה שמוצג בטבלה "User activity report".
 // מחשב את נתוני מסך הדוחות לפי הסינון.
 // נקרא מ: tasks.routes.js
 export async function getReportsSummary(actor, filters) {

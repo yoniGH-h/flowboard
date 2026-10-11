@@ -9,12 +9,12 @@ import { effectivePermissions } from '../permissions/effective.js';
 import { forbidden, unauthorized } from '../utils/httpError.js';
 import { highestRoleLevel, ROLE_LEVEL } from '../utils/permissions.js';
 
-// Loads the signed-in user from an access token. Returns the same object that every
-// service receives as `actor`:
+// טוען את המשתמש המחובר לפי אסימון הגישה. מחזיר את האובייקט שכל
+// service מקבל כ-actor:
 //   { userId, organizationId, email, roles, permissions }
-// `permissions` is a Set of permission keys - role defaults + the organization's changes +
-// the user's personal exceptions (see permissions/effective.js).
-// Used by both the HTTP middleware below and the Socket.IO connection handler.
+// permissions הוא Set של מפתחות הרשאה - ברירות המחדל של התפקיד + שינויי הארגון +
+// החריגים האישיים של המשתמש (ראו permissions/effective.js).
+// משמש גם את ה-middleware של HTTP שלמטה וגם את החיבור של Socket.IO.
 // מאמת אסימון גישה, טוען את המשתמש ומחשב את ההרשאות שלו.
 // נקרא מ: socket.js
 export async function authenticateAccessToken(token) {
@@ -25,8 +25,8 @@ export async function authenticateAccessToken(token) {
     throw unauthorized('Unauthorized');
   }
 
-  // Loaded fresh on every request, so suspending a user or changing their permissions takes
-  // effect immediately rather than when their access token expires.
+  // נטען מחדש בכל בקשה, כך שהשעיית משתמש או שינוי בהרשאות שלו חלים
+  // מיד, ולא רק כשאסימון הגישה שלו פג.
   const [user, orgChanges] = await Promise.all([
     prisma.user.findUnique({
       where: { id: payload.sub },
@@ -48,8 +48,8 @@ export async function authenticateAccessToken(token) {
   };
 }
 
-// Every /api route goes through this except the public ones (see app.js).
-// On success the user is available as `req.user`.
+// כל נתיב תחת /api עובר כאן, חוץ מהציבוריים (ראו app.js).
+// בהצלחה, המשתמש זמין ב-req.user.
 // חוסם בקשה בלי אסימון תקף, ושם את המשתמש ב-req.user.
 // נקרא מ: app.js, auth.routes.js
 export async function requireAuth(req, _res, next) {
@@ -61,14 +61,14 @@ export async function requireAuth(req, _res, next) {
   next();
 }
 
-// Usage:  router.get('/', requirePermission('audit.view'), handler)
-// For organization-wide permissions. Project-scoped permissions (tasks.manage, ...) are
-// checked inside the services, because they also depend on WHICH project it is
-// (see assertProjectPermission in modules/projects/projects.service.js).
+// שימוש:  router.get('/', requirePermission('audit.view'), handler)
+// להרשאות ברמת הארגון. הרשאות ברמת פרויקט (tasks.manage, ...)
+// נבדקות בתוך ה-services, כי הן תלויות גם באיזה פרויקט מדובר
+// (ראו assertProjectPermission בקובץ modules/projects/projects.service.js).
 // יוצר middleware שמחזיר 403 למי שאין לו את ההרשאה.
 // נקרא מ: audit-log.routes.js, automation-rules.routes.js, insights.routes.js, meetings.routes.js +7
 export function requirePermission(key) {
-  if (!PERMISSION_KEYS.has(key)) throw new Error(`Unknown permission "${key}"`); // catches typos at startup
+  if (!PERMISSION_KEYS.has(key)) throw new Error(`Unknown permission "${key}"`); // תופס שגיאות הקלדה כבר בהפעלת השרת
   return (req, _res, next) => {
     if (!req.user?.permissions.has(key)) {
       throw forbidden('You do not have permission to perform this action');
@@ -77,9 +77,9 @@ export function requirePermission(key) {
   };
 }
 
-// Usage:  router.get('/', requireRole('SYSTEM_ADMIN'), handler)
-// Allows that role and every role above it (Employee < PM < Org Admin < System Admin).
-// Still used for things tied to a role itself rather than a changeable permission.
+// שימוש:  router.get('/', requireRole('SYSTEM_ADMIN'), handler)
+// מתיר לתפקיד הזה ולכל תפקיד שמעליו (עובד < מנהל פרויקט < מנהל ארגון < מנהל מערכת).
+// עדיין בשימוש לדברים שקשורים לתפקיד עצמו ולא להרשאה שאפשר לשנות.
 // יוצר middleware שמתיר רק מדרג מסוים ומעלה.
 // נקרא מ: הקובץ הזה בלבד
 export function requireRole(role) {

@@ -28,9 +28,9 @@ export function AuditLogPage() {
   const [actionFilter, setActionFilter] = useState('ALL');
   const [actorFilter, setActorFilter] = useState('ALL');
 
-  // The "Action" dropdown's own options come from an unfiltered fetch (server-side filters
-  // narrow the *rows*, not what's offered to filter by), while the table itself uses the
-  // filtered query below.
+  // האפשרויות ברשימה "Action" מגיעות משליפה לא מסוננת (הסינון בשרת
+  // מצמצם את השורות, לא את מה שמוצע לסינון), ואילו הטבלה עצמה משתמשת
+  // בשאילתה המסוננת שלמטה.
   const { data: allAuditLog } = useAuditLog({});
   const { data: auditLog, isLoading } = useAuditLog({
     action: actionFilter === 'ALL' ? undefined : actionFilter,

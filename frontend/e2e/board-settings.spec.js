@@ -1,8 +1,8 @@
 import { test, expect } from '@playwright/test';
 
-// Kanban -> Board settings (the project's manager): add a column with a WIP limit, change a
-// limit, and the server refuses to delete a column that still has tasks. Uses a fresh sign-up
-// and project in the e2e database.
+// Kanban -> הגדרות הלוח (מנהל הפרויקט): מוסיפים עמודה עם מגבלת WIP, משנים
+// מגבלה, והשרת מסרב למחוק עמודה שעדיין יש בה משימות. משתמש בהרשמה חדשה
+// ובפרויקט חדש במסד הבדיקות.
 
 test('board settings: add a column, set WIP limits, protect columns with tasks', async ({ page }) => {
   const stamp = Date.now();
@@ -29,7 +29,7 @@ test('board settings: add a column, set WIP limits, protect columns with tasks',
   const projectId = page.url().match(/\/projects\/([^/]+)$/)?.[1];
   await page.goto(`/projects/${projectId}/board`);
 
-  // A task in Backlog, so that column can't be deleted.
+  // משימה ב-Backlog, כדי שאי אפשר יהיה למחוק את העמודה הזו.
   await page.getByRole('button', { name: 'Add Task' }).click();
   await page.getByLabel('Title').fill(`Task ${stamp}`);
   await page.getByRole('button', { name: 'Create task' }).click();
@@ -38,24 +38,24 @@ test('board settings: add a column, set WIP limits, protect columns with tasks',
   await page.getByRole('button', { name: 'Board settings' }).click();
   const dialog = page.getByRole('dialog', { name: 'Board settings' });
 
-  // Add a "QA" column with a WIP limit of 2 -> it appears on the board.
+  // מוסיפים עמודה "QA" עם מגבלת WIP של 2 -> היא מופיעה בלוח.
   await dialog.getByLabel('New column name').fill('QA');
   await dialog.locator('input').last().fill('2');
   await dialog.getByRole('button', { name: 'Add column' }).click();
   await expect(page.locator('[data-testid="kanban-column-dropzone"][data-column-name="QA"]')).toBeAttached();
   await expect(dialog.getByTestId('board-settings-column')).toHaveCount(6);
 
-  // Change In Progress's WIP limit from 5 to 3.
+  // משנים את מגבלת ה-WIP של In Progress מ-5 ל-3.
   const inProgressWip = dialog.getByLabel('WIP limit for In Progress');
   await inProgressWip.fill('3');
   await inProgressWip.blur();
   await expect(page.getByText('WIP 0/3')).toBeAttached();
 
-  // Backlog holds a task -> the server refuses, and the message is shown.
+  // ב-Backlog יש משימה -> השרת מסרב, וההודעה מוצגת.
   await dialog.getByRole('button', { name: 'Delete Backlog' }).click();
   await expect(dialog.getByText('Move or archive the tasks in this column before deleting it')).toBeVisible();
 
-  // The empty QA column can be deleted.
+  // את העמודה הריקה QA אפשר למחוק.
   await dialog.getByRole('button', { name: 'Delete QA' }).click();
   await expect(dialog.getByTestId('board-settings-column')).toHaveCount(5);
 });

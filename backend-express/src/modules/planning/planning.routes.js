@@ -7,7 +7,7 @@ import { requirePermission } from '../../middleware/auth.js';
 import { isoDate, parse, uuid } from '../../utils/validate.js';
 import * as planning from './planning.service.js';
 
-// The what-if changes (see model.js applyChanges).
+// שינויי ה"מה אם" (ראו applyChanges בקובץ model.js).
 const changesSchema = z
   .strictObject({
     reassign: z.array(z.strictObject({ taskId: uuid, toUserId: uuid })).max(20).optional(),
@@ -29,8 +29,8 @@ const decisionSchema = z.strictObject({
 });
 const noteSchema = z.strictObject({ note: z.string().max(500) });
 
-// Decision Center. Needs reports.view; each project additionally needs tasks.manage there
-// (checked in the service - a Project Manager can only plan their own projects).
+// מרכז ההחלטות. דורש reports.view; בכל פרויקט נדרש בנוסף tasks.manage
+// (נבדק ב-service - מנהל פרויקט יכול לתכנן רק את הפרויקטים שלו).
 // הראוטר של מרכז ההחלטות.
 // נקרא מ: app.js
 export const planningRouter = Router();
@@ -40,7 +40,7 @@ planningRouter.get('/projects/:projectId', async (req, res) => {
   res.json(await planning.getPlanningView(req.user, req.params.projectId));
 });
 
-// What-if: nothing is saved.
+// "מה אם": שום דבר לא נשמר.
 planningRouter.post('/projects/:projectId/simulate', async (req, res) => {
   const { changes } = parse(simulateSchema, req.body);
   res.json(await planning.simulate(req.user, req.params.projectId, changes));
@@ -50,7 +50,7 @@ planningRouter.get('/projects/:projectId/recommendations', async (req, res) => {
   res.json(await planning.recommend(req.user, req.params.projectId));
 });
 
-// Apply the changes for real and record the decision.
+// מבצע את השינויים בפועל ורושם את ההחלטה.
 planningRouter.post('/projects/:projectId/decisions', async (req, res) => {
   const dto = parse(decisionSchema, req.body);
   res.status(201).json(await planning.applyDecision(req.user, req.params.projectId, dto));

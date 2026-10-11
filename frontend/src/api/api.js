@@ -1,15 +1,15 @@
 // תפקיד הקובץ: כל הקריאות לשרת (חוץ מהתחברות): פונקציה אחת לכל כתובת API.
 // משתמשים בו: AuthContext.jsx, ContactButtons.jsx, TaskDetailsPage.jsx, queries.js +1
 
-// Real API layer for Projects, Project Members, Boards, Tasks, Comments, Attachments,
-// Labels, and the org member directory - backed by the Express backend.
+// שכבת ה-API לפרויקטים, חברי צוות, לוחות, משימות, תגובות, קבצים,
+// תוויות ורשימת חברי הארגון - מול השרת (Express).
 import { http, getErrorMessage } from './http';
 
 function isNotFound(error) {
   return error?.response?.status === 404;
 }
 
-// ---------- Users ----------
+// ---------- משתמשים ----------
 // שולף את משתמשי הארגון.
 // נקרא מ: queries.js
 export async function fetchUsers(_organizationId, filters = {}) {
@@ -60,8 +60,8 @@ export async function removeUser(userId) {
   }
 }
 
-// ---------- Roles & permissions ----------
-// ---------- Projects ----------
+// ---------- תפקידים והרשאות ----------
+// ---------- פרויקטים ----------
 function mapProject(p) {
   return {
     id: p.id,
@@ -80,10 +80,10 @@ function mapProject(p) {
     riskScore: p.riskScore,
     riskLevel: p.riskLevel,
     riskFactors: p.riskFactors,
-    // Computed by the server: may the signed-in user manage this project? (Org Admins: every
-    // project; Project Managers: only the projects they manage.)
+    // מחושב בשרת: האם המשתמש המחובר רשאי לנהל את הפרויקט הזה? (מנהל ארגון: כל
+    // פרויקט; מנהל פרויקט: רק הפרויקטים שהוא מנהל.)
     canManage: !!p.canManage,
-    // Fine-grained abilities for this project - see projectAbility() in lib/permissions.js.
+    // יכולות מפורטות בפרויקט הזה - ראו projectAbility() בקובץ lib/permissions.js.
     can: p.can,
   };
 }
@@ -187,8 +187,8 @@ export async function fetchBoard(projectId) {
   }
 }
 
-// ---------- Board columns (Board settings - the project's manager) ----------
-// Each call returns the whole board again, so the screen can show it right away.
+// ---------- עמודות הלוח (הגדרות הלוח - מנהל הפרויקט) ----------
+// כל קריאה מחזירה שוב את הלוח כולו, כך שהמסך יכול להציג אותו מיד.
 
 // מוסיף עמודה ללוח.
 // נקרא מ: queries.js
@@ -237,7 +237,7 @@ export async function fetchProjectActivity(projectId) {
   return data;
 }
 
-// ---------- Tasks ----------
+// ---------- משימות ----------
 function mapTask(t) {
   return {
     id: t.id,
@@ -396,8 +396,8 @@ export async function deleteTask(taskId) {
   return true;
 }
 
-// Server-side rollup for Team Workload - counts/sums computed by the database
-// (Prisma groupBy) rather than fetched-and-reduced client-side.
+// סיכום בצד השרת לעומס הצוות - הספירות והסכומים מחושבים במסד הנתונים
+// (groupBy של Prisma) ולא בדפדפן.
 // שולף את סיכום עומס הצוות.
 // נקרא מ: queries.js
 export async function fetchWorkloadSummary(projectId) {
@@ -405,8 +405,8 @@ export async function fetchWorkloadSummary(projectId) {
   return data;
 }
 
-// Server-side rollup for the Management Dashboard - status/priority/weekly-completion
-// counts computed by the database rather than fetched-and-reduced client-side.
+// סיכום בצד השרת לדשבורד הניהולי - ספירות לפי סטטוס, עדיפות והשלמה שבועית
+// מחושבות במסד הנתונים ולא בדפדפן.
 // שולף את נתוני הדשבורד הניהולי.
 // נקרא מ: queries.js
 export async function fetchDashboardSummary(projectId) {
@@ -414,10 +414,10 @@ export async function fetchDashboardSummary(projectId) {
   return data;
 }
 
-// Server-side rollup for Reports & Analytics - project/assignee/date-range filters and the
-// completion/on-time/per-user stats computed by the database rather than fetched-and-reduced
-// client-side. `userActivity` always reflects the whole project scope (unaffected by the
-// assignee/date filters), matching the "User activity report" table's long-standing behavior.
+// סיכום בצד השרת למסך הדוחות - הסינון לפי פרויקט, אחראי וטווח תאריכים,
+// והנתונים על השלמה, עמידה במועד ולכל משתמש, מחושבים במסד הנתונים ולא
+// בדפדפן. userActivity משקף תמיד את כל הפרויקטים שבהיקף (לא מושפע מהסינון
+// לפי אחראי ותאריכים), כמו שמוצג בטבלה "User activity report".
 // שולף את נתוני מסך הדוחות.
 // נקרא מ: queries.js
 export async function fetchReportsSummary(filters = {}) {
@@ -436,7 +436,7 @@ export async function fetchTaskActivity(taskId) {
   return data;
 }
 
-// ---------- Comments ----------
+// ---------- תגובות ----------
 // שולף את התגובות של משימה.
 // נקרא מ: queries.js
 export async function fetchComments(taskId) {
@@ -473,7 +473,7 @@ export async function deleteComment(commentId) {
   return true;
 }
 
-// ---------- Attachments ----------
+// ---------- קבצים מצורפים ----------
 // שולף את הקבצים של משימה.
 // נקרא מ: queries.js
 export async function fetchAttachments(taskId) {
@@ -499,8 +499,8 @@ export async function addAttachment(taskId, file) {
   }
 }
 
-// Downloads require the JWT bearer header, so a plain <a href> won't work -
-// fetch as a blob (via the authenticated axios instance) and trigger a client-side save.
+// הורדה דורשת את כותרת ה-JWT, ולכן קישור <a href> רגיל לא יעבוד -
+// שולפים כ-blob (דרך מופע axios המאומת) ומפעילים שמירה בצד הדפדפן.
 // מוריד קובץ מצורף ושומר אותו במחשב.
 // נקרא מ: TaskDetailsPage.jsx
 export async function downloadAttachment(attachmentId, fileName) {
@@ -522,7 +522,7 @@ export async function deleteAttachment(attachmentId) {
   return true;
 }
 
-// ---------- Labels ----------
+// ---------- תוויות ----------
 // שולף את התוויות של הארגון.
 // נקרא מ: queries.js
 export async function fetchLabels() {
@@ -530,10 +530,9 @@ export async function fetchLabels() {
   return data;
 }
 
-// ---------- Audit log ----------
-// Server only supports pagination + organization scoping today (see
-// docs/future-improvements.md: "server-side search/filter/sort" is a follow-up),
-// so action/actor/search filters are applied client-side, same as fetchUsers above.
+// ---------- יומן ביקורת ----------
+// השרת תומך כרגע רק בדפדוף ובסינון לפי ארגון,
+// ולכן הסינון לפי פעולה, מבצע וחיפוש נעשה בצד הדפדפן, כמו ב-fetchUsers למעלה.
 function formatAuditMetadata(metadata) {
   const entries = Object.entries(metadata ?? {});
   if (entries.length === 0) return '';
@@ -565,8 +564,8 @@ export async function fetchAuditLog(filters = {}) {
   return data.items.map(mapAuditLogEntry);
 }
 
-// System Administrator scope - a cross-org feed backed by GET /audit-log/system, which
-// (unlike the org-scoped endpoint above) also joins each entry's organization name.
+// היקף של מנהל מערכת - רשימה מכל הארגונים דרך GET /audit-log/system, שמצרפת
+// (בשונה מהנתיב של הארגון למעלה) גם את שם הארגון של כל רשומה.
 // שולף את יומן הביקורת של כל הארגונים.
 // נקרא מ: queries.js
 export async function fetchSystemAuditLog(filters = {}) {
@@ -583,7 +582,7 @@ export async function fetchSystemAuditLog(filters = {}) {
   }));
 }
 
-// ---------- Organizations ----------
+// ---------- ארגונים ----------
 // מעדכן את הגדרות הארגון.
 // נקרא מ: queries.js
 export async function updateOrganization(_orgId, patch) {
@@ -595,7 +594,7 @@ export async function updateOrganization(_orgId, patch) {
   }
 }
 
-// ---------- Organizations (System Administrator scope) ----------
+// ---------- ארגונים (היקף של מנהל מערכת) ----------
 // שולף את כל הארגונים (למנהל מערכת).
 // נקרא מ: queries.js
 export async function fetchOrganizations() {
@@ -610,7 +609,7 @@ export async function setOrganizationStatus(orgId, status) {
   return data;
 }
 
-// ---------- Notifications ----------
+// ---------- התראות ----------
 // ממיר התראה מהמבנה של השרת למבנה של האתר.
 // נקרא מ: useNotificationsSocket.js
 export function mapNotification(n) {
@@ -625,7 +624,7 @@ export function mapNotification(n) {
     createdAt: n.createdAt,
     relatedProjectId: n.relatedProjectId ?? undefined,
     relatedTaskId: n.relatedTaskId ?? undefined,
-    actionUrl: n.actionUrl ?? undefined, // e.g. the Zoom join link of a meeting invite
+    actionUrl: n.actionUrl ?? undefined, // למשל קישור ההצטרפות ל-Zoom בהזמנה לפגישה
   };
 }
 
@@ -654,7 +653,7 @@ export async function markAllNotificationsRead(_userId) {
   return true;
 }
 
-// ---------- Automation Rules ----------
+// ---------- חוקי אוטומציה ----------
 // שולף את חוקי האוטומציה.
 // נקרא מ: queries.js
 export async function fetchAutomationRules(_organizationId) {
@@ -673,9 +672,9 @@ export async function toggleAutomationRule(ruleId, enabled) {
   }
 }
 
-// `rule.organizationId` is accepted (the panel still sends it, mirroring the mock signature)
-// but dropped before the request - the backend always derives the organization from the
-// caller's JWT, and the endpoint's ValidationPipe rejects unknown body fields.
+// rule.organizationId מתקבל (הפאנל עדיין שולח אותו)
+// אבל מושמט לפני הבקשה - השרת תמיד קובע את הארגון לפי
+// ה-JWT של המשתמש, ודוחה שדות לא מוכרים בגוף הבקשה.
 // יוצר חוק אוטומציה.
 // נקרא מ: queries.js
 export async function createAutomationRule(rule) {
@@ -722,9 +721,9 @@ export async function fetchAutomationExecutions(ruleId) {
   return data;
 }
 
-// ---------- Insights (Express backend) ----------
+// ---------- תובנות ----------
 
-// Forecast, estimate accuracy, where work waits, risk trend + plain-language conclusions.
+// צפי, דיוק הערכות, איפה העבודה ממתינה, מגמת סיכון ומסקנות בשפה פשוטה.
 // שולף את התובנות של פרויקט.
 // נקרא מ: queries.js
 export async function fetchInsights(projectId) {
@@ -732,7 +731,7 @@ export async function fetchInsights(projectId) {
   return data;
 }
 
-// Daily delay-risk scores of one project: [{ day, riskScore, riskLevel }]
+// ציוני הסיכון היומיים של פרויקט אחד: [{ day, riskScore, riskLevel }]
 // שולף את ציוני הסיכון היומיים של פרויקט.
 // נקרא מ: queries.js
 export async function fetchRiskHistory(projectId, days = 30) {
@@ -740,7 +739,7 @@ export async function fetchRiskHistory(projectId, days = 30) {
   return data;
 }
 
-// ---------- Decision Center (Express backend) ----------
+// ---------- מרכז ההחלטות ----------
 // changes = { reassign: [{ taskId, toUserId }], deferTaskIds, addMemberIds, unblockTaskIds, newTargetDate }
 
 // שולף את תמונת המצב למרכז ההחלטות.
@@ -786,7 +785,7 @@ export async function fetchDecisions(projectId) {
   return data;
 }
 
-// ---------- Permissions (dynamic: role matrix + per-employee exceptions) ----------
+// ---------- הרשאות (דינמי: טבלת תפקידים + חריגים אישיים) ----------
 
 // שולף את טבלת ההרשאות לפי תפקיד.
 // נקרא מ: queries.js
@@ -795,7 +794,7 @@ export async function fetchPermissionMatrix() {
   return data;
 }
 
-// granted: true = give the role this permission, false = take it away, null = back to default
+// granted: true = לתת לתפקיד את ההרשאה, false = לשלול אותה, null = חזרה לברירת המחדל
 // נותן או שולל הרשאה מתפקיד.
 // נקרא מ: queries.js
 export async function setRolePermission(roleName, key, granted) {
@@ -814,7 +813,7 @@ export async function fetchUserPermissions(userId) {
   return data;
 }
 
-// granted: true = extra permission, false = removed permission, null = remove the exception
+// granted: true = הרשאה נוספת, false = שלילת הרשאה, null = הסרת החריג
 // קובע או מסיר חריג הרשאה למשתמש.
 // נקרא מ: queries.js
 export async function setUserPermission(userId, key, { granted, expiresAt, reason }) {
@@ -830,9 +829,9 @@ export async function setUserPermission(userId, key, { granted, expiresAt, reaso
   }
 }
 
-// ---------- Meetings (Zoom voice / video calls) ----------
-// The server creates a Zoom meeting and notifies the invitee. Returns { startUrl, joinUrl }:
-// startUrl opens the meeting as host for the caller.
+// ---------- פגישות (שיחות קוליות ושיחות וידאו ב-Zoom) ----------
+// השרת יוצר פגישת Zoom ומודיע למוזמן. מחזיר { startUrl, joinUrl }:
+// startUrl פותח את הפגישה כמארח עבור מי שפתח אותה.
 // פותח שיחה או פגישת Zoom עם חבר צוות.
 // נקרא מ: ContactButtons.jsx
 export async function startMeeting({ inviteeId, mode, projectId, taskId }) {

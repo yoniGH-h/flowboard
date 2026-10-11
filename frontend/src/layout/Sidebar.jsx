@@ -35,7 +35,7 @@ export const SIDEBAR_WIDTH_COLLAPSED = 72;
 const SIDEBAR_BG = '#111A2E';
 const SIDEBAR_HOVER_BG = '#1B2440';
 const SIDEBAR_TEXT = '#9BA5C0';
-const SIDEBAR_TEXT_MUTED = '#7A84A6'; // meets WCAG AA 4.5:1 against SIDEBAR_BG (#5C6685 only hit ~3:1)
+const SIDEBAR_TEXT_MUTED = '#7A84A6'; // עומד ביחס הניגודיות 4.5:1 של WCAG AA מול SIDEBAR_BG (הצבע #5C6685 הגיע רק ל-3:1 בערך)
 const SIDEBAR_DIVIDER = 'rgba(255,255,255,0.08)';
 
 function SidebarContent({ collapsed, onNavigate }) {

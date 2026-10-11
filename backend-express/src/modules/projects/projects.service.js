@@ -9,7 +9,7 @@ import { recordAudit } from '../audit-log/audit-log.service.js';
 import { createNotification } from '../notifications/notifications.service.js';
 import { calculateRisk } from './risk.js';
 
-// Every new project gets a Kanban board with these columns.
+// כל פרויקט חדש מקבל לוח Kanban עם העמודות האלה.
 const DEFAULT_COLUMNS = [
   { name: 'Backlog', category: 'TODO', order: 0 },
   { name: 'To Do', category: 'TODO', order: 1 },
@@ -28,14 +28,14 @@ const DETAIL_INCLUDE = {
   _count: { select: { tasks: true } },
 };
 
-// ---------- Who may manage which project ----------
+// ---------- מי רשאי לנהל איזה פרויקט ----------
 //
-//   Org Admin / System Admin  -> every project in their organization
-//   Project Manager           -> only the projects they manage: they are the project's
-//                                manager, or a member with roleOnProject = MANAGER
-//   everyone else             -> none (members can still view and work on their tasks)
+//   מנהל ארגון / מנהל מערכת  -> כל הפרויקטים בארגון שלהם
+//   מנהל פרויקט               -> רק הפרויקטים שהוא מנהל: הוא המנהל של
+//                                הפרויקט, או חבר צוות עם roleOnProject = MANAGER
+//   כל השאר                   -> אף פרויקט (חברי צוות עדיין רואים ועובדים על המשימות שלהם)
 
-// project must include `members` (rows with userId + roleOnProject).
+// project חייב לכלול את members (שורות עם userId ו-roleOnProject).
 // האם המשתמש מנהל את הפרויקט הזה.
 // נקרא מ: הקובץ הזה בלבד
 export function managesProject(actor, project) {
@@ -47,7 +47,7 @@ export function managesProject(actor, project) {
   );
 }
 
-// The same rule as a Prisma `where` on Project - "the projects this actor manages".
+// אותו כלל כתנאי where של Prisma על Project - "הפרויקטים שהמשתמש מנהל".
 // תנאי שאילתה: הפרויקטים שהמשתמש מנהל.
 // נקרא מ: insights.service.js, planning.service.js, tasks.service.js
 export function managedProjectsWhere(actor) {
@@ -58,8 +58,8 @@ export function managedProjectsWhere(actor) {
   };
 }
 
-// Projects the actor can see: every org project for Org Admins, otherwise the ones they
-// belong to (a project's manager is always one of its members).
+// הפרויקטים שהמשתמש רואה: כל פרויקטי הארגון למנהלי ארגון, ואחרת אלה שהוא
+// חבר בהם (מנהל הפרויקט הוא תמיד אחד מחברי הצוות שלו).
 // תנאי שאילתה: הפרויקטים שהמשתמש רשאי לראות.
 // נקרא מ: tasks.service.js
 export function visibleProjectsWhere(actor) {
@@ -72,10 +72,10 @@ export function visibleProjectsWhere(actor) {
 
 const isMember = (actor, project) => project.members.some((m) => m.userId === actor.userId);
 
-// May the actor use this permission in THIS project? Two conditions:
-//   1. they have the permission (role defaults + org changes + personal exceptions), and
-//   2. its scope fits the project: 'managed-project' permissions work only in projects they
-//      manage, 'member-project' ones in any project they belong to.
+// האם למשתמש מותר להשתמש בהרשאה הזו בפרויקט הזה? שני תנאים:
+//   1. יש לו את ההרשאה (ברירות המחדל של התפקיד + שינויי הארגון + חריגים אישיים), וגם
+//   2. ההיקף שלה מתאים לפרויקט: הרשאות 'managed-project' פועלות רק בפרויקטים שהוא
+//      מנהל, והרשאות 'member-project' בכל פרויקט שהוא חבר בו.
 // האם למשתמש יש הרשאה מסוימת בפרויקט הזה.
 // נקרא מ: הקובץ הזה בלבד
 export function projectCan(actor, project, key) {
@@ -86,8 +86,8 @@ export function projectCan(actor, project, key) {
   return true;
 }
 
-// Everything the frontend needs to show or hide buttons for one project.
-// (The server checks the same rules again on every request.)
+// כל מה שהאתר צריך כדי להציג או להסתיר כפתורים בפרויקט אחד.
+// (השרת בודק את אותם כללים שוב בכל בקשה.)
 function projectAbilities(actor, project) {
   const can = (key) => projectCan(actor, project, key);
   return {
@@ -103,8 +103,8 @@ function projectAbilities(actor, project) {
   };
 }
 
-// Flattens the Prisma result into the shape the frontend expects, plus `can` (what the
-// signed-in user may do here) and `canManage` (kept for older frontend code = can.manageTasks).
+// משטח את התוצאה של Prisma למבנה שהאתר מצפה לו, ומוסיף את can (מה מותר
+// למשתמש המחובר כאן) ואת canManage (נשמר לקוד ישן באתר = can.manageTasks).
 function toDetail(project, actor) {
   const { _count, board, members, ...rest } = project;
   const can = projectAbilities(actor, project);
@@ -118,8 +118,8 @@ function toDetail(project, actor) {
   };
 }
 
-// Overwrites each project's stored risk fields with a freshly computed score. One query
-// fetches the open tasks of all the projects at once (not one query per project).
+// דורס את שדות הסיכון השמורים של כל פרויקט בציון שחושב עכשיו. שאילתה אחת
+// שולפת את המשימות הפתוחות של כל הפרויקטים יחד (ולא שאילתה לכל פרויקט).
 async function attachLiveRisk(details) {
   if (details.length === 0) return details;
 
@@ -141,14 +141,14 @@ async function attachLiveRisk(details) {
   }));
 }
 
-// ---------- Risk history ----------
+// ---------- היסטוריית הסיכון ----------
 
 const DAY_MS = 86_400_000;
 const startOfUtcDay = (date) => new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
 
-// Saves today's risk score of every active project (one row per project per day - running it
-// again the same day just updates the row). Called when the server starts and every hour
-// (server.js), so the insights can show how risk changes over time.
+// שומר את ציון הסיכון של היום לכל פרויקט פעיל (שורה אחת לפרויקט ליום - הרצה
+// נוספת באותו יום רק מעדכנת את השורה). נקרא כשהשרת עולה וכל שעה
+// (server.js), כדי שהתובנות יוכלו להציג איך הסיכון משתנה לאורך זמן.
 // שומר את ציון הסיכון של היום לכל פרויקט.
 // נקרא מ: server.js
 export async function recordRiskSnapshots(now = new Date()) {
@@ -165,7 +165,7 @@ export async function recordRiskSnapshots(now = new Date()) {
   return withRisk.length;
 }
 
-// GET /api/projects/:id/risk-history - the project's daily risk scores for the last `days` days.
+// GET /api/projects/:id/risk-history - ציוני הסיכון היומיים של הפרויקט ב-days הימים האחרונים.
 // מחזיר את ציוני הסיכון היומיים של פרויקט.
 // נקרא מ: projects.routes.js
 export async function getRiskHistory(actor, projectId, days = 30) {
@@ -184,9 +184,9 @@ async function loadDetail(actor, id) {
   return detail;
 }
 
-// Used by the Tasks/Comments/Attachments/Meetings modules too. The project must belong to
-// the actor's organization, and the actor must be a member of it or manage it.
-// Returns the project (with members) plus `can(key)` - projectCan bound to this project.
+// משמש גם את המודולים של משימות, תגובות, קבצים ופגישות. הפרויקט חייב להיות
+// בארגון של המשתמש, והמשתמש חייב להיות חבר בו או לנהל אותו.
+// מחזיר את הפרויקט (עם חברי הצוות) ואת can(key) - projectCan שקשור לפרויקט הזה.
 // מוודא גישה לפרויקט: 404 אם לא בארגון, 403 אם לא חבר.
 // נקרא מ: attachments.routes.js, comments.routes.js, meetings.routes.js, tasks.service.js
 export async function assertAccessible(actor, projectId) {
@@ -202,7 +202,7 @@ export async function assertAccessible(actor, projectId) {
   return { ...project, can: (key) => projectCan(actor, project, key) };
 }
 
-// assertAccessible + "and may use this permission here" - the check behind every project action.
+// assertAccessible ועוד "ומותר לו להשתמש בהרשאה הזו כאן" - הבדיקה שמאחורי כל פעולה בפרויקט.
 //   await assertProjectPermission(actor, projectId, 'tasks.manage')
 // מוודא גישה וגם הרשאה מסוימת בפרויקט.
 // נקרא מ: attachments.routes.js, comments.routes.js, insights.service.js, planning.service.js +2
@@ -219,7 +219,7 @@ export async function assertProjectPermission(actor, projectId, key) {
   return project;
 }
 
-// A project manager must hold the Project Manager role (or higher) in the organization.
+// מנהל של פרויקט חייב להחזיק בתפקיד מנהל פרויקט (או גבוה ממנו) בארגון.
 async function requireEligibleManager(actor, userId) {
   const user = await prisma.user.findFirst({
     where: { id: userId, organizationId: actor.organizationId },
@@ -234,13 +234,13 @@ async function requireEligibleManager(actor, userId) {
 // יוצר פרויקט, עם לוח ועמודות ברירת מחדל.
 // נקרא מ: projects.routes.js
 export async function create(actor, dto) {
-  // A Project Manager creates projects for themselves; only Org Admins pick another manager.
+  // מנהל פרויקט יוצר פרויקטים לעצמו; רק מנהל ארגון בוחר מנהל אחר.
   if (!isOrgAdmin(actor) && dto.managerId !== actor.userId) {
     throw forbidden('Project Managers can only create projects that they manage themselves');
   }
   await requireEligibleManager(actor, dto.managerId);
 
-  // The manager and the creator are always members.
+  // המנהל והיוצר הם תמיד חברי צוות.
   const memberIds = new Set([dto.managerId, actor.userId, ...(dto.memberIds ?? [])]);
 
   const members = await prisma.user.findMany({
@@ -250,7 +250,7 @@ export async function create(actor, dto) {
     throw notFound('One or more selected members were not found in your organization');
   }
 
-  // Project, members, board and columns are created together in one nested write.
+  // הפרויקט, חברי הצוות, הלוח והעמודות נוצרים יחד בכתיבה מקוננת אחת.
   const project = await prisma.project.create({
     data: {
       organizationId: actor.organizationId,
@@ -299,8 +299,8 @@ export async function findAll(actor, query) {
 
   const projects = await prisma.project.findMany({
     where: {
-      // "all" = every project the caller manages (for an Org Admin: the whole organization);
-      // "mine" = the projects the caller is a member of.
+      // "all" = כל הפרויקטים שהמשתמש מנהל (למנהל ארגון: כל הארגון);
+      // "mine" = הפרויקטים שהמשתמש חבר בהם.
       ...(wantsAll
         ? managedProjectsWhere(actor)
         : { organizationId: actor.organizationId, members: { some: { userId: actor.userId } } }),
@@ -329,8 +329,8 @@ export async function update(actor, id, dto) {
   const managerChanges = dto.managerId && dto.managerId !== project.managerId;
 
   if (managerChanges) {
-    // Handing a project to someone else is an Org Admin decision - otherwise a Project
-    // Manager could give away (or take over) control of a project.
+    // העברת פרויקט למישהו אחר היא החלטה של מנהל ארגון - אחרת מנהל
+    // פרויקט היה יכול למסור (או לקחת) שליטה על פרויקט.
     if (!isOrgAdmin(actor)) {
       throw forbidden('Only an organization admin can assign a project to a different manager');
     }
@@ -339,7 +339,7 @@ export async function update(actor, id, dto) {
 
   await prisma.$transaction([
     prisma.project.update({ where: { id }, data: dto }),
-    // Keep the member list in sync: the new manager is a MANAGER member, the old one a contributor.
+    // שומרים על רשימת החברים מסונכרנת: המנהל החדש הוא חבר בתפקיד MANAGER, והישן הופך לתורם.
     ...(managerChanges
       ? [
           prisma.projectMember.updateMany({
@@ -386,10 +386,10 @@ export async function setArchived(actor, id, archived) {
   return loadDetail(actor, id);
 }
 
-// ---------- Members ----------
+// ---------- חברי צוות ----------
 
-// roleOnProject = MANAGER makes someone a co-manager with full control of the project, so
-// only an Org Admin may grant it (just like reassigning the project's manager).
+// roleOnProject = MANAGER הופך מישהו למנהל-שותף עם שליטה מלאה בפרויקט, ולכן
+// רק מנהל ארגון רשאי לתת אותו (כמו בהחלפת מנהל הפרויקט).
 function assertCanGrantRole(actor, roleOnProject) {
   if (roleOnProject === 'MANAGER' && !isOrgAdmin(actor)) {
     throw forbidden('Only an organization admin can make someone a manager of this project');
@@ -443,7 +443,7 @@ export async function addMember(actor, projectId, dto) {
 export async function updateMember(actor, projectId, userId, dto) {
   const project = await assertProjectPermission(actor, projectId, 'members.manage');
   const member = await requireMember(projectId, userId);
-  // Promoting to MANAGER, or demoting an existing co-manager, both change who controls the project.
+  // קידום ל-MANAGER, או הורדה של מנהל-שותף קיים, משנים שניהם מי שולט בפרויקט.
   assertCanGrantRole(actor, dto.roleOnProject);
   assertCanGrantRole(actor, member.roleOnProject);
   if (userId === project.managerId && dto.roleOnProject !== 'MANAGER') {
@@ -464,7 +464,7 @@ export async function removeMember(actor, projectId, userId) {
     throw conflict('The project manager cannot be removed from the project. Reassign the manager first.');
   }
   const member = await requireMember(projectId, userId);
-  assertCanGrantRole(actor, member.roleOnProject); // removing a co-manager is an Org Admin decision
+  assertCanGrantRole(actor, member.roleOnProject); // הסרת מנהל-שותף היא החלטה של מנהל ארגון
 
   await prisma.projectMember.delete({ where: { projectId_userId: { projectId, userId } } });
 
@@ -489,7 +489,7 @@ async function requireMember(projectId, userId) {
   return member;
 }
 
-// ---------- Project-wide files and activity ----------
+// ---------- קבצים ופעילות ברמת הפרויקט ----------
 
 // שולף את כל הקבצים של הפרויקט.
 // נקרא מ: projects.routes.js
@@ -514,7 +514,7 @@ export async function getActivity(actor, projectId) {
   });
 }
 
-// ---------- Kanban board ----------
+// ---------- לוח ה-Kanban ----------
 
 // שולף את הלוח: עמודות לפי הסדר והמשימות שבכל אחת.
 // נקרא מ: projects.routes.js

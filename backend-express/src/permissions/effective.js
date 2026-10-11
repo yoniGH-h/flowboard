@@ -1,18 +1,18 @@
 // תפקיד הקובץ: חישוב ההרשאות בפועל בשלוש שכבות: תפקיד, שינויי הארגון, חריג אישי.
 // משתמשים בו: auth.js, permissions.service.js
 
-// Effective permissions = what a user is actually allowed to do, built in three layers:
+// הרשאות בפועל = מה שמותר למשתמש באמת לעשות, בשלוש שכבות:
 //
-//   1. role defaults            (catalog.js ROLE_DEFAULTS - union of every role the user holds)
-//   2. organization changes     (OrganizationRolePermission: "in our org, Employees may also X")
-//   3. personal exceptions      (UserPermissionOverride: "Dana may also X" / "Yossi may not Y")
+//   1. ברירות המחדל של התפקיד  (ROLE_DEFAULTS בקובץ catalog.js - איחוד של כל תפקידי המשתמש)
+//   2. שינויי הארגון            (OrganizationRolePermission: "אצלנו עובדים רשאים גם X")
+//   3. חריגים אישיים            (UserPermissionOverride: "דנה רשאית גם X" / "יוסי לא רשאי Y")
 //
-// Later layers win. Expired exceptions are ignored. 'system' permissions (platform-wide)
-// only ever come from the SYSTEM_ADMIN role - no organization can grant or remove them.
+// השכבות המאוחרות גוברות. חריגים שפג תוקפם לא נחשבים. הרשאות 'system' (ברמת הפלטפורמה)
+// מגיעות רק מהתפקיד SYSTEM_ADMIN - ארגון לא יכול לתת או לשלול אותן.
 import { prisma } from '../db.js';
 import { EDITABLE_ROLES, PERMISSIONS, ROLE_DEFAULTS } from './catalog.js';
 
-// Loads everything needed to compute one user's permissions (2 small queries).
+// טוען את כל מה שצריך כדי לחשב את ההרשאות של משתמש אחד (2 שאילתות קטנות).
 // טוען מהמסד את שינויי הארגון ואת החריגים של משתמש.
 // נקרא מ: permissions.service.js
 export async function loadPermissionInputs(organizationId, userId) {
@@ -25,8 +25,8 @@ export async function loadPermissionInputs(organizationId, userId) {
 
 const isActive = (override, now) => !override.expiresAt || override.expiresAt > now;
 
-// Does this role have this permission in this organization (layers 1 + 2)?
-// Returns { granted, source: 'role' | 'organization' }.
+// האם לתפקיד הזה יש את ההרשאה הזו בארגון הזה (שכבות 1 + 2)?
+// מחזיר { granted, source: 'role' | 'organization' }.
 // האם לתפקיד יש את ההרשאה בארגון הזה, ומאיזה מקור.
 // נקרא מ: permissions.service.js
 export function roleHasPermission(roleName, key, orgChanges) {
@@ -37,21 +37,21 @@ export function roleHasPermission(roleName, key, orgChanges) {
   return { granted: ROLE_DEFAULTS[roleName]?.includes(key) ?? false, source: 'role' };
 }
 
-// The full explanation for every permission in the catalog - used by the permissions
-// screen ("why can Dana do this?"). Each entry: { key, granted, source, expiresAt?, reason? }
+// ההסבר המלא לכל הרשאה בקטלוג - משמש את מסך ההרשאות
+// ("למה דנה רשאית לעשות את זה?"). כל רשומה: { key, granted, source, expiresAt?, reason? }
 //   source: 'role' | 'organization' | 'user'
 // מחזיר לכל הרשאה אם ניתנה ומאיזו שכבה.
 // נקרא מ: permissions.service.js
 export function explainPermissions(roles, { orgChanges, userOverrides }, now = new Date()) {
   return PERMISSIONS.map(({ key, scope }) => {
-    // Layers 1 + 2: granted if ANY of the user's roles has it.
+    // שכבות 1 + 2: ניתנת אם לאחד מתפקידי המשתמש יש אותה.
     const perRole = roles.map((role) => roleHasPermission(role, key, orgChanges));
     const fromRole = perRole.find((r) => r.granted);
     let result = fromRole
       ? { key, granted: true, source: fromRole.source }
       : { key, granted: false, source: perRole.some((r) => r.source === 'organization') ? 'organization' : 'role' };
 
-    // Layer 3: a personal exception (never for platform-level permissions).
+    // שכבה 3: חריג אישי (אף פעם לא להרשאות ברמת הפלטפורמה).
     const override = scope === 'system' ? undefined : userOverrides.find((o) => o.permissionKey === key);
     if (override && isActive(override, now)) {
       result = {
@@ -60,14 +60,14 @@ export function explainPermissions(roles, { orgChanges, userOverrides }, now = n
         source: 'user',
         expiresAt: override.expiresAt,
         reason: override.reason,
-        roleGranted: Boolean(fromRole), // what the user would have without the exception
+        roleGranted: Boolean(fromRole), // מה היה למשתמש בלי החריג
       };
     }
     return result;
   });
 }
 
-// Just the set of permission keys the user has - what every request is checked against.
+// רק קבוצת מפתחות ההרשאה שיש למשתמש - מה שכל בקשה נבדקת מולו.
 // מחזיר את קבוצת מפתחות ההרשאה שיש למשתמש.
 // נקרא מ: auth.js
 export function effectivePermissions(roles, inputs, now = new Date()) {

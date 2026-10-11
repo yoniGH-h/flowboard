@@ -1,18 +1,18 @@
 // תפקיד הקובץ: ניהול הרשאות על ידי מנהל הארגון: שינוי לתפקיד וחריג למשתמש.
 // משתמשים בו: permissions.routes.js
 
-// Managing permissions: an Org Admin (anyone with permissions.manage) can
-//   - change what a role may do in their organization, and
-//   - give a single employee an exception (extra permission / removed permission).
+// ניהול הרשאות: מנהל ארגון (כל מי שיש לו permissions.manage) יכול
+//   - לשנות מה מותר לתפקיד בארגון שלו, וגם
+//   - לתת לעובד יחיד חריג (הרשאה נוספת או שלילת הרשאה).
 //
-// Guard rails, so this can't become a security hole:
-//   * platform ('system') permissions can't be changed by an organization at all;
-//   * you can only GRANT a permission you have yourself;
-//   * you can't change your own exceptions, or those of someone above your role level;
-//   * users.manage / permissions.manage can't be taken away from Org Admins (no lock-out);
-//   * project-management permissions can only be given to Project Managers - they only work
-//     in projects the user manages, so for anyone else they would do nothing;
-//   * every change is written to the audit log.
+// כללי הגנה, כדי שזה לא יהפוך לפרצת אבטחה:
+//   * ארגון לא יכול לשנות הרשאות של הפלטפורמה ('system') בכלל;
+//   * אפשר להעניק רק הרשאה שיש לך בעצמך;
+//   * אי אפשר לשנות חריגים של עצמך, או של מי שמעליך בדרג;
+//   * אי אפשר לשלול ממנהלי ארגון את users.manage ואת permissions.manage (שלא יינעלו בחוץ);
+//   * הרשאות של ניהול פרויקט אפשר לתת רק למנהלי פרויקטים - הן פועלות רק
+//     בפרויקטים שהמשתמש מנהל, ולכל אחד אחר הן לא היו עושות כלום;
+//   * כל שינוי נרשם ביומן הביקורת.
 import { prisma } from '../../db.js';
 import {
   canGrant,
@@ -35,7 +35,7 @@ const ROLE_LABELS = {
   SYSTEM_ADMIN: 'System Administrator',
 };
 
-// Permissions that only mean something for someone who manages projects.
+// הרשאות שיש להן משמעות רק למי שמנהל פרויקטים.
 const needsProjectManager = (key) => key === 'projects.create' || PERMISSION_BY_KEY.get(key)?.scope === 'managed-project';
 
 function requireKnownPermission(key) {
@@ -43,10 +43,10 @@ function requireKnownPermission(key) {
   if (!isChangeable(key)) throw forbidden('Platform permissions cannot be changed by an organization');
 }
 
-// ---------- The role matrix ----------
+// ---------- טבלת התפקידים ----------
 
-// Everything the Roles & Permissions screen needs: the catalog, and for each role whether it
-// has each permission in this organization (and whether that's the default or a change).
+// כל מה שמסך התפקידים וההרשאות צריך: הקטלוג, ולכל תפקיד - האם יש לו
+// כל הרשאה בארגון הזה (והאם זו ברירת המחדל או שינוי).
 // מחזיר לכל תפקיד אילו הרשאות יש לו בארגון.
 // נקרא מ: permissions.routes.js
 export async function getMatrix(actor) {
@@ -76,7 +76,7 @@ export async function getMatrix(actor) {
   };
 }
 
-// granted: true = the role gets it, false = the role loses it, null = back to the default.
+// granted: true = התפקיד מקבל, false = התפקיד מאבד, null = חזרה לברירת המחדל.
 // נותן או שולל הרשאה מתפקיד בארגון, או מחזיר לברירת המחדל.
 // נקרא מ: permissions.routes.js
 export async function setRolePermission(actor, roleName, key, granted) {
@@ -90,7 +90,7 @@ export async function setRolePermission(actor, roleName, key, granted) {
   }
 
   const where = { organizationId_roleName_permissionKey: { organizationId: actor.organizationId, roleName, permissionKey: key } };
-  // Setting a role back to its default is the same as having no change at all.
+  // החזרת תפקיד לברירת המחדל זהה למצב שבו אין שינוי בכלל.
   if (granted === null || granted === ROLE_DEFAULTS[roleName].includes(key)) {
     await prisma.organizationRolePermission.deleteMany({
       where: { organizationId: actor.organizationId, roleName, permissionKey: key },
@@ -115,7 +115,7 @@ export async function setRolePermission(actor, roleName, key, granted) {
   return getMatrix(actor);
 }
 
-// ---------- One employee ----------
+// ---------- עובד אחד ----------
 
 async function requireTargetUser(actor, userId) {
   const user = await prisma.user.findFirst({
@@ -126,7 +126,7 @@ async function requireTargetUser(actor, userId) {
   return { ...user, roleNames: user.roles.map((r) => r.role.name) };
 }
 
-// A user's effective permissions, with where each one comes from, plus their exceptions.
+// ההרשאות בפועל של משתמש, מאיפה כל אחת מגיעה, והחריגים שלו.
 // מחזיר את ההרשאות של משתמש ומאיפה כל אחת מגיעה.
 // נקרא מ: permissions.routes.js
 export async function getUserPermissions(actor, userId) {
@@ -155,7 +155,7 @@ export async function getUserPermissions(actor, userId) {
   };
 }
 
-// Returns null when the actor may edit this user's exceptions, otherwise the reason why not.
+// מחזיר null כשלמשתמש מותר לערוך את החריגים של המשתמש הזה, ואחרת את הסיבה שלא.
 function canEditUser(actor, user) {
   if (user.id === actor.userId) return "You can't change your own permissions";
   if (highestRoleLevel(user.roleNames) > highestRoleLevel(actor.roles)) {
@@ -164,8 +164,8 @@ function canEditUser(actor, user) {
   return null;
 }
 
-// granted: true = extra permission, false = removed permission, null = remove the exception.
-// expiresAt (optional) makes the exception temporary.
+// granted: true = הרשאה נוספת, false = שלילת הרשאה, null = הסרת החריג.
+// expiresAt (אופציונלי) הופך את החריג לזמני.
 // קובע או מסיר חריג הרשאה אישי למשתמש.
 // נקרא מ: permissions.routes.js
 export async function setUserOverride(actor, userId, key, { granted, expiresAt, reason }) {

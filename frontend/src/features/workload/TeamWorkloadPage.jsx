@@ -24,7 +24,7 @@ import { LoadingState, EmptyState } from '../../components/common/States';
 import { useOrganizationUsers, useProjects, useWorkloadSummary } from '../../lib/queries';
 import { fullName } from '../../lib/format';
 
-const CAPACITY_TASKS = 6; // tasks considered "full capacity" for the workload bar, prototype heuristic
+const CAPACITY_TASKS = 6; // מספר המשימות שנחשב "קיבולת מלאה" בפס העומס
 
 // כמה משימות פתוחות ושעות יש לכל עובד, ומי מעל הקיבולת.
 // נקרא מ: App.jsx

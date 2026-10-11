@@ -7,10 +7,10 @@ import { useAuth } from '../auth/AuthContext';
 import { createNotificationsConnection } from './socket';
 import { mapNotification } from '../api/api';
 
-// Real-time delivery for the Notification Center / bell: connects once per signed-in
-// session (mounted in AppShell, which only renders behind ProtectedRoute) and keeps the
-// `['notifications', userId]` TanStack Query cache in sync via server push, instead of the
-// `refetchInterval` poll that hook used before this existed.
+// קבלת התראות בזמן אמת למרכז ההתראות ולפעמון: מתחבר פעם אחת לכל
+// משתמש מחובר (מופעל ב-AppShell, שמוצג רק מאחורי ProtectedRoute) ושומר על
+// המטמון ['notifications', userId] של TanStack Query מעודכן לפי מה שהשרת שולח,
+// במקום לשאול את השרת שוב ושוב.
 // פותח חיבור ומוסיף כל התראה חדשה לרשימה.
 // נקרא מ: AppShell.jsx
 export function useNotificationsSocket() {
@@ -33,7 +33,7 @@ export function useNotificationsSocket() {
     connection.on('notification:new', handleNew);
     connection.on('notification:read', handleReadSync);
     connection.on('notification:read-all', handleReadSync);
-    // A failed/aborted start (e.g. the component unmounted mid-connect) is not an error worth surfacing.
+    // התחלה שנכשלה או בוטלה (למשל הרכיב ירד מהמסך באמצע ההתחברות) אינה שגיאה שכדאי להציג.
     connection.start().catch(() => {});
 
     return () => {

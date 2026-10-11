@@ -6,7 +6,7 @@ import { forbidden, notFound } from '../../utils/httpError.js';
 import { ROLE_LEVEL } from '../../utils/permissions.js';
 import { recordAudit } from '../audit-log/audit-log.service.js';
 
-// The public shape of a user - never includes passwordHash or reset tokens.
+// המבנה הציבורי של משתמש - אף פעם לא כולל את passwordHash או אסימוני איפוס.
 const PROFILE_SELECT = {
   id: true,
   organizationId: true,
@@ -42,7 +42,7 @@ export async function findById(userId, organizationId) {
 // מעדכן את פרטי הפרופיל של המשתמש.
 // נקרא מ: users.routes.js
 export async function updateProfile(userId, dto) {
-  // The "active role" picker can only select a role the user actually holds.
+  // בבורר "התפקיד הפעיל" אפשר לבחור רק תפקיד שהמשתמש באמת מחזיק.
   if (dto.defaultRole) {
     const ownsRole = await prisma.userRole.findFirst({
       where: { userId, role: { name: dto.defaultRole } },
@@ -123,7 +123,7 @@ export async function updateRoles(actor, targetUserId, roleNames) {
 
   const roles = await prisma.role.findMany({ where: { name: { in: roleNames } } });
 
-  // Keep the user's current default role if they still hold it, otherwise use their highest.
+  // שומרים את תפקיד ברירת המחדל הנוכחי של המשתמש אם הוא עדיין מחזיק בו, ואחרת את הגבוה ביותר שלו.
   const defaultRole = roleNames.includes(target.defaultRole)
     ? target.defaultRole
     : [...roleNames].sort((a, b) => ROLE_LEVEL[b] - ROLE_LEVEL[a])[0];
@@ -152,8 +152,8 @@ export async function updateRoles(actor, targetUserId, roleNames) {
   return findById(target.id, actor.organizationId);
 }
 
-// "Remove" is a soft delete: the account is suspended and hidden, and all its sessions are
-// revoked, but its history (tasks, comments, audit entries) stays intact.
+// "הסרה" היא מחיקה רכה: החשבון מושעה ומוסתר, וכל החיבורים שלו
+// מבוטלים, אבל ההיסטוריה שלו (משימות, תגובות, רשומות ביומן) נשארת.
 // מסיר משתמש מהארגון ושומר על ההיסטוריה שלו.
 // נקרא מ: users.routes.js
 export async function remove(actor, targetUserId) {
@@ -182,7 +182,7 @@ export async function remove(actor, targetUserId) {
   });
 }
 
-// Multi-tenant isolation: a user id from another organization behaves as if it didn't exist.
+// הפרדה בין ארגונים: מזהה משתמש מארגון אחר מתנהג כאילו אינו קיים.
 async function requireSameOrgUser(organizationId, userId) {
   const user = await prisma.user.findFirst({ where: { id: userId, organizationId } });
   if (!user) throw notFound('User not found');

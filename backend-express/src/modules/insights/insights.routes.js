@@ -11,8 +11,8 @@ import { getInsights } from './insights.service.js';
 // נקרא מ: app.js
 export const insightsRouter = Router();
 
-// GET /api/insights?projectId= - forecast, estimate accuracy, bottlenecks, risk trend and
-// plain-language conclusions for the projects the caller manages.
+// GET /api/insights?projectId= - צפי, דיוק הערכות, צווארי בקבוק, מגמת סיכון
+// ומסקנות בשפה פשוטה, לפרויקטים שהמשתמש מנהל.
 insightsRouter.get('/', requirePermission('reports.view'), async (req, res) => {
   const { projectId } = parse(z.strictObject({ projectId: uuid.optional() }), req.query);
   res.json(await getInsights(req.user, projectId));

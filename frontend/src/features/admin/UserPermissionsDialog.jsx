@@ -28,8 +28,8 @@ import { formatDate, fullName } from '../../lib/format';
 
 const SOURCE_LABELS = { role: 'Role', organization: 'Organization setting', user: 'Exception' };
 
-// One employee's permissions: what they may do, WHY (their role, an organization-wide change
-// to their role, or a personal exception), and controls to add / remove exceptions.
+// ההרשאות של עובד אחד: מה מותר לו, למה (התפקיד שלו, שינוי של הארגון
+// בתפקיד, או חריג אישי), ואמצעים להוסיף ולהסיר חריגים.
 // מציג מאיפה כל הרשאה מגיעה, ומאפשר חריגים אישיים.
 // נקרא מ: UserManagementPage.jsx
 export function UserPermissionsDialog({ user, onClose }) {
@@ -44,10 +44,10 @@ function UserPermissionsContent({ user, onClose }) {
   const { data, isLoading, error } = useUserPermissions(user.id);
   const { data: matrix } = usePermissionMatrix();
   const setUserPermission = useSetUserPermission();
-  // The exception being added: { key, granted } - opens the small "until / reason" form.
+  // החריג שמוסיפים: { key, granted } - פותח את הטופס הקטן של "עד מתי / סיבה".
   const [pending, setPending] = useState(null);
 
-  // Catalog entries (labels, groups), without platform-level permissions.
+  // רשומות הקטלוג (תוויות, קבוצות), בלי הרשאות ברמת הפלטפורמה.
   const groups = useMemo(() => {
     const map = new Map();
     for (const p of matrix?.permissions ?? []) {
@@ -83,7 +83,7 @@ function UserPermissionsContent({ user, onClose }) {
   const expiredOverride = (key) => data.overrides.find((o) => o.key === key && o.expired);
 
   const choose = (key, value) => {
-    if (value === null) return; // clicking the already-selected button
+    if (value === null) return; // לחיצה על הכפתור שכבר נבחר
     if (value === 'role') {
       setUserPermission.mutate({ userId: user.id, key, granted: null });
     } else {
@@ -102,7 +102,7 @@ function UserPermissionsContent({ user, onClose }) {
       });
       setPending(null);
     } catch {
-      // The server's explanation is shown inside this form (setUserPermission.error).
+      // ההסבר של השרת מוצג בתוך הטופס הזה (setUserPermission.error).
     }
   };
 
@@ -234,7 +234,7 @@ function UserPermissionsContent({ user, onClose }) {
         <Button onClick={onClose}>Close</Button>
       </DialogActions>
 
-      {/* The exception details: optional end date and reason */}
+      {/* פרטי החריג: תאריך סיום וסיבה (אופציונליים) */}
       <Dialog open={!!pending} onClose={closePending} maxWidth="xs" fullWidth>
         {pending && (
           <>

@@ -10,7 +10,7 @@ import { unauthorized } from '../../utils/httpError.js';
 import { nonEmptyString, parse } from '../../utils/validate.js';
 import * as authService from './auth.service.js';
 
-// ---------- Validation ----------
+// ---------- בדיקת קלט ----------
 
 const signUpSchema = z.strictObject({
   firstName: nonEmptyString,
@@ -33,7 +33,7 @@ const signInSchema = z.strictObject({
   password: nonEmptyString,
 });
 
-// The refresh token normally comes from the httpOnly cookie; the body field is optional.
+// אסימון הרענון מגיע בדרך כלל מעוגיית ה-httpOnly; השדה בגוף הבקשה אופציונלי.
 const refreshTokenSchema = z.strictObject({
   refreshToken: nonEmptyString.optional(),
 });
@@ -50,9 +50,9 @@ const resetPasswordSchema = z.strictObject({
   newPassword: z.string().min(8),
 });
 
-// ---------- Refresh-token cookie ----------
-// httpOnly means page JavaScript can never read it (protects against XSS stealing it), and
-// path=/api/auth means the browser only sends it to the auth endpoints.
+// ---------- עוגיית אסימון הרענון ----------
+// httpOnly אומר שקוד JavaScript בדף לא יכול לקרוא אותה (הגנה מפני גניבה ב-XSS),
+// ו-path=/api/auth אומר שהדפדפן שולח אותה רק לנתיבי ההתחברות.
 
 const REFRESH_COOKIE = 'flowboard_refresh';
 const COOKIE_OPTIONS = {
@@ -66,7 +66,7 @@ function setRefreshCookie(res, token) {
   res.cookie(REFRESH_COOKIE, token, { ...COOKIE_OPTIONS, maxAge: 7 * 24 * 60 * 60 * 1000 });
 }
 
-// ---------- Stricter rate limits for brute-force targets ----------
+// ---------- מגבלות קצב מחמירות לנתיבים שמנסים לפרוץ בניחוש ----------
 
 const limit = (max) => {
   if (!config.rateLimitEnabled) return (_req, _res, next) => next();
@@ -85,7 +85,7 @@ const limit = (max) => {
   });
 };
 
-// ---------- Routes ----------
+// ---------- נתיבים ----------
 
 // הראוטר של ההתחברות (נתיבים ציבוריים ברובם).
 // נקרא מ: app.js
@@ -136,15 +136,15 @@ authRouter.post('/reset-password', limit(5), async (req, res) => {
   res.status(204).end();
 });
 
-// A signed-in user changes their own password (Profile & Settings). Every other session is
-// signed out; this browser gets a fresh pair of tokens so it stays signed in.
+// משתמש מחובר משנה את הסיסמה של עצמו (מסך הפרופיל). כל חיבור אחר שלו
+// מנותק; הדפדפן הזה מקבל זוג אסימונים חדש ונשאר מחובר.
 authRouter.post('/change-password', limit(5), requireAuth, async (req, res) => {
   const tokens = await authService.changePassword(req.user, parse(changePasswordSchema, req.body));
   setRefreshCookie(res, tokens.refreshToken);
   res.json(tokens);
 });
 
-// Signs the user out everywhere.
+// מנתק את המשתמש מכל המכשירים.
 authRouter.post('/sessions/revoke-all', requireAuth, async (req, res) => {
   await authService.revokeAllSessions(req.user.userId);
   res.status(204).end();

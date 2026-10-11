@@ -6,9 +6,9 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 
-// Demo mode only (VITE_DEMO_MODE=true): one-click sign-in with the seeded demo accounts, for
-// presenting the system. SignInPage loads this file only in demo mode, so a production build
-// contains neither the accounts nor the password.
+// מצב דמו בלבד (VITE_DEMO_MODE=true): כניסה בלחיצה אחת לחשבונות הדמו, לצורך
+// הצגת המערכת. SignInPage טוען את הקובץ הזה רק במצב דמו, כך שבנייה להפצה
+// לא מכילה את החשבונות ולא את הסיסמה.
 const DEMO_PASSWORD = 'password123';
 
 const DEMO_ACCOUNTS = [

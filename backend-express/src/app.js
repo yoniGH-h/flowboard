@@ -1,8 +1,8 @@
 // תפקיד הקובץ: בונה את אפליקציית Express: שרשרת ה-middleware ואחריה כל הנתיבים תחת /api.
 // משתמשים בו: server.js
 
-// Builds the Express application: global middleware, then every route under /api.
-// (server.js starts it listening; keeping the two apart lets tests import the app alone.)
+// בונה את אפליקציית Express: קודם ה-middleware הכללי, ואחריו כל הנתיבים תחת /api.
+// (server.js מפעיל את ההאזנה; ההפרדה מאפשרת לבדיקות לייבא רק את האפליקציה.)
 import { randomUUID } from 'node:crypto';
 import compression from 'compression';
 import cookieParser from 'cookie-parser';
@@ -35,28 +35,28 @@ import { usersRouter } from './modules/users/users.routes.js';
 // נקרא מ: server.js
 export const app = express();
 
-// ---------- Global middleware (runs on every request, in this order) ----------
+// ---------- middleware כללי (רץ על כל בקשה, בסדר הזה) ----------
 
-app.use(helmet()); // security headers
-app.use(compression()); // gzip responses
-app.use(cors({ origin: config.corsOrigins, credentials: true })); // let the React dev server call us
-app.use(express.json({ limit: '1mb' })); // parse JSON bodies into req.body
-app.use(cookieParser()); // parse cookies into req.cookies (the refresh token)
+app.use(helmet()); // כותרות אבטחה
+app.use(compression()); // דחיסת התשובות (gzip)
+app.use(cors({ origin: config.corsOrigins, credentials: true })); // מתיר לאתר (שרת הפיתוח של React) לפנות אלינו
+app.use(express.json({ limit: '1mb' })); // מפענח גוף JSON אל req.body
+app.use(cookieParser()); // מפענח עוגיות אל req.cookies (אסימון הרענון)
 app.use((req, res, next) => {
-  // A request id for tracing one request through the logs.
+  // מזהה בקשה, כדי לעקוב אחרי בקשה אחת בלוגים.
   res.setHeader('x-request-id', req.header('x-request-id') || randomUUID());
   next();
 });
-// Basic protection against brute force / floods: 120 requests per minute per client.
+// הגנה בסיסית מפני ניחוש סיסמאות והצפה: 120 בקשות בדקה לכל לקוח.
 if (config.rateLimitEnabled) {
   app.use(rateLimit({ windowMs: 60_000, limit: 120, standardHeaders: 'draft-8', legacyHeaders: false }));
 }
 
-// ---------- Routes ----------
+// ---------- נתיבים ----------
 
 const api = express.Router();
 
-// Public routes (no token needed).
+// נתיבים ציבוריים (בלי אסימון).
 api.get('/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
@@ -64,9 +64,9 @@ api.get('/ready', async (_req, res) => {
   await prisma.$queryRaw`SELECT 1`;
   res.json({ status: 'ready', database: 'connected', timestamp: new Date().toISOString() });
 });
-api.use('/auth', authRouter); // sign-in, sign-up, refresh... (/sessions/revoke-all checks auth itself)
+api.use('/auth', authRouter); // כניסה, הרשמה, רענון... (/sessions/revoke-all בודק התחברות בעצמו)
 
-// Everything below requires a valid access token.
+// כל מה שמכאן ומטה דורש אסימון גישה תקף.
 api.use(requireAuth);
 api.use('/users', usersRouter);
 api.use('/organizations', organizationsRouter);
@@ -81,12 +81,12 @@ api.use('/meetings', meetingsRouter);
 api.use('/permissions', permissionsRouter);
 api.use('/insights', insightsRouter);
 api.use('/planning', planningRouter);
-api.use(commentsRouter); // /tasks/:taskId/comments and /comments/:id
-api.use(attachmentsRouter); // /tasks/:taskId/attachments and /attachments/:id
+api.use(commentsRouter); // /tasks/:taskId/comments וגם /comments/:id
+api.use(attachmentsRouter); // /tasks/:taskId/attachments וגם /attachments/:id
 
 app.use('/api', api);
 
-// ---------- Errors (must be last) ----------
+// ---------- שגיאות (חייב להיות אחרון) ----------
 
 app.use('/api', notFoundHandler);
 app.use(errorHandler);

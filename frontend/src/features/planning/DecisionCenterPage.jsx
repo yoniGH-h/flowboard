@@ -22,19 +22,19 @@ import { RecommendationsPanel } from './RecommendationsPanel';
 import { SimulatorPanel } from './SimulatorPanel';
 import { DecisionLogPanel } from './DecisionLogPanel';
 
-// Decision Center: spot a problem, get a recommendation, test changes in the what-if
-// simulator before committing, apply them, and later see whether the decision worked.
+// מרכז ההחלטות: מזהים בעיה, מקבלים המלצה, בודקים שינויים בסימולטור
+// "מה אם" לפני שמתחייבים, מבצעים אותם, ואחר כך רואים אם ההחלטה הצליחה.
 // המלצות, סימולטור ויומן החלטות לפרויקט.
 // נקרא מ: App.jsx
 export function DecisionCenterPage() {
-  // Only the projects the manager manages (scope=all = managed projects for a Project Manager).
+  // רק הפרויקטים שהמנהל מנהל (scope=all = הפרויקטים המנוהלים, עבור מנהל פרויקט).
   const { data: projects, isLoading } = useProjects({ scope: 'all' });
   const [chosenProjectId, setProjectId] = useState('');
   const [tab, setTab] = useState('recommendations');
-  // A recommendation opened in the simulator, and a key to restart the simulator with it.
+  // המלצה שנפתחה בסימולטור, ומפתח להפעלה מחדש של הסימולטור איתה.
   const [simulatorSeed, setSimulatorSeed] = useState({ key: 0, changes: null });
 
-  // Until the manager picks one, show their first project.
+  // עד שהמנהל בוחר פרויקט, מוצג הפרויקט הראשון שלו.
   const projectId = chosenProjectId || projects?.[0]?.id || '';
 
   const { data: view, isLoading: viewLoading, isError } = usePlanningView(projectId || undefined);
@@ -83,7 +83,7 @@ export function DecisionCenterPage() {
 
       {view && (
         <>
-          {/* Where the project stands right now */}
+          {/* איפה הפרויקט עומד כרגע */}
           <Grid container spacing={2} sx={{ mb: 2.5 }}>
             {[
               { label: 'Forecast finish', value: forecastLabel },

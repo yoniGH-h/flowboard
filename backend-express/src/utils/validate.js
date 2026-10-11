@@ -1,12 +1,11 @@
 // תפקיד הקובץ: בדיקת קלט עם zod: הפונקציה parse וסוגי שדות משותפים.
 // משתמשים בו: audit-log.routes.js, auth.routes.js, automation-rules.routes.js, comments.routes.js +8
 
-// Request validation with zod. Every route parses its input explicitly:
+// בדיקת קלט עם zod. כל נתיב בודק את הקלט שלו במפורש:
 //
 //   const dto = parse(createTaskSchema, req.body);
 //
-// Schemas are "strict", so unknown fields are rejected (400) instead of silently ignored -
-// the same rule the NestJS version enforced with `forbidNonWhitelisted`.
+// הסכמות הן "strict", כך ששדות לא מוכרים נדחים (400) ולא נבלעים בשקט.
 import { z } from 'zod';
 import { badRequest } from './httpError.js';
 
@@ -23,7 +22,7 @@ export function parse(schema, input) {
   return result.data;
 }
 
-// ---------- Reusable field types ----------
+// ---------- סוגי שדות לשימוש חוזר ----------
 
 // סוג שדה: מזהה ייחודי.
 // נקרא מ: audit-log.routes.js, automation-rules.routes.js, insights.routes.js, meetings.routes.js +3
@@ -32,7 +31,7 @@ export const uuid = z.guid();
 // נקרא מ: auth.routes.js, automation-rules.routes.js, comments.routes.js, organizations.routes.js +3
 export const nonEmptyString = z.string().min(1);
 
-// A date string like "2026-09-28" or "2026-09-28T10:00:00.000Z", converted to a Date.
+// מחרוזת תאריך כמו "2026-09-28" או "2026-09-28T10:00:00.000Z", שהופכת ל-Date.
 // סוג שדה: מחרוזת תאריך שהופכת ל-Date.
 // נקרא מ: permissions.routes.js, planning.routes.js, projects.routes.js, tasks.routes.js
 export const isoDate = z
@@ -41,7 +40,7 @@ export const isoDate = z
   .refine((value) => !Number.isNaN(Date.parse(value)), 'must be a valid date')
   .transform((value) => new Date(value));
 
-// Query-string values always arrive as strings: "true" / "false" -> boolean.
+// ערכים מהכתובת מגיעים תמיד כמחרוזות: "true" / "false" -> בוליאני.
 // סוג שדה: "true" או "false" מהכתובת שהופך לבוליאני.
 // נקרא מ: tasks.routes.js
 export const queryBoolean = z
@@ -57,7 +56,7 @@ export const paginationShape = {
   cursor: z.guid().optional(),
 };
 
-// Prisma enums (same values as schema.prisma).
+// ה-enums של Prisma (אותם ערכים כמו ב-schema.prisma).
 // הערכים המותרים לתפקיד.
 // נקרא מ: permissions.routes.js, users.routes.js
 export const RoleName = z.enum(['EMPLOYEE', 'PROJECT_MANAGER', 'ORG_ADMIN', 'SYSTEM_ADMIN']);

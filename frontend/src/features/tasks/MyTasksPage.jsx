@@ -40,9 +40,9 @@ export function MyTasksPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const isMobile = useMediaQuery('(max-width:900px)');
-  // Unfiltered fetch for the KPI cards and the "no tasks at all" empty state (they
-  // summarize every task assigned to you, not the current filter selection); a
-  // separately-filtered, server-side query for the table rows.
+  // שליפה לא מסוננת לכרטיסי המדדים ולמצב הריק "אין משימות בכלל" (הם
+  // מסכמים את כל המשימות שמשויכות אליך, לא את הסינון הנוכחי);
+  // ושאילתה נפרדת, מסוננת בשרת, לשורות הטבלה.
   const { data: tasks, isLoading } = useTasks({ assigneeId: user?.id });
   const { data: projects } = useProjects({ memberId: user?.id });
   const { data: users } = useOrganizationUsers();

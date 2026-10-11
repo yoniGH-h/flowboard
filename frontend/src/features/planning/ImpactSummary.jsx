@@ -11,8 +11,8 @@ import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 import { formatDate } from '../../lib/format';
 
-// Before -> after of a what-if change: forecast, days late, open tasks, delay risk (and, in
-// the full version, each risk factor), plus whose workload changes.
+// לפני -> אחרי של שינוי "מה אם": צפי, ימי איחור, משימות פתוחות, סיכון לעיכוב (ובגרסה
+// המלאה גם כל גורם סיכון), ושל מי העומס משתנה.
 
 function forecastText(f) {
   if (f.status === 'done') return 'All done';
@@ -22,7 +22,7 @@ function forecastText(f) {
 
 const lateText = (f) => (f.daysLate == null ? '—' : f.daysLate > 0 ? `${f.daysLate} days late` : 'On time');
 
-// Lower is better for both days late and risk. Returns a colour for the "after" value.
+// נמוך יותר טוב יותר, גם בימי איחור וגם בסיכון. מחזיר צבע לערך ה"אחרי".
 function deltaColor(before, after) {
   if (before == null || after == null || before === after) return 'text.primary';
   return after < before ? 'success.main' : 'error.main';
@@ -72,7 +72,7 @@ export function ImpactSummary({ before, after, loadChanges = [], compact = false
       color: deltaColor(before.riskScore, after.riskScore),
       bold: true,
     },
-    // Each risk factor, so the manager can see WHY the risk moved.
+    // כל גורם סיכון, כדי שהמנהל יראה למה הסיכון השתנה.
     ...before.riskFactors.map((f, i) => ({
       label: `  ${f.label}`,
       before: `+${f.contribution}`,

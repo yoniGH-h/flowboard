@@ -44,8 +44,8 @@ import { useAuth } from '../../auth/AuthContext';
 export function ProjectManagementPage() {
   const navigate = useNavigate();
   const { activeRole, user } = useAuth();
-  // Unfiltered fetch for the KPI cards (they summarize every org project, not the current
-  // filter selection); a separately-filtered, server-side query for the table.
+  // שליפה לא מסוננת לכרטיסי המדדים (הם מסכמים את כל פרויקטי הארגון, לא את
+  // הסינון הנוכחי); ושאילתה נפרדת, מסוננת בשרת, לטבלה.
   const { data: projects, isLoading } = useProjects({ includeArchived: true, scope: 'all' });
   const { data: users } = useOrganizationUsers();
   const archiveProject = useArchiveProject();

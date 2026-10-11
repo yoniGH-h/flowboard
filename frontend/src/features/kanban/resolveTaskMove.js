@@ -1,10 +1,10 @@
 // תפקיד הקובץ: ההחלטה אם גרירה צריכה לשלוח בקשת הזזה.
 // משתמשים בו: KanbanBoardPage.jsx, resolveTaskMove.test.js
 
-// The decision behind KanbanBoardPage's onDragEnd: given the dragged task and the column it
-// was dropped on, should a move actually be requested, and with what payload? Pulled out as
-// a pure function so it's testable without needing to simulate a real dnd-kit pointer-sensor
-// drag gesture through the DOM.
+// ההחלטה שמאחורי onDragEnd ב-KanbanBoardPage: בהינתן המשימה שנגררה והעמודה
+// שעליה שוחררה, האם באמת צריך לבקש הזזה, ועם אילו נתונים? הוצאה
+// לפונקציה טהורה כדי שאפשר יהיה לבדוק אותה בלי לדמות גרירה אמיתית
+// של dnd-kit בדפדפן.
 // מחזיר את פרטי ההזזה, או null אם הכרטיס לא עבר עמודה.
 // נקרא מ: KanbanBoardPage.jsx, resolveTaskMove.test.js
 export function resolveTaskMove(tasks, activeId, overId) {

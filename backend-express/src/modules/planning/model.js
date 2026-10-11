@@ -1,11 +1,11 @@
 // תפקיד הקובץ: מודל התכנון: מצב פרויקט, החלת שינויי "מה אם", וחישוב צפי, סיכון ועומס.
 // משתמשים בו: planning.service.js
 
-// The planning model: a project's state, what-if changes applied to it, and the resulting
-// forecast / delay risk / workload. Used by the what-if simulator, the recommendations, and
-// the decision log - so all three always agree with each other and with Insights.
+// מודל התכנון: מצב של פרויקט, שינויי "מה אם" שמוחלים עליו, והתוצאה:
+// צפי, סיכון לעיכוב ועומס. משמש את הסימולטור, את ההמלצות ואת
+// יומן ההחלטות - כך ששלושתם תמיד מסכימים ביניהם ועם התובנות.
 //
-// It is deliberately simple and transparent. Every result lists the assumptions it made.
+// המודל פשוט ושקוף בכוונה. כל תוצאה מפרטת את ההנחות שעליהן היא נשענת.
 import { prisma } from '../../db.js';
 import { badRequest, notFound } from '../../utils/httpError.js';
 import { calculateRisk, WORKLOAD_CAPACITY_TASKS } from '../projects/risk.js';
@@ -13,15 +13,15 @@ import { calculateRisk, WORKLOAD_CAPACITY_TASKS } from '../projects/risk.js';
 export { WORKLOAD_CAPACITY_TASKS };
 // מספר הימים שלפיהם נמדד קצב העבודה (28).
 // נקרא מ: הקובץ הזה בלבד
-export const PACE_WINDOW_DAYS = 28; // "current pace" = tasks completed in the last 4 weeks
+export const PACE_WINDOW_DAYS = 28; // "הקצב הנוכחי" = משימות שהושלמו ב-4 השבועות האחרונים
 // מינימום משימות שהושלמו כדי לסמוך על הצפי.
 // נקרא מ: הקובץ הזה בלבד
-export const MIN_PACE_SAMPLE = 3; // fewer completed tasks = too little data for a finish date
+export const MIN_PACE_SAMPLE = 3; // פחות משימות שהושלמו = מעט מדי נתונים לתאריך סיום
 const DAY_MS = 86_400_000;
 
-// ---------- Loading ----------
+// ---------- טעינה ----------
 
-// Everything the model needs about one project, in plain objects (no further DB access).
+// כל מה שהמודל צריך על פרויקט אחד, כאובייקטים פשוטים (בלי גישה נוספת למסד).
 // טוען מהמסד את כל מה שהמודל צריך על פרויקט.
 // נקרא מ: planning.service.js
 export async function loadProjectState(actor, projectId, now = new Date()) {
@@ -53,8 +53,8 @@ export async function loadProjectState(actor, projectId, now = new Date()) {
         column: { select: { name: true, category: true } },
       },
     }),
-    // Open tasks per person across the WHOLE organization - someone busy on another project
-    // is not really free.
+    // משימות פתוחות לכל אדם בכל הארגון - מי שעסוק בפרויקט אחר
+    // לא באמת פנוי.
     prisma.task.groupBy({
       by: ['assigneeId'],
       where: { archived: false, completedAt: null, assigneeId: { not: null }, project: { organizationId: actor.organizationId } },
@@ -64,7 +64,7 @@ export async function loadProjectState(actor, projectId, now = new Date()) {
       where: { organizationId: actor.organizationId, status: 'ACTIVE', deletedAt: null },
       select: { id: true, firstName: true, lastName: true, title: true },
     }),
-    // When did each task enter its current column? (the latest TaskStatusChange)
+    // מתי כל משימה נכנסה לעמודה הנוכחית שלה? (ה-TaskStatusChange האחרון)
     prisma.taskStatusChange.findMany({
       where: { projectId },
       orderBy: { changedAt: 'desc' },
@@ -119,17 +119,17 @@ export const userName = (state, id) => {
 export const isOpen = (t) => !t.completedAt && !t.deferred;
 const shortDate = (d) => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 
-// ---------- What-if changes ----------
+// ---------- שינויי "מה אם" ----------
 //
 // changes = {
-//   reassign:       [{ taskId, toUserId }]   give open tasks to someone else
-//   deferTaskIds:   [taskId]                 take open tasks out of this release (archived)
-//   addMemberIds:   [userId]                 add people to the project
-//   unblockTaskIds: [taskId]                 mark blocked tasks as unblocked
-//   newTargetDate:  Date                     move the target date
+//   reassign:       [{ taskId, toUserId }]   להעביר משימות פתוחות למישהו אחר
+//   deferTaskIds:   [taskId]                 להוציא משימות פתוחות מהגרסה הזו (ארכוב)
+//   addMemberIds:   [userId]                 להוסיף אנשים לפרויקט
+//   unblockTaskIds: [taskId]                 לסמן משימות חסומות כלא חסומות
+//   newTargetDate:  Date                     להזיז את תאריך היעד
 // }
 //
-// Returns a NEW state (the original is untouched) plus human-readable descriptions.
+// מחזיר מצב חדש (המקורי לא משתנה) ותיאורים קריאים של השינויים.
 // מחזיר מצב חדש עם השינויים, בלי לגעת במקורי.
 // נקרא מ: planning.service.js
 export function applyChanges(state, changes) {
@@ -153,7 +153,7 @@ export function applyChanges(state, changes) {
     next.memberIds.add(userId);
     next.changes.push({ type: 'addMember', userId, text: `Add ${userName(next, userId)} to the project` });
   }
-  // Assumption: every added person brings the team's average per-person pace (see below).
+  // הנחה: כל אדם שנוסף מביא את הקצב הממוצע לאדם של הצוות (ראו למטה).
   const added = changes.addMemberIds?.length ?? 0;
   if (added > 0 && state.memberIds.size > 0) next.paceFactor = (state.memberIds.size + added) / state.memberIds.size;
 
@@ -197,9 +197,9 @@ export function applyChanges(state, changes) {
   return next;
 }
 
-// ---------- Evaluation ----------
+// ---------- הערכה ----------
 
-// Forecast, delay risk and workload for a state (real or simulated).
+// צפי, סיכון לעיכוב ועומס למצב נתון (אמיתי או מדומה).
 // מחשב צפי סיום, ציון סיכון ועומס למצב נתון.
 // נקרא מ: planning.service.js
 export function evaluate(state) {
@@ -213,7 +213,7 @@ export function evaluate(state) {
     now,
   );
 
-  // Forecast = open tasks / pace of the last 4 weeks (x paceFactor when people are added).
+  // צפי = משימות פתוחות חלקי הקצב של 4 השבועות האחרונים (כפול paceFactor כשמוסיפים אנשים).
   const perDay = (state.doneLast4Weeks / PACE_WINDOW_DAYS) * state.paceFactor;
   let forecast;
   if (open.length === 0) forecast = { status: 'done' };
@@ -252,7 +252,7 @@ export function evaluate(state) {
   };
 }
 
-// The assumptions behind a simulation - shown next to every result.
+// ההנחות שמאחורי הסימולציה - מוצגות ליד כל תוצאה.
 // מנסח את ההנחות שמאחורי תוצאת הסימולציה.
 // נקרא מ: planning.service.js
 export function assumptionsFor(state, next) {

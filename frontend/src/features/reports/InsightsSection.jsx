@@ -43,8 +43,8 @@ const FORECAST_STATUS = {
   done: { label: 'All done', color: 'default' },
 };
 
-// "Insights" on Reports & Analytics: conclusions a manager can act on, computed by the server
-// from data FlowBoard already has (see backend-express/src/modules/insights).
+// "תובנות" במסך הדוחות: מסקנות שמנהל יכול לפעול לפיהן, מחושבות בשרת
+// מנתונים ש-FlowBoard כבר מחזיק (ראו backend-express/src/modules/insights).
 // צפי סיום, דיוק הערכות, צווארי בקבוק ומגמת סיכון.
 // נקרא מ: ReportsAnalyticsPage.jsx
 export function InsightsSection({ projectId, users }) {
@@ -59,7 +59,7 @@ export function InsightsSection({ projectId, users }) {
 
   return (
     <Box sx={{ mb: 3 }}>
-      {/* ---------- Key conclusions ---------- */}
+      {/* ---------- המסקנות העיקריות ---------- */}
       <Card sx={{ mb: 2.5 }}>
         <CardContent>
           <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1 }}>
@@ -93,7 +93,7 @@ export function InsightsSection({ projectId, users }) {
       </Card>
 
       <Grid container spacing={2.5}>
-        {/* ---------- Delivery forecast ---------- */}
+        {/* ---------- צפי סיום ---------- */}
         <Grid size={{ xs: 12, lg: 7 }}>
           <Card sx={{ height: '100%' }}>
             <CardContent>
@@ -138,7 +138,7 @@ export function InsightsSection({ projectId, users }) {
           </Card>
         </Grid>
 
-        {/* ---------- Estimate accuracy ---------- */}
+        {/* ---------- דיוק הערכות ---------- */}
         <Grid size={{ xs: 12, lg: 5 }}>
           <Card sx={{ height: '100%' }}>
             <CardContent>
@@ -196,7 +196,7 @@ export function InsightsSection({ projectId, users }) {
           </Card>
         </Grid>
 
-        {/* ---------- Where work waits ---------- */}
+        {/* ---------- איפה העבודה ממתינה ---------- */}
         <Grid size={{ xs: 12 }}>
           <Card>
             <CardContent>

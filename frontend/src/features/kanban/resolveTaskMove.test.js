@@ -29,9 +29,9 @@ function makeTask(overrides = {}) {
   };
 }
 
-// KanbanBoardPage.handleDragEnd has no optimistic update or rollback (unlike what the
-// original test plan assumed) - it's a plain resolve-then-mutate. This is the resolve half:
-// deciding whether a drop should actually trigger a move, and with what payload.
+// ב-KanbanBoardPage.handleDragEnd אין עדכון אופטימי ואין ביטול
+// - קודם מחליטים ואז שולחים. כאן נבדק חלק ההחלטה:
+// האם שחרור צריך להפעיל הזזה, ועם אילו נתונים.
 describe('resolveTaskMove', () => {
   it('returns the move payload when the task is dropped on a different column', () => {
     const tasks = [makeTask({ id: 'task-1', columnId: 'col-todo' })];

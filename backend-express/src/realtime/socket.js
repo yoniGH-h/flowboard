@@ -1,12 +1,12 @@
 // תפקיד הקובץ: זמן אמת ב-Socket.IO: אימות החיבור, חדר לכל משתמש ושליחת אירועים.
 // משתמשים בו: notifications.service.js, server.js
 
-// Real-time push over Socket.IO. Each connection authenticates with the same access token
-// the REST API uses, then joins a room named after its own user id - so pushing to a user is
-// just `io.to('user:<id>').emit(...)`, with no socket-to-user bookkeeping.
+// שליחה בזמן אמת ב-Socket.IO. כל חיבור מזדהה עם אותו אסימון גישה שמשמש את
+// ה-REST API, ואז מצטרף לחדר שנקרא על שם מזהה המשתמש שלו - כך ששליחה למשתמש היא
+// פשוט io.to('user:<id>').emit(...), בלי לנהל רשימה של חיבורים לכל משתמש.
 //
-// Events sent to the browser:
-//   notification:new       a full Notification row
+// האירועים שנשלחים לדפדפן:
+//   notification:new       שורת Notification מלאה
 //   notification:read      { id }
 //   notification:read-all  {}
 import { Server } from 'socket.io';
@@ -24,7 +24,7 @@ export function initRealtime(httpServer) {
     cors: { origin: config.corsOrigins, credentials: true },
   });
 
-  // Runs once per connection attempt, before 'connection'. Calling next(error) rejects it.
+  // רץ פעם אחת לכל ניסיון התחברות, לפני 'connection'. קריאה ל-next(error) דוחה את החיבור.
   io.use(async (socket, next) => {
     try {
       const header = socket.handshake.headers.authorization;
@@ -42,7 +42,7 @@ export function initRealtime(httpServer) {
 
   io.on('connection', (socket) => {
     socket.join(roomFor(socket.data.user.userId));
-    // Leaving the room on disconnect is automatic.
+    // היציאה מהחדר בזמן ניתוק היא אוטומטית.
   });
 
   return io;

@@ -15,8 +15,8 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import { useApplyDecision } from '../../lib/queries';
 
-// Confirms applying changes for real. They are carried out through the normal task / project
-// actions (with their notifications and audit entries) and recorded in the decision log.
+// אישור לביצוע השינויים בפועל. הם מתבצעים דרך הפעולות הרגילות של משימות ופרויקטים
+// (עם ההתראות והרישום ביומן שלהן) ונרשמים ביומן ההחלטות.
 // מציג את השינויים, מקבל הערה ומבצע.
 // נקרא מ: RecommendationsPanel.jsx, SimulatorPanel.jsx
 export function ApplyDecisionDialog({ open, onClose, onApplied, projectId, changes, summary, source }) {
@@ -36,7 +36,7 @@ export function ApplyDecisionDialog({ open, onClose, onApplied, projectId, chang
       onApplied?.();
       onClose();
     } catch {
-      // shown below
+      // מוצג למטה
     }
   };
 

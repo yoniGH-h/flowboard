@@ -18,7 +18,7 @@ import {
 import * as reports from './tasks.reports.js';
 import * as tasksService from './tasks.service.js';
 
-// ---------- Validation ----------
+// ---------- בדיקת קלט ----------
 
 const labelIds = z
   .array(uuid)
@@ -53,7 +53,7 @@ const updateTaskSchema = z.strictObject({
 const queryTasksSchema = z.strictObject({
   ...paginationShape,
   projectId: uuid.optional(),
-  assigneeId: z.string().optional(), // a user id, or "me"
+  assigneeId: z.string().optional(), // מזהה משתמש, או "me"
   status: TaskStatusCategory.optional(),
   priority: TaskPriority.optional(),
   overdue: queryBoolean.optional(),
@@ -79,10 +79,10 @@ const addDependencySchema = z.strictObject({
   type: DependencyType.optional(),
 });
 
-// ---------- Routes ----------
+// ---------- נתיבים ----------
 
-// Task actions are checked per project inside tasks.service.js (tasks.manage / tasks.create /
-// tasks.move.own), because the same user may manage one project and only work in another.
+// פעולות על משימות נבדקות לכל פרויקט בתוך tasks.service.js (tasks.manage / tasks.create /
+// tasks.move.own), כי אותו משתמש יכול לנהל פרויקט אחד ורק לעבוד באחר.
 // הראוטר של המשימות.
 // נקרא מ: app.js
 export const tasksRouter = Router();
@@ -96,8 +96,8 @@ tasksRouter.get('/', async (req, res) => {
   res.json(await tasksService.findAll(req.user, parse(queryTasksSchema, req.query)));
 });
 
-// The summary routes are declared before '/:id', otherwise Express would treat
-// "workload-summary" as a task id.
+// נתיבי הסיכום מוגדרים לפני '/:id', אחרת Express היה מתייחס אל
+// "workload-summary" כאל מזהה של משימה.
 tasksRouter.get('/workload-summary', canViewReports, async (req, res) => {
   const { projectId } = parse(projectFilterSchema, req.query);
   res.json(await reports.getWorkloadSummary(req.user, projectId));
@@ -133,7 +133,7 @@ tasksRouter.patch('/:id', async (req, res) => {
   res.json(await tasksService.update(req.user, req.params.id, parse(updateTaskSchema, req.body)));
 });
 
-// Not PM-only: an Employee may move their own cards (checked inside the service).
+// לא רק למנהל פרויקט: עובד רשאי להזיז את הכרטיסים שלו (נבדק בתוך ה-service).
 tasksRouter.patch('/:id/move', async (req, res) => {
   res.json(await tasksService.move(req.user, req.params.id, parse(moveSchema, req.body)));
 });

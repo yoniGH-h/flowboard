@@ -1,16 +1,16 @@
 // תפקיד הקובץ: מרכז ההחלטות: זיהוי בעיה, המלצה, סימולציה, ביצוע ומעקב.
 // משתמשים בו: planning.routes.js
 
-// The Decision Center: detect a problem -> recommend a fix -> simulate its effect ->
-// apply it -> measure what actually happened.
+// מרכז ההחלטות: זיהוי בעיה -> המלצה על תיקון -> סימולציה של ההשפעה ->
+// ביצוע -> מדידה של מה שקרה בפועל.
 //
-//   getPlanningView    the project's current state, for the simulator
-//   simulate           what-if: evaluate changes WITHOUT saving anything
-//   recommend          rule-based suggestions, each already simulated
-//   applyDecision      carry out the changes (through the normal task / project services,
-//                      so every permission check, notification and audit entry still happens)
-//                      and record the decision
-//   listDecisions      the decision log, with each decision's effect so far
+//   getPlanningView    המצב הנוכחי של הפרויקט, עבור הסימולטור
+//   simulate           "מה אם": מעריך שינויים בלי לשמור דבר
+//   recommend          הצעות מבוססות כללים, כל אחת כבר עברה סימולציה
+//   applyDecision      מבצע את השינויים (דרך ה-services הרגילים של משימות ופרויקטים,
+//                      כך שכל בדיקת הרשאה, התראה ורישום ביומן עדיין קורים)
+//                      ורושם את ההחלטה
+//   listDecisions      יומן ההחלטות, עם ההשפעה של כל החלטה עד כה
 import { inTransaction, prisma } from '../../db.js';
 import { notFound } from '../../utils/httpError.js';
 import { recordAudit } from '../audit-log/audit-log.service.js';
@@ -30,10 +30,10 @@ const DAY_MS = 86_400_000;
 const STUCK_AFTER_DAYS = 7;
 const MAX_RECOMMENDATIONS = 5;
 
-// Planning a project = managing its tasks. (A Project Manager: only their own projects.)
+// תכנון פרויקט = ניהול המשימות שלו. (מנהל פרויקט: רק הפרויקטים שלו.)
 const requirePlanning = (actor, projectId) => projectsService.assertProjectPermission(actor, projectId, 'tasks.manage');
 
-// The part of an evaluation worth showing in a before/after comparison.
+// החלק של ההערכה שכדאי להציג בהשוואת "לפני ואחרי".
 const brief = (e) => ({
   riskScore: e.riskScore,
   riskLevel: e.riskLevel,
@@ -42,7 +42,7 @@ const brief = (e) => ({
   forecast: e.forecast,
 });
 
-// ---------- View + simulation ----------
+// ---------- תמונת מצב וסימולציה ----------
 
 // מחזיר את תמונת המצב של הפרויקט למסך התכנון.
 // נקרא מ: planning.routes.js
@@ -96,7 +96,7 @@ export async function simulate(actor, projectId, changes) {
   };
 }
 
-// People whose open-task count changes, e.g. [{ name: 'Ravi Patel', before: 8, after: 6 }]
+// אנשים שמספר המשימות הפתוחות שלהם משתנה, למשל [{ name: 'Ravi Patel', before: 8, after: 6 }]
 function loadChanges(before, after) {
   const beforeBy = new Map(before.load.map((l) => [l.userId, l.openTotal]));
   return after.load
@@ -104,16 +104,16 @@ function loadChanges(before, after) {
     .filter((l) => l.before !== l.after);
 }
 
-// ---------- Recommendations ----------
+// ---------- המלצות ----------
 //
-// Simple, explainable rules - every recommendation says exactly why it was made:
-//   REBALANCE   a task is stuck (>7 days in an active stage) or its owner is over capacity,
-//               and a project member has clearly more room -> suggest reassigning it
-//   DEFER       the project is forecast late and some LOW-priority tasks haven't started ->
-//               suggest moving them out of this release
-//   ADD_MEMBER  the project is forecast late and someone in the organization has room ->
-//               suggest adding them
-// Each one is run through the simulator, so it comes with its predicted effect.
+// כללים פשוטים שאפשר להסביר - כל המלצה אומרת בדיוק למה היא ניתנה:
+//   REBALANCE   משימה תקועה (יותר מ-7 ימים בשלב פעיל) או שהאחראי עליה מעל הקיבולת,
+//               ולחבר צוות אחר יש הרבה יותר מקום -> מציעים להעביר אותה אליו
+//   DEFER       הפרויקט צפוי לאחר ויש משימות בעדיפות LOW שעוד לא התחילו ->
+//               מציעים להוציא אותן מהגרסה הזו
+//   ADD_MEMBER  הפרויקט צפוי לאחר ולמישהו בארגון יש מקום ->
+//               מציעים להוסיף אותו
+// כל המלצה עוברת בסימולטור, ולכן מגיעה עם ההשפעה החזויה שלה.
 // מציע פעולות לשיפור, כל אחת עם ההשפעה החזויה שלה.
 // נקרא מ: planning.routes.js
 export async function recommend(actor, projectId) {
@@ -122,9 +122,9 @@ export async function recommend(actor, projectId) {
   const base = evaluate(state);
   const recs = [];
 
-  // Each recommendation stands on its own, so its explanation uses today's loads (loadOf).
-  // `promised` only remembers who was already suggested as a new owner, so we don't pile
-  // every suggestion onto the same person.
+  // כל המלצה עומדת בפני עצמה, ולכן ההסבר שלה משתמש בעומסים של היום (loadOf).
+  // promised רק זוכר מי כבר הוצע כאחראי חדש, כדי שלא נעמיס
+  // את כל ההצעות על אותו אדם.
   const loadOf = (id) => state.orgOpenByUser.get(id) ?? 0;
   const promised = new Map();
   const targetLoad = (id) => loadOf(id) + (promised.get(id) ?? 0);
@@ -148,8 +148,8 @@ export async function recommend(actor, projectId) {
     const target = [...state.memberIds]
       .filter((id) => id !== from && state.users.has(id))
       .sort((a, b) => targetLoad(a) - targetLoad(b) || userName(state, a).localeCompare(userName(state, b)))[0];
-    // Only when it clearly helps: the new owner stays well under capacity and ends up with
-    // fewer tasks than the current owner.
+    // רק כשזה עוזר בבירור: האחראי החדש נשאר הרבה מתחת לקיבולת ונשאר עם
+    // פחות משימות מהאחראי הנוכחי.
     if (!target || targetLoad(target) > WORKLOAD_CAPACITY_TASKS - 2 || targetLoad(target) + 2 > loadOf(from)) continue;
 
     const why = stuck
@@ -194,7 +194,7 @@ export async function recommend(actor, projectId) {
     }
   }
 
-  // Simulate each one; keep only those that actually improve something.
+  // מריצים סימולציה לכל אחת; משאירים רק את אלה שבאמת משפרות משהו.
   return recs
     .map((rec) => {
       const next = applyChanges(state, rec.changes);
@@ -219,28 +219,28 @@ export async function recommend(actor, projectId) {
     .slice(0, MAX_RECOMMENDATIONS);
 }
 
-// ---------- Applying a decision ----------
+// ---------- ביצוע החלטה ----------
 
 // מבצע החלטה בפועל בתוך טרנזקציה אחת, ורושם אותה.
 // נקרא מ: planning.routes.js
 export async function applyDecision(actor, projectId, { changes, note, source }) {
   await requirePlanning(actor, projectId);
   const state = await loadProjectState(actor, projectId);
-  const next = applyChanges(state, changes); // validates everything BEFORE changing any data
+  const next = applyChanges(state, changes); // מאמת את הכל לפני שמשנים נתונים כלשהם
   const before = evaluate(state);
   const predicted = evaluate(next);
 
-  // All or nothing: every change below, the Decision row and the audit entry run in ONE
-  // database transaction. If any step fails (e.g. a permission or a task that changed in the
-  // meantime), everything is rolled back and nothing is left half-applied. Notifications are
-  // pushed to browsers only after the transaction commits (see db.js).
+  // הכל או כלום: כל השינויים שלמטה, שורת ה-Decision והרישום ביומן רצים בטרנזקציה
+  // אחת. אם שלב כלשהו נכשל (למשל הרשאה, או משימה שהשתנתה
+  // בינתיים), הכל מתבטל ולא נשאר מצב חלקי. ההתראות
+  // נשלחות לדפדפנים רק אחרי שהטרנזקציה נשמרה (ראו db.js).
   return inTransaction(async () => {
-    // Checked first, so a decision that is not allowed fails before anything is written.
+    // נבדק קודם, כך שהחלטה שאסורה נכשלת לפני שנכתב משהו.
     if (changes.addMemberIds?.length) await projectsService.assertProjectPermission(actor, projectId, 'members.manage');
     if (changes.newTargetDate) await projectsService.assertProjectPermission(actor, projectId, 'projects.update');
 
-    // Carry it out through the normal services: same checks, notifications and audit trail as
-    // doing each step by hand.
+    // מבצעים דרך ה-services הרגילים: אותן בדיקות, התראות ורישום ביומן כמו
+    // בביצוע של כל שלב ביד.
     for (const userId of changes.addMemberIds ?? []) await projectsService.addMember(actor, projectId, { userId });
     for (const { taskId, toUserId } of changes.reassign ?? []) await tasksService.assign(actor, taskId, toUserId);
     for (const taskId of changes.deferTaskIds ?? []) await tasksService.setArchived(actor, taskId, true);
@@ -284,10 +284,10 @@ const serializeChanges = (changes) => ({
   ...(changes.newTargetDate ? { newTargetDate: changes.newTargetDate.toISOString() } : {}),
 });
 
-// ---------- The decision log ----------
+// ---------- יומן ההחלטות ----------
 
-// Decisions in the projects the actor manages, each with its effect so far: the risk and
-// forecast when it was taken, what the model predicted, and where they are now.
+// ההחלטות בפרויקטים שהמשתמש מנהל, כל אחת עם ההשפעה שלה עד כה: הסיכון
+// והצפי ברגע שהתקבלה, מה המודל חזה, ואיפה הם עכשיו.
 // שולף את ההחלטות שבוצעו ומה קרה מאז.
 // נקרא מ: planning.routes.js
 export async function listDecisions(actor, projectId) {
@@ -306,14 +306,14 @@ export async function listDecisions(actor, projectId) {
     },
   });
 
-  // The current state of each project involved (evaluated once per project).
+  // המצב הנוכחי של כל פרויקט מעורב (מחושב פעם אחת לכל פרויקט).
   const now = new Date();
   const current = new Map();
   for (const pid of new Set(decisions.map((d) => d.projectId))) {
     try {
       current.set(pid, evaluate(await loadProjectState(actor, pid, now)));
     } catch {
-      // project no longer accessible - leave its impact empty
+      // הפרויקט כבר לא נגיש - משאירים את ההשפעה שלו ריקה
     }
   }
 
@@ -339,7 +339,7 @@ export async function listDecisions(actor, projectId) {
   });
 }
 
-// Decisions can only be recorded by applying them, but a manager may add a note afterwards.
+// אפשר לרשום החלטה רק על ידי ביצוע שלה, אבל מנהל רשאי להוסיף הערה אחר כך.
 // מעדכן את ההערה של החלטה.
 // נקרא מ: planning.routes.js
 export async function updateDecisionNote(actor, decisionId, note) {

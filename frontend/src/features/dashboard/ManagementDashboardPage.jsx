@@ -105,7 +105,7 @@ export function ManagementDashboardPage() {
       ].filter((d) => d.value > 0)
     : [];
 
-  // Real weekly data from the server: % of tasks due by each week vs. % actually completed.
+  // נתונים שבועיים אמיתיים מהשרת: אחוז המשימות שהמועד שלהן הגיע בכל שבוע מול האחוז שהושלם בפועל.
   const completionTrend = summary?.completionTrend ?? [];
 
   const auditEntries = auditLog ?? [];

@@ -18,8 +18,8 @@ import { ApplyDecisionDialog } from './ApplyDecisionDialog';
 
 const TYPE_LABELS = { REBALANCE: 'Rebalance work', DEFER: 'Reduce scope', ADD_MEMBER: 'Add capacity' };
 
-// Rule-based suggestions for this project, each already run through the simulator.
-// The manager decides: open it in the simulator to adjust, or apply it as is.
+// הצעות מבוססות כללים לפרויקט הזה, כל אחת כבר עברה בסימולטור.
+// המנהל מחליט: לפתוח בסימולטור ולהתאים, או לבצע כמו שהיא.
 // המלצות המערכת, עם פתיחה בסימולטור או ביצוע.
 // נקרא מ: DecisionCenterPage.jsx
 export function RecommendationsPanel({ projectId, onOpenInSimulator }) {

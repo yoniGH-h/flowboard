@@ -48,8 +48,8 @@ export function OrganizationSettingsPage() {
 
   const handleSave = async () => {
     const patch = { name: name.trim(), tagline: tagline.trim() };
-    // Only send brandColor if it's empty (clear it) or a valid hex code -
-    // the backend rejects anything else, so an in-progress edit is never sent.
+    // שולחים את brandColor רק אם הוא ריק (ניקוי) או קוד hex תקין -
+    // השרת דוחה כל דבר אחר, ולכן עריכה שעדיין באמצע לא נשלחת.
     if (brandColor.trim() === '' || HEX_COLOR_PATTERN.test(brandColor.trim())) {
       patch.brandColor = brandColor.trim() || null;
     }

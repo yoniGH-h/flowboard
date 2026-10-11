@@ -12,20 +12,20 @@ const querySchema = z.strictObject({
   action: z.string().optional(),
   actorId: uuid.optional(),
   entityType: z.string().optional(),
-  search: z.string().optional(), // matches action or entity type
+  search: z.string().optional(), // מתאים לפעולה או לסוג הישות
 });
 
 // הראוטר של יומן הביקורת.
 // נקרא מ: app.js
 export const auditLogRouter = Router();
 
-// GET /api/audit-log - the caller's organization only.
+// GET /api/audit-log - רק הארגון של המשתמש.
 auditLogRouter.get('/', requirePermission('audit.view'), async (req, res) => {
   const filters = parse(querySchema, req.query);
   res.json(await auditLog.findForOrganization(req.user.organizationId, filters));
 });
 
-// GET /api/audit-log/system - every organization (System Activity tab).
+// GET /api/audit-log/system - כל הארגונים (הלשונית System Activity).
 auditLogRouter.get('/system', requirePermission('system.audit.view'), async (req, res) => {
   const filters = parse(querySchema, req.query);
   res.json(await auditLog.findAcrossOrganizations(filters));

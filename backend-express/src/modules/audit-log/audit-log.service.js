@@ -3,9 +3,9 @@
 
 import { prisma } from '../../db.js';
 
-// Appends one row to the organization's audit trail. Every module calls this after a
-// significant action. Never put passwords, tokens, or other secrets in `metadata` - Org
-// Admins can read audit rows on the Audit Log screen.
+// מוסיף שורה אחת ליומן הביקורת של הארגון. כל מודול קורא לזה אחרי
+// פעולה משמעותית. לעולם לא שמים סיסמאות, אסימונים או סודות אחרים ב-metadata -
+// מנהלי ארגון יכולים לקרוא את השורות במסך יומן הביקורת.
 // רושם שורה ביומן הביקורת: מי עשה, מה ועל מה.
 // נקרא מ: attachments.routes.js, auth.service.js, comments.routes.js, meetings.routes.js +6
 export function recordAudit({ organizationId, actorId, action, entityType, entityId, projectId, taskId, metadata }) {
@@ -68,8 +68,8 @@ export function findForOrganization(organizationId, filters) {
   return findPage(filters, organizationId, { actor: ACTOR });
 }
 
-// System Administrator scope - no organization filter, and each entry carries its
-// organization's name so the cross-org feed stays readable.
+// היקף של מנהל מערכת - בלי סינון לפי ארגון, וכל רשומה נושאת את שם
+// הארגון שלה כדי שהרשימה המשולבת תהיה קריאה.
 // שולף רשומות יומן מכל הארגונים (למנהל מערכת).
 // נקרא מ: audit-log.routes.js
 export function findAcrossOrganizations(filters) {

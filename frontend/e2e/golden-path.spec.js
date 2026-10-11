@@ -1,10 +1,10 @@
 import { test, expect } from '@playwright/test';
 
-// The single required Playwright flow (see docs/test-plan.md): sign in (via a fresh sign-up,
-// since that's the only account-creation path that doesn't depend on seeded demo data) -> open
-// a project -> create a task -> move it across the board -> add a comment -> sign out. Runs
-// against the isolated flowboard_test database (see playwright.config.ts / e2e/global-setup.ts),
-// never the seeded dev dataset.
+// תרחיש ה-Playwright המרכזי: כניסה (דרך הרשמה חדשה,
+// כי זו הדרך היחידה ליצור חשבון שלא תלויה בנתוני הדמו) -> פתיחת
+// פרויקט -> יצירת משימה -> הזזה שלה בלוח -> הוספת תגובה -> יציאה. רץ
+// מול מסד הבדיקות המבודד (ראו playwright.config.js ו-e2e/global-setup.js),
+// ואף פעם לא מול נתוני הפיתוח.
 
 async function dragTaskToColumn(page, taskCard, columnName) {
   const target = page.locator(`[data-testid="kanban-column-dropzone"][data-column-name="${columnName}"]`);
@@ -19,7 +19,7 @@ async function dragTaskToColumn(page, taskCard, columnName) {
 
   await page.mouse.move(startX, startY);
   await page.mouse.down();
-  // A few small moves first to clear dnd-kit's PointerSensor activation distance (6px).
+  // כמה תזוזות קטנות קודם, כדי לעבור את מרחק ההפעלה של PointerSensor ב-dnd-kit (6 פיקסלים).
   await page.mouse.move(startX + 12, startY + 12, { steps: 5 });
   await page.mouse.move(endX, endY, { steps: 20 });
   await page.mouse.move(endX, endY, { steps: 3 });
@@ -38,9 +38,9 @@ test('golden path: sign up, create a project and task, move it, comment, sign ou
   await page.getByLabel('First name').fill('Golden');
   await page.getByLabel('Last name').fill('Pather');
   await page.getByLabel('Email address').fill(email);
-  // Not `getByLabel('Password', { exact: true })`: MUI's floating-label markup made that
-  // selector unreliably time out here. The two password fields are unambiguous by input type
-  // and DOM order (Password, then Confirm password), so target them that way instead.
+  // לא getByLabel('Password', { exact: true }): התווית הצפה של MUI גרמה לכך
+  // שהבורר הזה נכשל כאן בזמן קצוב. שני שדות הסיסמה מזוהים בבירור לפי סוג הקלט
+  // והסדר בדף (Password ואז Confirm password), ולכן מאתרים אותם כך.
   const passwordInputs = page.locator('input[type="password"]');
   await passwordInputs.nth(0).fill('password123');
   await passwordInputs.nth(1).fill('password123');
@@ -58,8 +58,8 @@ test('golden path: sign up, create a project and task, move it, comment, sign ou
   await page.getByLabel('Target date').fill(nextMonth);
   await page.getByRole('button', { name: 'Create project' }).click();
 
-  // exact: true - otherwise this also matches the row's "Actions for <project name>" icon
-  // button, whose accessible name contains the project name as a substring.
+  // exact: true - אחרת זה מתאים גם לכפתור האייקון "Actions for <project name>" בשורה,
+  // שהשם הנגיש שלו מכיל את שם הפרויקט.
   const projectCell = page.getByRole('cell', { name: projectName, exact: true });
   await expect(projectCell).toBeVisible();
   await projectCell.click();

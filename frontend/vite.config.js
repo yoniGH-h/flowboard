@@ -5,10 +5,10 @@ import { defineConfig } from 'vite';
 export default defineConfig({
   plugins: [react()],
   server: {
-    // Without an explicit host, Vite binds to the "localhost" hostname, which on some
-    // Windows setups resolves to IPv6-only (::1) - a browser that tries 127.0.0.1 first
-    // (IPv4) then gets a connection refused / "Network Error" even though the server is
-    // actually running. Binding to the IPv4 loopback explicitly avoids that.
+    // בלי host מפורש, Vite נקשר לשם "localhost", שבחלק מהתקנות
+    // Windows מתורגם ל-IPv6 בלבד (::1) - דפדפן שמנסה קודם 127.0.0.1
+    // (IPv4) מקבל אז סירוב חיבור / "Network Error" למרות שהשרת
+    // באמת רץ. קשירה מפורשת לכתובת ה-IPv4 המקומית מונעת את זה.
     host: '127.0.0.1',
   },
   test: {
@@ -16,13 +16,13 @@ export default defineConfig({
     globals: true,
     setupFiles: ['./src/test/setup.js'],
     css: true,
-    // Playwright's own *.spec.js files live under e2e/ and use @playwright/test's test/expect,
-    // not Vitest's - excluded here so Vitest doesn't try (and fail) to run them as unit tests.
+    // קובצי *.spec.js של Playwright נמצאים תחת e2e/ ומשתמשים ב-test/expect של @playwright/test,
+    // ולא של Vitest - הם מוחרגים כאן כדי ש-Vitest לא ינסה (וייכשל) להריץ אותם כבדיקות יחידה.
     exclude: ['e2e/**', 'node_modules/**'],
-    // The project path contains non-ASCII (Hebrew) characters and spaces. Vitest's default
-    // worker pool communicates over an internal `fetch()`-based RPC that hangs for minutes
-    // then times out against a path like that - `forks` (plain child_process.fork, no
-    // fetch-based URL round-trip) sidesteps it entirely.
+    // נתיב הפרויקט מכיל תווים שאינם ASCII (עברית) ורווחים. מאגר התהליכים של
+    // Vitest כברירת מחדל מתקשר דרך RPC פנימי מבוסס fetch(), שנתקע לדקות
+    // ואז נכשל בזמן קצוב מול נתיב כזה - forks (שימוש ב-child_process.fork רגיל, בלי
+    // מעבר דרך כתובת) עוקף את הבעיה לגמרי.
     pool: 'forks',
   },
 });

@@ -7,14 +7,14 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as ReTooltip, Res
 import { useRiskHistory } from '../../lib/queries';
 import { formatDate } from '../../lib/format';
 
-// The project's delay-risk score over the last 30 days (one point per day, recorded by the
-// server). The dashed lines are the LOW / MEDIUM / HIGH thresholds of RiskBadge.
+// ציון הסיכון של הפרויקט ב-30 הימים האחרונים (נקודה לכל יום, נרשמת על ידי
+// השרת). הקווים המקווקווים הם הספים LOW / MEDIUM / HIGH של RiskBadge.
 // גרף קו של ציון הסיכון היומי של פרויקט.
 // נקרא מ: ProjectOverviewPage.jsx
 export function RiskTrendChart({ projectId }) {
   const { data: history, isError } = useRiskHistory(projectId);
 
-  // Needs at least two days to be a trend; hidden on backends without risk history.
+  // צריך לפחות יומיים כדי שתהיה מגמה; מוסתר כשאין היסטוריית סיכון.
   if (isError || !history || history.length < 2) return null;
 
   const points = history.map((h) => ({ day: formatDate(h.day), score: h.riskScore }));

@@ -37,12 +37,12 @@ export function RolesPermissionsPage() {
   return <EditablePermissionMatrix matrix={matrix} />;
 }
 
-// ---------- Editable matrix ----------
+// ---------- הטבלה הניתנת לעריכה ----------
 
 function EditablePermissionMatrix({ matrix }) {
   const setRolePermission = useSetRolePermission();
 
-  // Rows grouped by area: Tasks, Projects, Collaboration...
+  // השורות מקובצות לפי תחום: משימות, פרויקטים, שיתוף פעולה...
   const groups = useMemo(() => {
     const map = new Map();
     for (const p of matrix.permissions) {

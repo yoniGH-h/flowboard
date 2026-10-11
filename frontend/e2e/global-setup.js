@@ -3,9 +3,9 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { E2E_DATABASE_URL } from '../playwright.config.js';
 
-// Prepares the flowboard_e2e database before the API webServer boots: drops and re-creates it,
-// applies the Prisma migrations and loads the demo data (which includes the 4 fixed roles that
-// sign-up needs). Runs inside backend-express so it can use that project's pg / Prisma.
+// מכין את המסד flowboard_e2e לפני שהשרת של הבדיקות עולה: מוחק ויוצר אותו מחדש,
+// מריץ את ה-migrations של Prisma וטוען את נתוני הדמו (שכוללים את 4 התפקידים הקבועים
+// שההרשמה צריכה). רץ מתוך backend-express כדי להשתמש ב-pg וב-Prisma של הפרויקט ההוא.
 export default function globalSetup() {
   const dirname = path.dirname(fileURLToPath(import.meta.url));
   const backendDir = path.resolve(dirname, '../../backend-express');
@@ -24,6 +24,6 @@ export default function globalSetup() {
 
   const prismaCli = path.join(backendDir, 'node_modules/prisma/build/index.js');
   execFileSync(process.execPath, [prismaCli, 'migrate', 'deploy'], { cwd: backendDir, env, stdio: 'inherit' });
-  // The seed prints every demo account; keep the test output short.
+  // נתוני הדמו מדפיסים כל חשבון דמו; שומרים על פלט בדיקות קצר.
   execFileSync(process.execPath, ['prisma/seed.js'], { cwd: backendDir, env, stdio: ['ignore', 'ignore', 'inherit'] });
 }

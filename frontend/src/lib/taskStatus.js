@@ -1,9 +1,9 @@
 // תפקיד הקובץ: בדיקות מועד של משימה.
 // משתמשים בו: TaskRow.jsx, PersonalDashboardPage.jsx, KanbanBoardPage.jsx, KanbanTaskCard.jsx +2
 
-// Shared overdue/due-soon logic evaluated against the real current
-// time, so every screen uses a consistent clock.
-// wired to real task data.
+// לוגיקה משותפת של "באיחור" ו"מועד מתקרב", מחושבת מול השעה האמיתית
+// הנוכחית, כך שכל המסכים משתמשים באותו שעון
+// ובנתוני המשימות האמיתיים.
 // האם המשימה באיחור.
 // נקרא מ: TaskRow.jsx, PersonalDashboardPage.jsx, KanbanBoardPage.jsx, KanbanTaskCard.jsx +2
 export function isOverdue(task) {

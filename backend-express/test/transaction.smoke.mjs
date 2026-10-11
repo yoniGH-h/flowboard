@@ -1,10 +1,10 @@
-// Applying a decision is all-or-nothing (spec section 8.3). Runs against a freshly seeded
-// database (DATABASE_URL), calling the planning service directly:
-//   1. a decision whose LAST step fails leaves no trace: the member it added, the tasks it
-//      deferred and the notification it created are all rolled back;
-//   2. the same decision with valid input is applied completely;
-//   3. work queued with afterCommit (pushing notifications to browsers) runs only on commit.
-// Usage: npm run test:transaction
+// ביצוע החלטה הוא "הכל או כלום" (סעיף 8.3 במסמך האפיון). רצה מול מסד עם נתוני דמו טריים
+// (DATABASE_URL), וקוראת ישירות ל-service של התכנון:
+//   1. החלטה שהשלב האחרון שלה נכשל לא משאירה עקבות: חבר הצוות שנוסף, המשימות
+//      שנדחו וההתראה שנוצרה - כולם מבוטלים;
+//   2. אותה החלטה עם קלט תקין מתבצעת במלואה;
+//   3. עבודה שנכנסה לתור עם afterCommit (שליחת התראות לדפדפנים) רצה רק אחרי שמירה.
+// שימוש: npm run test:transaction
 import 'dotenv/config';
 import assert from 'node:assert/strict';
 import jwt from 'jsonwebtoken';
@@ -25,7 +25,7 @@ async function check(name, fn) {
   }
 }
 
-// The acting manager, exactly as requireAuth builds it.
+// המנהל שמבצע את הפעולה, בדיוק כמו ש-requireAuth בונה אותו.
 const daniel = await prisma.user.findUniqueOrThrow({ where: { email: 'daniel.cho@nimbusdigital.io' } });
 const token = jwt.sign({ sub: daniel.id, email: daniel.email, organizationId: daniel.organizationId, roles: [] }, config.jwt.accessSecret);
 const actor = await authenticateAccessToken(token);
@@ -56,9 +56,9 @@ await check('setup: one person to add and two tasks to defer', async () => {
 
 await check('a decision whose last step fails is rolled back completely', async () => {
   const before = await snapshot();
-  // An invalid target date gets past the planning model (the API route would reject it; the
-  // service is called directly here) and fails only when the project is updated - the last
-  // change, after the member was added and both tasks were deferred.
+  // תאריך יעד לא תקין עובר את מודל התכנון (הנתיב ב-API היה דוחה אותו; כאן
+  // קוראים ל-service ישירות) ונכשל רק כשמעדכנים את הפרויקט - השינוי
+  // האחרון, אחרי שחבר הצוות נוסף ושתי המשימות נדחו.
   await assert.rejects(
     planning.applyDecision(actor, project.id, { changes: { ...changes, newTargetDate: new Date(Number.NaN) }, source: 'SIMULATOR', note: 'rollback test' }),
   );
