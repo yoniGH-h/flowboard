@@ -1,9 +1,14 @@
+// תפקיד הקובץ: נתיב התובנות של פרויקט.
+// משתמשים בו: app.js
+
 import { Router } from 'express';
 import { z } from 'zod';
 import { requirePermission } from '../../middleware/auth.js';
 import { parse, uuid } from '../../utils/validate.js';
 import { getInsights } from './insights.service.js';
 
+// הראוטר של התובנות.
+// נקרא מ: app.js
 export const insightsRouter = Router();
 
 // GET /api/insights?projectId= - forecast, estimate accuracy, bottlenecks, risk trend and

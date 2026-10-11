@@ -1,3 +1,6 @@
+// תפקיד הקובץ: יצירת חיבור Socket.IO לשרת, עם האסימון.
+// משתמשים בו: useNotificationsSocket.js
+
 import { io } from 'socket.io-client';
 import { getAccessToken } from '../api/session';
 
@@ -12,6 +15,8 @@ const SERVER_BASE = (import.meta.env.VITE_API_URL ?? 'http://localhost:3000/api'
 // A fresh connection per call, so React StrictMode's mount -> unmount -> mount cycle never
 // reuses a socket that is still closing. The token is read on every (re)connect, so a
 // refreshed access token is picked up automatically after a dropped connection.
+// יוצר חיבור ומחזיר ארבע פעולות: on, off, start, stop.
+// נקרא מ: useNotificationsSocket.js
 export function createNotificationsConnection() {
   const socket = io(SERVER_BASE || undefined, {
     autoConnect: false,

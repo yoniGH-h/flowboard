@@ -1,3 +1,6 @@
+// תפקיד הקובץ: החיבור היחיד למסד הנתונים (Prisma), ותמיכה בטרנזקציה שעוברת בין כמה services.
+// משתמשים בו: app.js, auth.js, attachments.routes.js, audit-log.service.js +19
+
 // One shared Prisma client for the whole app. Prisma 7 always talks to Postgres through an
 // explicit driver adapter (@prisma/adapter-pg), not a URL inside schema.prisma.
 import { AsyncLocalStorage } from 'node:async_hooks';
@@ -17,6 +20,8 @@ const client = new PrismaClient({ adapter });
 // browser) is queued with afterCommit() and runs only if the transaction commits.
 const context = new AsyncLocalStorage();
 
+// מריץ פונקציה בתוך טרנזקציה אחת: הכל נשמר או הכל מתבטל.
+// נקרא מ: planning.service.js
 export async function inTransaction(fn) {
   const afterCommitQueue = [];
   const result = await client.$transaction((tx) => context.run({ tx, afterCommitQueue }, fn), {
@@ -27,12 +32,16 @@ export async function inTransaction(fn) {
 }
 
 // Runs `task` now, or - inside inTransaction - right after the transaction commits.
+// מריץ פעולה רק אחרי שהטרנזקציה נשמרה (או מיד, אם אין טרנזקציה).
+// נקרא מ: notifications.service.js
 export function afterCommit(task) {
   const store = context.getStore();
   if (store) store.afterCommitQueue.push(task);
   else task();
 }
 
+// הלקוח של מסד הנתונים שכל השרת משתמש בו; בתוך טרנזקציה מפנה אליה אוטומטית.
+// נקרא מ: app.js, auth.js, attachments.routes.js, audit-log.service.js +19
 export const prisma = new Proxy(client, {
   get(target, prop) {
     const tx = context.getStore()?.tx;

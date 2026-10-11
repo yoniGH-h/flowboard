@@ -1,3 +1,6 @@
+// תפקיד הקובץ: מסך "המשימות שלי".
+// משתמשים בו: App.jsx
+
 import { useMemo, useState } from 'react';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
@@ -31,6 +34,8 @@ import { useOrganizationUsers, useProjects, useTasks } from '../../lib/queries';
 import { isDueSoon, isOverdue } from '../../lib/taskStatus';
 import { formatDateShort } from '../../lib/format';
 
+// המשימות שמשויכות למשתמש, עם סינון ומיון.
+// נקרא מ: App.jsx
 export function MyTasksPage() {
   const { user } = useAuth();
   const navigate = useNavigate();

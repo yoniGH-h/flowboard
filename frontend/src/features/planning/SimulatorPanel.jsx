@@ -1,3 +1,6 @@
+// תפקיד הקובץ: סימולטור "מה אם".
+// משתמשים בו: DecisionCenterPage.jsx
+
 import { useEffect, useMemo, useState } from 'react';
 import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
@@ -19,6 +22,8 @@ import { ApplyDecisionDialog } from './ApplyDecisionDialog';
 
 // The what-if simulator: pick changes on the left, see their predicted effect on the right.
 // Nothing is saved until "Apply" - the server only calculates.
+// בחירת שינויים והצגת ההשפעה שלהם, בלי לשמור.
+// נקרא מ: DecisionCenterPage.jsx
 export function SimulatorPanel({ projectId, view, initialChanges }) {
   const simulation = useSimulation();
   const [reassign, setReassign] = useState(initialChanges?.reassign ?? []);

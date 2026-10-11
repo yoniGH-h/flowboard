@@ -1,3 +1,6 @@
+// תפקיד הקובץ: סיכומים למסכי הניהול: עומס צוות, דשבורד ודוחות.
+// משתמשים בו: tasks.routes.js
+
 // Server-side rollups for the management screens (Team Workload, Management Dashboard,
 // Reports & Analytics). Counting and summing is done by the database (count / groupBy)
 // instead of sending every task to the browser and adding them up there.
@@ -37,6 +40,8 @@ async function assertManagedProject(actor, projectId) {
 }
 
 // Team Workload: per assignee - open tasks, overdue tasks, estimated hours.
+// מחשב לכל עובד משימות פתוחות, איחורים ושעות.
+// נקרא מ: tasks.routes.js
 export async function getWorkloadSummary(actor, projectId) {
   await assertManagedProject(actor, projectId);
 
@@ -72,6 +77,8 @@ export async function getWorkloadSummary(actor, projectId) {
 
 // Management Dashboard: status counts, this week's completion, the completion trend and the
 // top priority tasks.
+// מחשב את נתוני הדשבורד הניהולי, כולל גרף ההתקדמות.
+// נקרא מ: tasks.routes.js
 export async function getDashboardSummary(actor, projectId) {
   await assertManagedProject(actor, projectId);
 
@@ -161,6 +168,8 @@ export async function getDashboardSummary(actor, projectId) {
 // Reports & Analytics. Two scopes on purpose: the KPI numbers follow the assignee and
 // date-range filters, while `userActivity` always covers the whole project scope (every
 // member's overall numbers), which is what the "User activity report" table shows.
+// מחשב את נתוני מסך הדוחות לפי הסינון.
+// נקרא מ: tasks.routes.js
 export async function getReportsSummary(actor, filters) {
   await assertManagedProject(actor, filters.projectId);
 

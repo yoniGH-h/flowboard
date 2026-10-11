@@ -1,3 +1,6 @@
+// תפקיד הקובץ: הדשבורד האישי.
+// משתמשים בו: App.jsx
+
 import { useMemo } from 'react';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
@@ -23,6 +26,8 @@ import { isDueSoon, isOverdue } from '../../lib/taskStatus';
 import { formatRelativeToNow } from '../../lib/format';
 import { useNotifications } from '../../lib/queries';
 
+// המשימות, הפרויקטים והפעילות של המשתמש.
+// נקרא מ: App.jsx
 export function PersonalDashboardPage() {
   const { user } = useAuth();
   const navigate = useNavigate();

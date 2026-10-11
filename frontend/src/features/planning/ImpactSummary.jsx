@@ -1,3 +1,6 @@
+// תפקיד הקובץ: סיכום השפעה: לפני ואחרי.
+// משתמשים בו: RecommendationsPanel.jsx, SimulatorPanel.jsx
+
 import Stack from '@mui/material/Stack';
 import Chip from '@mui/material/Chip';
 import Table from '@mui/material/Table';
@@ -25,6 +28,8 @@ function deltaColor(before, after) {
   return after < before ? 'success.main' : 'error.main';
 }
 
+// השוואת סיכון, צפי ועומס לפני ואחרי שינוי.
+// נקרא מ: RecommendationsPanel.jsx, SimulatorPanel.jsx
 export function ImpactSummary({ before, after, loadChanges = [], compact = false }) {
   if (compact) {
     const late = (f) => (f.daysLate == null ? f.status : f.daysLate > 0 ? `+${f.daysLate}d` : 'on time');

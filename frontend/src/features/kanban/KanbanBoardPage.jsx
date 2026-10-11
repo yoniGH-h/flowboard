@@ -1,3 +1,6 @@
+// תפקיד הקובץ: מסך לוח ה-Kanban.
+// משתמשים בו: App.jsx
+
 import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Box from '@mui/material/Box';
@@ -33,6 +36,8 @@ import { useBoard, useLabels, useMoveTask, useOrganizationUsers, useProject, use
 import { projectAbility } from '../../lib/permissions';
 import { isOverdue } from '../../lib/taskStatus';
 
+// הלוח: עמודות, כרטיסים, סינון וגרירה בין עמודות.
+// נקרא מ: App.jsx
 export function KanbanBoardPage() {
   const { projectId } = useParams();
   const { user, activeRole } = useAuth();

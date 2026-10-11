@@ -1,3 +1,6 @@
+// תפקיד הקובץ: מסך ההתחברות.
+// משתמשים בו: App.jsx, SignInPage.test.jsx
+
 import { lazy, Suspense, useState } from 'react';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
@@ -20,6 +23,8 @@ import { signIn } from '../../api/authApi';
 // and with it the accounts and the password - entirely.
 const DemoAccounts = import.meta.env.VITE_DEMO_MODE === 'true' ? lazy(() => import('../DemoAccounts')) : null;
 
+// טופס אימייל וסיסמה, עם בדיקת שדות והודעות שגיאה.
+// נקרא מ: App.jsx, SignInPage.test.jsx
 export function SignInPage() {
   const { signInWithResult } = useAuth();
   const navigate = useNavigate();

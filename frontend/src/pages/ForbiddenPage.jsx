@@ -1,8 +1,13 @@
+// תפקיד הקובץ: מסך 403: אין הרשאה.
+// משתמשים בו: App.jsx
+
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import { useNavigate } from 'react-router-dom';
 import { ForbiddenState } from '../components/common/States';
 
+// המסך שמוצג למי שאין לו הרשאה לעמוד.
+// נקרא מ: App.jsx
 export function ForbiddenPage() {
   const navigate = useNavigate();
   return (

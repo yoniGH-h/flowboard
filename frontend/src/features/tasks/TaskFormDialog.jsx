@@ -1,3 +1,6 @@
+// תפקיד הקובץ: טופס משימה חדשה.
+// משתמשים בו: KanbanBoardPage.jsx, TaskDetailsPage.jsx
+
 import { useState } from 'react';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -16,6 +19,8 @@ import { useAuth } from '../../auth/AuthContext';
 
 const PRIORITIES = ['LOW', 'MEDIUM', 'HIGH', 'URGENT'];
 
+// חלון יצירת משימה.
+// נקרא מ: KanbanBoardPage.jsx, TaskDetailsPage.jsx
 export function TaskFormDialog({ open, onClose, projectId, columns, defaultColumnId, members, labels, parentTaskId = null, titlePrefix = 'Create task' }) {
   const { user } = useAuth();
   const createTask = useCreateTask();

@@ -1,3 +1,6 @@
+// תפקיד הקובץ: רשימת ההמלצות.
+// משתמשים בו: DecisionCenterPage.jsx
+
 import { useState } from 'react';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -17,6 +20,8 @@ const TYPE_LABELS = { REBALANCE: 'Rebalance work', DEFER: 'Reduce scope', ADD_ME
 
 // Rule-based suggestions for this project, each already run through the simulator.
 // The manager decides: open it in the simulator to adjust, or apply it as is.
+// המלצות המערכת, עם פתיחה בסימולטור או ביצוע.
+// נקרא מ: DecisionCenterPage.jsx
 export function RecommendationsPanel({ projectId, onOpenInSimulator }) {
   const { data: recs, isLoading } = useRecommendations(projectId);
   const [applying, setApplying] = useState(null);

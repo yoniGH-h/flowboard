@@ -1,3 +1,6 @@
+// תפקיד הקובץ: מסך התפקידים וההרשאות.
+// משתמשים בו: App.jsx
+
 import { Fragment, useMemo } from 'react';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
@@ -24,6 +27,8 @@ import { ErrorState, LoadingState } from '../../components/common/States';
 import { usePermissionMatrix, useSetRolePermission } from '../../lib/queries';
 import { ROLE_LEVEL, SCOPE_LABELS } from '../../lib/permissions';
 
+// טבלת הרשאות לפי תפקיד, עם אפשרות לשנות.
+// נקרא מ: App.jsx
 export function RolesPermissionsPage() {
   const { data: matrix, isLoading, isError, refetch } = usePermissionMatrix();
 

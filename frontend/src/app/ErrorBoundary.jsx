@@ -1,9 +1,14 @@
+// תפקיד הקובץ: תופס שגיאה שקרתה בזמן ציור המסך ומציג הודעה במקום מסך לבן.
+// משתמשים בו: main.jsx
+
 import { Component } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 
+// רכיב שתופס שגיאות ציור של כל מה שבתוכו.
+// נקרא מ: main.jsx
 export class ErrorBoundary extends Component {
   state = { hasError: false };
 

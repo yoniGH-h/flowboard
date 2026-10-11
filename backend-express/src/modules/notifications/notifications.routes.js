@@ -1,6 +1,11 @@
+// תפקיד הקובץ: נתיבי ההתראות: רשימה וסימון כנקראו.
+// משתמשים בו: app.js
+
 import { Router } from 'express';
 import * as notificationsService from './notifications.service.js';
 
+// הראוטר של ההתראות.
+// נקרא מ: app.js
 export const notificationsRouter = Router();
 
 notificationsRouter.get('/', async (req, res) => {

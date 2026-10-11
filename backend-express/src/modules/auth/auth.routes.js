@@ -1,3 +1,6 @@
+// תפקיד הקובץ: נתיבי ההתחברות: הרשמה, כניסה, רענון, יציאה וסיסמאות; כולל העוגייה ומגבלת הקצב.
+// משתמשים בו: app.js
+
 import { Router } from 'express';
 import rateLimit from 'express-rate-limit';
 import { z } from 'zod';
@@ -84,6 +87,8 @@ const limit = (max) => {
 
 // ---------- Routes ----------
 
+// הראוטר של ההתחברות (נתיבים ציבוריים ברובם).
+// נקרא מ: app.js
 export const authRouter = Router();
 
 authRouter.post('/sign-up', async (req, res) => {

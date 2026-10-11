@@ -1,3 +1,6 @@
+// תפקיד הקובץ: לוגיקת ההתחברות: סיסמאות, אסימונים, נעילת חשבון ואיפוס סיסמה.
+// משתמשים בו: auth.routes.js
+
 import { randomBytes } from 'node:crypto';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
@@ -16,6 +19,8 @@ const AVATAR_COLORS = ['#2563EB', '#7C3AED', '#DB2777', '#059669', '#D97706', '#
 const randomAvatarColor = () => AVATAR_COLORS[Math.floor(Math.random() * AVATAR_COLORS.length)];
 
 // Sign up = create a brand-new organization with the caller as its first Org Admin.
+// הרשמה: יוצר ארגון חדש ואת המשתמש הראשון שלו כמנהל הארגון.
+// נקרא מ: auth.routes.js
 export async function signUp(dto) {
   const existingUser = await prisma.user.findUnique({ where: { email: dto.email } });
   if (existingUser) {
@@ -82,6 +87,8 @@ export async function signUp(dto) {
 }
 
 // Join an existing organization (by its slug) as an Employee.
+// הרשמה לארגון קיים כעובד.
+// נקרא מ: auth.routes.js
 export async function joinOrganization(dto) {
   const existingUser = await prisma.user.findUnique({ where: { email: dto.email } });
   if (existingUser) {
@@ -120,6 +127,8 @@ export async function joinOrganization(dto) {
   return issueSession(user.id, user.email, organization.id, ['EMPLOYEE']);
 }
 
+// כניסה: בודק סיסמה, מטפל בנעילה ומנפיק אסימונים.
+// נקרא מ: auth.routes.js
 export async function signIn(dto) {
   const user = await prisma.user.findUnique({
     where: { email: dto.email },
@@ -171,6 +180,8 @@ export async function signIn(dto) {
 
 // Refresh-token rotation: a refresh token works exactly once. Using it revokes it and issues
 // a brand-new pair, so a stolen-and-replayed token is rejected.
+// מחליף אסימון רענון תקף בזוג אסימונים חדש.
+// נקרא מ: auth.routes.js
 export async function refresh(refreshToken) {
   let payload;
   try {
@@ -205,6 +216,8 @@ export async function refresh(refreshToken) {
   );
 }
 
+// יציאה: מבטל את אסימון הרענון.
+// נקרא מ: auth.routes.js
 export async function logout(refreshToken) {
   try {
     const payload = jwt.verify(refreshToken, config.jwt.refreshSecret);
@@ -219,6 +232,8 @@ export async function logout(refreshToken) {
 
 // The current password must match. Wrong current password = 400 (not 401, which would make
 // the frontend try to refresh the session).
+// שינוי סיסמה למשתמש מחובר, וביטול שאר החיבורים שלו.
+// נקרא מ: auth.routes.js
 export async function changePassword(actor, dto) {
   const user = await prisma.user.findUnique({ where: { id: actor.userId } });
   if (!user || !(await bcrypt.compare(dto.currentPassword, user.passwordHash))) {
@@ -244,6 +259,8 @@ export async function changePassword(actor, dto) {
   return issueSession(user.id, user.email, user.organizationId, actor.roles);
 }
 
+// מבטל את כל אסימוני הרענון של משתמש.
+// נקרא מ: auth.routes.js
 export async function revokeAllSessions(userId) {
   await prisma.refreshToken.updateMany({
     where: { userId, revokedAt: null },
@@ -253,6 +270,8 @@ export async function revokeAllSessions(userId) {
 
 // Dev-only: there is no email provider, so the reset token is returned in the response
 // instead of being emailed (see docs/security.md).
+// יוצר אסימון חד-פעמי לאיפוס סיסמה.
+// נקרא מ: auth.routes.js
 export async function forgotPassword(dto) {
   const user = await prisma.user.findUnique({ where: { email: dto.email } });
   if (!user) {
@@ -272,6 +291,8 @@ export async function forgotPassword(dto) {
   return { resetToken: `${user.id}.${rawToken}` };
 }
 
+// קובע סיסמה חדשה לפי אסימון האיפוס.
+// נקרא מ: auth.routes.js
 export async function resetPassword(dto) {
   const [userId, rawToken] = dto.token.split('.');
   if (!userId || !rawToken) {

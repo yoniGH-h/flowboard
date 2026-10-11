@@ -1,3 +1,6 @@
+// תפקיד הקובץ: חוקי אוטומציה: ניהול החוקים, והמנוע שמפעיל אותם באירוע או בסריקה.
+// משתמשים בו: automation-rules.routes.js, tasks.service.js, server.js
+
 // "When X happens, do Y" rules. A rule stores three small JSON tags - trigger, optional
 // condition, and action - each shaped { type, label } (plus e.g. userId for ASSIGN_TO_USER).
 //
@@ -22,6 +25,8 @@ const jsonOrNull = (value) => (value === null ? Prisma.DbNull : value);
 
 // ---------- CRUD ----------
 
+// שולף את כל החוקים של הארגון.
+// נקרא מ: automation-rules.routes.js
 export function findForOrganization(organizationId) {
   return prisma.automationRule.findMany({ where: { organizationId }, orderBy: { createdAt: 'desc' } });
 }
@@ -34,6 +39,8 @@ async function assertProjectInOrg(actor, projectId) {
   if (!project) throw notFound('Project not found in your organization');
 }
 
+// יוצר חוק חדש.
+// נקרא מ: automation-rules.routes.js
 export async function create(actor, dto) {
   await assertProjectInOrg(actor, dto.projectId);
   return prisma.automationRule.create({
@@ -49,6 +56,8 @@ export async function create(actor, dto) {
   });
 }
 
+// מעדכן חוק קיים.
+// נקרא מ: automation-rules.routes.js
 export async function update(actor, ruleId, dto) {
   const rule = await requireRule(actor, ruleId);
   await assertProjectInOrg(actor, dto.projectId);
@@ -65,11 +74,15 @@ export async function update(actor, ruleId, dto) {
   });
 }
 
+// מפעיל או מכבה חוק.
+// נקרא מ: automation-rules.routes.js
 export async function toggle(actor, ruleId, enabled) {
   const rule = await requireRule(actor, ruleId);
   return prisma.automationRule.update({ where: { id: rule.id }, data: { enabled } });
 }
 
+// מוחק חוק.
+// נקרא מ: automation-rules.routes.js
 export async function remove(actor, ruleId) {
   const rule = await requireRule(actor, ruleId);
   await prisma.automationRule.delete({ where: { id: rule.id } });
@@ -77,6 +90,8 @@ export async function remove(actor, ruleId) {
 }
 
 // The rule's run history (success / failure per task).
+// שולף את היסטוריית ההרצות של חוק.
+// נקרא מ: automation-rules.routes.js
 export async function executions(actor, ruleId) {
   const rule = await requireRule(actor, ruleId);
   return prisma.automationRuleExecution.findMany({
@@ -98,6 +113,8 @@ async function requireRule(actor, ruleId) {
 
 // Called by tasks.service move() after a card changes column. Fires on every entry into
 // the column (each move is its own event, so there is no "fire once" bookkeeping here).
+// מפעיל חוקים של "משימה נכנסה לעמודה".
+// נקרא מ: tasks.service.js
 export async function handleTaskMoved(taskId, newCategory) {
   if (newCategory !== 'REVIEW') return;
 
@@ -109,6 +126,8 @@ export async function handleTaskMoved(taskId, newCategory) {
 }
 
 // Called by tasks.service move() when a subtask reaches Done.
+// מפעיל חוקים של "כל תת-המשימות הושלמו".
+// נקרא מ: tasks.service.js
 export async function handleSubtaskCompleted(parentTaskId) {
   const parent = await prisma.task.findUnique({
     where: { id: parentTaskId },
@@ -125,6 +144,8 @@ export async function handleSubtaskCompleted(parentTaskId) {
 // Run every 15 minutes by the scheduler (server.js), and on demand by POST /run-now.
 // Each (rule, task) pair fires at most once - recorded in AutomationRuleFiring - so a task
 // that stays overdue for days doesn't notify on every scan.
+// סריקה תקופתית: חוקים של משימה באיחור ושל מועד מתקרב.
+// נקרא מ: automation-rules.routes.js, server.js
 export async function runScans(organizationId) {
   let actionsExecuted = 0;
 

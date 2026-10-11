@@ -1,3 +1,6 @@
+// תפקיד הקובץ: עמודה אחת בלוח.
+// משתמשים בו: KanbanBoardPage.jsx
+
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
@@ -7,6 +10,8 @@ import { useDroppable } from '@dnd-kit/core';
 import { KanbanTaskCard } from './KanbanTaskCard';
 import { EmptyState } from '../../components/common/States';
 
+// עמודה שאפשר לשחרר בה כרטיס, עם מונה ומגבלת WIP.
+// נקרא מ: KanbanBoardPage.jsx
 export function KanbanColumn({ column, tasks, userMap, labelMap, canDragTask }) {
   const { setNodeRef, isOver } = useDroppable({ id: column.id });
   const overLimit = !!column.wipLimit && tasks.length > column.wipLimit;

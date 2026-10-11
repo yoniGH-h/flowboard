@@ -1,3 +1,6 @@
+// תפקיד הקובץ: מרכז ההחלטות: זיהוי בעיה, המלצה, סימולציה, ביצוע ומעקב.
+// משתמשים בו: planning.routes.js
+
 // The Decision Center: detect a problem -> recommend a fix -> simulate its effect ->
 // apply it -> measure what actually happened.
 //
@@ -41,6 +44,8 @@ const brief = (e) => ({
 
 // ---------- View + simulation ----------
 
+// מחזיר את תמונת המצב של הפרויקט למסך התכנון.
+// נקרא מ: planning.routes.js
 export async function getPlanningView(actor, projectId) {
   await requirePlanning(actor, projectId);
   const state = await loadProjectState(actor, projectId);
@@ -74,6 +79,8 @@ export async function getPlanningView(actor, projectId) {
   };
 }
 
+// מחשב "לפני ואחרי" לשינויים מוצעים, בלי לשמור.
+// נקרא מ: planning.routes.js
 export async function simulate(actor, projectId, changes) {
   await requirePlanning(actor, projectId);
   const state = await loadProjectState(actor, projectId);
@@ -107,6 +114,8 @@ function loadChanges(before, after) {
 //   ADD_MEMBER  the project is forecast late and someone in the organization has room ->
 //               suggest adding them
 // Each one is run through the simulator, so it comes with its predicted effect.
+// מציע פעולות לשיפור, כל אחת עם ההשפעה החזויה שלה.
+// נקרא מ: planning.routes.js
 export async function recommend(actor, projectId) {
   await requirePlanning(actor, projectId);
   const state = await loadProjectState(actor, projectId);
@@ -212,6 +221,8 @@ export async function recommend(actor, projectId) {
 
 // ---------- Applying a decision ----------
 
+// מבצע החלטה בפועל בתוך טרנזקציה אחת, ורושם אותה.
+// נקרא מ: planning.routes.js
 export async function applyDecision(actor, projectId, { changes, note, source }) {
   await requirePlanning(actor, projectId);
   const state = await loadProjectState(actor, projectId);
@@ -277,6 +288,8 @@ const serializeChanges = (changes) => ({
 
 // Decisions in the projects the actor manages, each with its effect so far: the risk and
 // forecast when it was taken, what the model predicted, and where they are now.
+// שולף את ההחלטות שבוצעו ומה קרה מאז.
+// נקרא מ: planning.routes.js
 export async function listDecisions(actor, projectId) {
   if (projectId) await requirePlanning(actor, projectId);
   const decisions = await prisma.decision.findMany({
@@ -327,6 +340,8 @@ export async function listDecisions(actor, projectId) {
 }
 
 // Decisions can only be recorded by applying them, but a manager may add a note afterwards.
+// מעדכן את ההערה של החלטה.
+// נקרא מ: planning.routes.js
 export async function updateDecisionNote(actor, decisionId, note) {
   const decision = await prisma.decision.findFirst({ where: { id: decisionId, organizationId: actor.organizationId } });
   if (!decision) throw notFound('Decision not found');

@@ -1,3 +1,6 @@
+// תפקיד הקובץ: מצבי מסך משותפים: ריק, טעינה, שגיאה ואין הרשאה.
+// משתמשים בו: AuditLogPage.jsx, AutomationRulesPanel.jsx, RolesPermissionsPage.jsx, UserManagementPage.jsx +18
+
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
@@ -10,6 +13,8 @@ import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import SearchOffOutlinedIcon from '@mui/icons-material/SearchOffOutlined';
 
+// מוצג כשאין נתונים להציג.
+// נקרא מ: AutomationRulesPanel.jsx, ActivityFeed.jsx, PersonalDashboardPage.jsx, KanbanBoardPage.jsx +9
 export function EmptyState({ icon, title, description, action }) {
   return (
     <Box
@@ -39,6 +44,8 @@ export function EmptyState({ icon, title, description, action }) {
   );
 }
 
+// מחוון טעינה עם טקסט.
+// נקרא מ: AuditLogPage.jsx, RolesPermissionsPage.jsx, UserManagementPage.jsx, ManagementDashboardPage.jsx +13
 export function LoadingState({ label = 'Loading…' }) {
   return (
     <Stack alignItems="center" justifyContent="center" spacing={1.5} sx={{ py: 6 }} role="status" aria-live="polite">
@@ -50,6 +57,8 @@ export function LoadingState({ label = 'Loading…' }) {
   );
 }
 
+// שלדי כרטיסים בזמן טעינה.
+// נקרא מ: אין שימוש כרגע
 export function CardSkeletonGrid({ count = 4 }) {
   return (
     <Stack direction="row" spacing={2} flexWrap="wrap" useFlexGap>
@@ -60,6 +69,8 @@ export function CardSkeletonGrid({ count = 4 }) {
   );
 }
 
+// הודעת שגיאה עם כפתור "נסה שוב".
+// נקרא מ: RolesPermissionsPage.jsx
 export function ErrorState({ title = 'Something went wrong', description, onRetry }) {
   return (
     <EmptyState
@@ -77,6 +88,8 @@ export function ErrorState({ title = 'Something went wrong', description, onRetr
   );
 }
 
+// הודעה על בעיית תקשורת עם השרת.
+// נקרא מ: אין שימוש כרגע
 export function NetworkErrorState({ onRetry }) {
   return (
     <EmptyState
@@ -94,6 +107,8 @@ export function NetworkErrorState({ onRetry }) {
   );
 }
 
+// מוצג כשהחיפוש לא החזיר תוצאות.
+// נקרא מ: AuditLogPage.jsx, UserManagementPage.jsx, MyProjectsPage.jsx, ProjectManagementPage.jsx +1
 export function NoSearchResultsState({ onClear }) {
   return (
     <EmptyState
@@ -111,6 +126,8 @@ export function NoSearchResultsState({ onClear }) {
   );
 }
 
+// מוצג כשאין הרשאה לתוכן.
+// נקרא מ: ForbiddenPage.jsx
 export function ForbiddenState() {
   return (
     <EmptyState

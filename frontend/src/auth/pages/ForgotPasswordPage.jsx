@@ -1,3 +1,6 @@
+// תפקיד הקובץ: מסך "שכחתי סיסמה".
+// משתמשים בו: App.jsx
+
 import { useState } from 'react';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
@@ -9,6 +12,8 @@ import { Link as RouterLink } from 'react-router-dom';
 import { AuthLayout } from '../AuthLayout';
 import { requestPasswordReset } from '../../api/authApi';
 
+// טופס לבקשת איפוס סיסמה.
+// נקרא מ: App.jsx
 export function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
   const [error, setError] = useState(null);

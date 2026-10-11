@@ -1,3 +1,6 @@
+// תפקיד הקובץ: הסרגל העליון.
+// משתמשים בו: AppShell.jsx
+
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
@@ -10,6 +13,8 @@ import { UserMenu } from './UserMenu';
 import { RoleSwitcher } from './RoleSwitcher';
 import { useAuth } from '../auth/AuthContext';
 
+// חיפוש, החלפת תפקיד, פעמון ותפריט משתמש.
+// נקרא מ: AppShell.jsx
 export function Topbar({ onOpenMobileNav }) {
   const { organization } = useAuth();
   return (

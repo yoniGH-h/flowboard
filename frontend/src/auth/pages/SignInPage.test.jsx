@@ -1,3 +1,6 @@
+// תפקיד הקובץ: בדיקות יחידה למסך ההתחברות.
+// משתמשים בו: מורץ על ידי Vitest (npm test)
+
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';

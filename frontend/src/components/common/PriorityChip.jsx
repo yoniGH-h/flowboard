@@ -1,3 +1,6 @@
+// תפקיד הקובץ: תגית עדיפות של משימה.
+// משתמשים בו: TaskRow.jsx, ManagementDashboardPage.jsx, KanbanTaskCard.jsx, MyTasksPage.jsx +1
+
 import Chip from '@mui/material/Chip';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
@@ -11,6 +14,8 @@ const CONFIG = {
   URGENT: { label: 'Urgent', color: '#C62828', bg: '#FBE9E9', icon: <PriorityHighIcon sx={{ fontSize: 14 }} /> },
 };
 
+// תגית צבעונית לפי עדיפות.
+// נקרא מ: TaskRow.jsx, ManagementDashboardPage.jsx, KanbanTaskCard.jsx, MyTasksPage.jsx +1
 export function PriorityChip({ priority }) {
   const cfg = CONFIG[priority];
   return (

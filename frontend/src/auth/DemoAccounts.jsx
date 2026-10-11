@@ -1,3 +1,6 @@
+// תפקיד הקובץ: כפתורי כניסה מהירה לחשבונות הדמו (רק במצב דמו).
+// משתמשים בו: SignInPage.jsx, SignInPage.test.jsx
+
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
@@ -15,6 +18,8 @@ const DEMO_ACCOUNTS = [
   { email: 'grace.kim@harborline.com', label: 'Grace Kim — Org Admin (Harborline Logistics)' },
 ];
 
+// רשימת חשבונות הדמו לכניסה בלחיצה.
+// נקרא מ: SignInPage.jsx, SignInPage.test.jsx
 export default function DemoAccounts({ onSignIn, disabled }) {
   return (
     <>

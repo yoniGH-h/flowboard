@@ -1,3 +1,6 @@
+// תפקיד הקובץ: נתיבי המשימות: יצירה, עדכון, הזזה, שיוך, תלויות ודוחות.
+// משתמשים בו: app.js
+
 import { Router } from 'express';
 import { z } from 'zod';
 import { requirePermission } from '../../middleware/auth.js';
@@ -80,6 +83,8 @@ const addDependencySchema = z.strictObject({
 
 // Task actions are checked per project inside tasks.service.js (tasks.manage / tasks.create /
 // tasks.move.own), because the same user may manage one project and only work in another.
+// הראוטר של המשימות.
+// נקרא מ: app.js
 export const tasksRouter = Router();
 const canViewReports = requirePermission('reports.view');
 

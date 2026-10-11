@@ -1,3 +1,6 @@
+// תפקיד הקובץ: נתיבי מרכז ההחלטות: תמונת מצב, סימולציה, המלצות והחלטות.
+// משתמשים בו: app.js
+
 import { Router } from 'express';
 import { z } from 'zod';
 import { requirePermission } from '../../middleware/auth.js';
@@ -28,6 +31,8 @@ const noteSchema = z.strictObject({ note: z.string().max(500) });
 
 // Decision Center. Needs reports.view; each project additionally needs tasks.manage there
 // (checked in the service - a Project Manager can only plan their own projects).
+// הראוטר של מרכז ההחלטות.
+// נקרא מ: app.js
 export const planningRouter = Router();
 planningRouter.use(requirePermission('reports.view'));
 

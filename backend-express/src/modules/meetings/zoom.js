@@ -1,3 +1,6 @@
+// תפקיד הקובץ: לקוח מינימלי ל-Zoom API בשיטת Server-to-Server OAuth.
+// משתמשים בו: meetings.routes.js
+
 // A minimal Zoom API client (Server-to-Server OAuth app).
 //
 // Setup: create a "Server-to-Server OAuth" app at https://marketplace.zoom.us, give it the
@@ -11,6 +14,8 @@ import { HttpError } from '../../utils/httpError.js';
 const TOKEN_URL = 'https://zoom.us/oauth/token';
 const API_URL = 'https://api.zoom.us/v2';
 
+// בודק אם שלושת מפתחות Zoom הוגדרו.
+// נקרא מ: meetings.routes.js
 export const isZoomConfigured = () => Boolean(config.zoom.accountId && config.zoom.clientId && config.zoom.clientSecret);
 
 // Zoom access tokens live for an hour; reuse one until shortly before it expires.
@@ -35,6 +40,8 @@ async function getAccessToken() {
 // Creates an instant meeting. mode 'voice' starts with every camera off.
 // Returns { id, joinUrl, startUrl } - startUrl lets the host in without signing in to
 // Zoom, so it must only ever be given to the person who started the call.
+// יוצר פגישה מיידית ב-Zoom ומחזיר את הקישורים.
+// נקרא מ: meetings.routes.js
 export async function createInstantMeeting({ topic, mode }) {
   const video = mode === 'video';
   const token = await getAccessToken();

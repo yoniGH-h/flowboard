@@ -1,9 +1,14 @@
+// תפקיד הקובץ: מסך 404: העמוד לא נמצא.
+// משתמשים בו: App.jsx
+
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import SearchOffOutlinedIcon from '@mui/icons-material/SearchOffOutlined';
 import { useNavigate } from 'react-router-dom';
 
+// המסך שמוצג לכתובת שלא קיימת.
+// נקרא מ: App.jsx
 export function NotFoundPage() {
   const navigate = useNavigate();
   return (

@@ -1,3 +1,6 @@
+// תפקיד הקובץ: שורת משימה ברשימה.
+// משתמשים בו: PersonalDashboardPage.jsx, MyTasksPage.jsx
+
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
@@ -11,6 +14,8 @@ import { UserAvatar } from './UserAvatar';
 import { formatDateShort } from '../../lib/format';
 import { isOverdue } from '../../lib/taskStatus';
 
+// שורה עם כותרת, אחראי, עדיפות ומועד; לחיצה פותחת את המשימה.
+// נקרא מ: PersonalDashboardPage.jsx, MyTasksPage.jsx
 export function TaskRow({ task, assignee, projectName, showProject = false }) {
   const navigate = useNavigate();
   const overdue = isOverdue(task);

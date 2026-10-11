@@ -1,3 +1,6 @@
+// תפקיד הקובץ: רשימת הפעילות האחרונה.
+// משתמשים בו: ManagementDashboardPage.jsx
+
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -43,6 +46,8 @@ function titleFor(entry) {
     .join(' ');
 }
 
+// רשימת אירועים עם מבצע, פעולה וזמן.
+// נקרא מ: ManagementDashboardPage.jsx
 export function ActivityFeed({ entries, userMap }) {
   return (
     <Card sx={{ height: '100%' }}>

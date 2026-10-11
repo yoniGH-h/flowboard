@@ -1,3 +1,6 @@
+// תפקיד הקובץ: קטלוג ההרשאות: כל הרשאה שהשרת בודק, ואילו תפקידים מקבלים אותה כברירת מחדל.
+// משתמשים בו: auth.js, permissions.service.js, projects.service.js, effective.js
+
 // The permission catalog - every permission the server checks, and which roles get it by
 // default. This file is the single source of truth: the seed copies it into the database,
 // and the Roles & Permissions screen shows it.
@@ -15,6 +18,8 @@
 //   2. give a single employee an exception - an extra permission or a removed one,
 //      optionally until an expiry date.
 
+// רשימת כל ההרשאות: מפתח, קבוצה, היקף ותיאור.
+// נקרא מ: permissions.service.js, effective.js
 export const PERMISSIONS = [
   // --- Work inside projects the user belongs to ---
   // `includedIn`: a stronger permission that already covers this one (whoever has tasks.manage
@@ -46,7 +51,11 @@ export const PERMISSIONS = [
   { key: 'system.audit.view', group: 'Platform', scope: 'system', label: 'System activity', description: 'Read the cross-organization activity feed.' },
 ];
 
+// קבוצת כל מפתחות ההרשאה, לבדיקה מהירה.
+// נקרא מ: auth.js
 export const PERMISSION_KEYS = new Set(PERMISSIONS.map((p) => p.key));
+// מפה ממפתח הרשאה אל ההגדרה שלה.
+// נקרא מ: permissions.service.js, projects.service.js
 export const PERMISSION_BY_KEY = new Map(PERMISSIONS.map((p) => [p.key, p]));
 
 // Default permissions of each role. A user with several roles gets the union.
@@ -71,19 +80,29 @@ const ORG_ADMIN = [
 ];
 const SYSTEM_ADMIN = [...ORG_ADMIN, 'organizations.manage', 'system.audit.view'];
 
+// הרשאות ברירת המחדל של כל תפקיד.
+// נקרא מ: permissions.service.js, effective.js
 export const ROLE_DEFAULTS = { EMPLOYEE, PROJECT_MANAGER, ORG_ADMIN, SYSTEM_ADMIN };
 
 // Roles an organization may customize. SYSTEM_ADMIN is platform-level and stays fixed.
+// התפקידים שארגון רשאי לשנות את ההרשאות שלהם.
+// נקרא מ: permissions.service.js, effective.js
 export const EDITABLE_ROLES = ['EMPLOYEE', 'PROJECT_MANAGER', 'ORG_ADMIN'];
 
 // Can this permission be changed by an organization at all?
+// האם ארגון רשאי לשנות את ההרשאה הזו.
+// נקרא מ: permissions.service.js
 export const isChangeable = (key) => PERMISSION_BY_KEY.get(key)?.scope !== 'system';
 
 // May someone holding `permissions` hand out `key`? Only if they have it themselves, or a
 // stronger permission that includes it - nobody can grant more than they can do.
+// האם למשתמש מותר להעניק את ההרשאה הזו לאחרים.
+// נקרא מ: permissions.service.js
 export const canGrant = (permissions, key) =>
   permissions.has(key) || (PERMISSION_BY_KEY.get(key)?.includedIn ?? []).some((k) => permissions.has(k));
 
 // Is removing this permission from this role forbidden? (Keeps an organization from locking
 // every admin out of user / permission management.)
+// האם ההרשאה נעולה לתפקיד הזה ואי אפשר לשלול אותה.
+// נקרא מ: permissions.service.js
 export const isLockedFor = (key, roleName) => PERMISSION_BY_KEY.get(key)?.lockedFor?.includes(roleName) ?? false;

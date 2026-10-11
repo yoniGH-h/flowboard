@@ -1,3 +1,6 @@
+// תפקיד הקובץ: נתיבי התגובות על משימות: רשימה, הוספה, עריכה ומחיקה.
+// משתמשים בו: app.js
+
 import { Router } from 'express';
 import { z } from 'zod';
 import { prisma } from '../../db.js';
@@ -40,6 +43,8 @@ async function requireAccessibleComment(actor, commentId) {
 //   /api/tasks/:taskId/comments   (list, create)
 //   /api/comments/:id             (edit, delete)
 
+// הראוטר של התגובות.
+// נקרא מ: app.js
 export const commentsRouter = Router();
 
 commentsRouter.get('/tasks/:taskId/comments', async (req, res) => {

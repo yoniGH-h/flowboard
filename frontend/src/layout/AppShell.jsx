@@ -1,3 +1,6 @@
+// תפקיד הקובץ: המסגרת של כל המסכים הפנימיים.
+// משתמשים בו: App.jsx
+
 import { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import Alert from '@mui/material/Alert';
@@ -8,6 +11,8 @@ import { useNotificationsSocket } from '../lib/useNotificationsSocket';
 
 const COLLAPSE_KEY = 'flowboard.sidebarCollapsed';
 
+// תפריט צד, סרגל עליון, והמסך הנוכחי באמצע.
+// נקרא מ: App.jsx
 export function AppShell() {
   useNotificationsSocket();
   const [collapsed, setCollapsed] = useState(() => localStorage.getItem(COLLAPSE_KEY) === '1');

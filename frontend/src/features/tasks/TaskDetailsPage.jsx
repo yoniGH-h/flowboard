@@ -1,3 +1,6 @@
+// תפקיד הקובץ: מסך פרטי משימה.
+// משתמשים בו: App.jsx
+
 import { useMemo, useRef, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
@@ -56,6 +59,8 @@ import { formatDate, formatDateTime, formatFileSize, formatHours, fullName } fro
 import { projectAbility } from '../../lib/permissions';
 import { ContactButtons } from '../../components/common/ContactButtons';
 
+// כל פרטי המשימה: עריכה, תגובות, קבצים, תלויות והיסטוריה.
+// נקרא מ: App.jsx
 export function TaskDetailsPage() {
   const { taskId } = useParams();
   const navigate = useNavigate();

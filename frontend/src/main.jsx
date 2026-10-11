@@ -1,3 +1,6 @@
+// תפקיד הקובץ: נקודת הכניסה של האתר: עוטף את App בעיצוב, במטמון, בניווט ובמשתמש המחובר.
+// משתמשים בו: נטען מתוך index.html
+
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';

@@ -1,3 +1,6 @@
+// תפקיד הקובץ: יומן ההחלטות.
+// משתמשים בו: DecisionCenterPage.jsx
+
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -36,6 +39,8 @@ function Trajectory({ before, predicted, now, unit = '' }) {
 }
 
 // Every decision taken in the Decision Center, and how the project developed afterwards.
+// ההחלטות שבוצעו: מה נחזה ומה קרה בפועל.
+// נקרא מ: DecisionCenterPage.jsx
 export function DecisionLogPanel({ projectId }) {
   const { data: decisions, isLoading } = useDecisions(projectId);
 

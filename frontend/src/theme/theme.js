@@ -1,7 +1,12 @@
+// תפקיד הקובץ: ערכת העיצוב של MUI: צבעים, גופנים ועיצוב רכיבים.
+// משתמשים בו: main.jsx
+
 import { createTheme } from '@mui/material/styles';
 
 // FlowBoard design language: calm light surface, one restrained brand blue,
 // semantic colors reserved strictly for status meaning (never decoration).
+// ערכת העיצוב שכל רכיבי MUI משתמשים בה.
+// נקרא מ: main.jsx
 export const theme = createTheme({
   palette: {
     mode: 'light',

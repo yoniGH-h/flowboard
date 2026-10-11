@@ -1,8 +1,13 @@
+// תפקיד הקובץ: הופך כל שגיאה לתשובת JSON אחידה עם קוד הסטטוס המתאים.
+// משתמשים בו: app.js
+
 import multer from 'multer';
 import { config } from '../config.js';
 import { HttpError } from '../utils/httpError.js';
 
 // Unknown route under /api -> 404 in the same JSON shape as every other error.
+// מחזיר 404 לכתובת שלא קיימת תחת /api.
+// נקרא מ: app.js
 export function notFoundHandler(req, res) {
   res.status(404).json({
     statusCode: 404,
@@ -16,6 +21,8 @@ export function notFoundHandler(req, res) {
 // in async route handlers here automatically, so routes don't need try/catch.
 // Every error response has the shape { statusCode, path, timestamp, message } - the
 // frontend reads `message` (a string or an array of strings) to show to the user.
+// מטפל השגיאות המרכזי: קובע קוד והודעה ומחזיר JSON.
+// נקרא מ: app.js
 // eslint-disable-next-line no-unused-vars
 export function errorHandler(err, req, res, _next) {
   let status = 500;

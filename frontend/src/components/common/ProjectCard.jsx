@@ -1,3 +1,6 @@
+// תפקיד הקובץ: כרטיס פרויקט ברשימה.
+// משתמשים בו: PersonalDashboardPage.jsx, MyProjectsPage.jsx
+
 import Card from '@mui/material/Card';
 import CardActionArea from '@mui/material/CardActionArea';
 import CardContent from '@mui/material/CardContent';
@@ -12,6 +15,8 @@ import { RiskBadge } from './RiskBadge';
 import { UserAvatarStack } from './UserAvatar';
 import { formatDate } from '../../lib/format';
 
+// כרטיס עם שם, סטטוס, התקדמות, סיכון וצוות.
+// נקרא מ: PersonalDashboardPage.jsx, MyProjectsPage.jsx
 export function ProjectCard({ project, manager, members }) {
   const navigate = useNavigate();
   return (

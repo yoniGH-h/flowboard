@@ -1,3 +1,6 @@
+// תפקיד הקובץ: מסך יומן הביקורת.
+// משתמשים בו: App.jsx
+
 import { useMemo, useState } from 'react';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -18,6 +21,8 @@ import { LoadingState, NoSearchResultsState } from '../../components/common/Stat
 import { useAuditLog, useOrganizationUsers } from '../../lib/queries';
 import { formatDateTime, fullName } from '../../lib/format';
 
+// טבלת הפעולות שנרשמו, עם סינון.
+// נקרא מ: App.jsx
 export function AuditLogPage() {
   const [search, setSearch] = useState('');
   const [actionFilter, setActionFilter] = useState('ALL');

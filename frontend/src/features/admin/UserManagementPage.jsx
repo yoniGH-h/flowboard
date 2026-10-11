@@ -1,3 +1,6 @@
+// תפקיד הקובץ: מסך ניהול המשתמשים.
+// משתמשים בו: App.jsx
+
 import { useMemo, useState } from 'react';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
@@ -47,6 +50,8 @@ const STATUS_CONFIG = {
 
 const ALL_ROLES = ['EMPLOYEE', 'PROJECT_MANAGER', 'ORG_ADMIN', 'SYSTEM_ADMIN'];
 
+// טבלת משתמשים: תפקידים, סטטוס, הסרה והרשאות אישיות.
+// נקרא מ: App.jsx
 export function UserManagementPage() {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');

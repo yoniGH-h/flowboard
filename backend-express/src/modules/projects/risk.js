@@ -1,3 +1,6 @@
+// תפקיד הקובץ: ציון הסיכון לעיכוב של פרויקט (0 עד 100) מחמישה גורמים משוקללים.
+// משתמשים בו: model.js, projects.service.js
+
 // Explainable, rules-based project delay-risk score (0-100), computed live from real task
 // data on every read - never stored, so it can never go stale.
 //
@@ -8,6 +11,8 @@
 
 // A member with more open tasks than this counts as over capacity - same number as
 // CAPACITY_TASKS on the Team Workload screen.
+// מעל כמה משימות פתוחות עובד נחשב עמוס (6).
+// נקרא מ: model.js
 export const WORKLOAD_CAPACITY_TASKS = 6;
 
 const DAY_MS = 86_400_000;
@@ -15,6 +20,8 @@ const plural = (n, word) => `${n} ${word}${n === 1 ? '' : 's'}`;
 
 // project:   { startDate, targetDate, progress }
 // openTasks: [{ assigneeId, dueDate, blocked }]  (not archived, not completed)
+// מחשב את ציון הסיכון, הרמה ופירוט הגורמים.
+// נקרא מ: model.js, projects.service.js
 export function calculateRisk(project, openTasks, memberCount, now = new Date()) {
   const openCount = openTasks.length;
   const overdueCount = openTasks.filter((t) => t.dueDate && t.dueDate < now).length;

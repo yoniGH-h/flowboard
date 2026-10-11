@@ -1,3 +1,6 @@
+// תפקיד הקובץ: מודל התכנון: מצב פרויקט, החלת שינויי "מה אם", וחישוב צפי, סיכון ועומס.
+// משתמשים בו: planning.service.js
+
 // The planning model: a project's state, what-if changes applied to it, and the resulting
 // forecast / delay risk / workload. Used by the what-if simulator, the recommendations, and
 // the decision log - so all three always agree with each other and with Insights.
@@ -8,13 +11,19 @@ import { badRequest, notFound } from '../../utils/httpError.js';
 import { calculateRisk, WORKLOAD_CAPACITY_TASKS } from '../projects/risk.js';
 
 export { WORKLOAD_CAPACITY_TASKS };
+// מספר הימים שלפיהם נמדד קצב העבודה (28).
+// נקרא מ: הקובץ הזה בלבד
 export const PACE_WINDOW_DAYS = 28; // "current pace" = tasks completed in the last 4 weeks
+// מינימום משימות שהושלמו כדי לסמוך על הצפי.
+// נקרא מ: הקובץ הזה בלבד
 export const MIN_PACE_SAMPLE = 3; // fewer completed tasks = too little data for a finish date
 const DAY_MS = 86_400_000;
 
 // ---------- Loading ----------
 
 // Everything the model needs about one project, in plain objects (no further DB access).
+// טוען מהמסד את כל מה שהמודל צריך על פרויקט.
+// נקרא מ: planning.service.js
 export async function loadProjectState(actor, projectId, now = new Date()) {
   const project = await prisma.project.findFirst({
     where: { id: projectId, organizationId: actor.organizationId },
@@ -99,10 +108,14 @@ export async function loadProjectState(actor, projectId, now = new Date()) {
   };
 }
 
+// מחזיר שם מלא של משתמש מתוך המצב.
+// נקרא מ: planning.service.js
 export const userName = (state, id) => {
   const u = state.users.get(id);
   return u ? `${u.firstName} ${u.lastName}` : 'someone';
 };
+// האם משימה פתוחה (לא הושלמה ולא נדחתה).
+// נקרא מ: planning.service.js
 export const isOpen = (t) => !t.completedAt && !t.deferred;
 const shortDate = (d) => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 
@@ -117,6 +130,8 @@ const shortDate = (d) => d.toLocaleDateString('en-US', { month: 'short', day: 'n
 // }
 //
 // Returns a NEW state (the original is untouched) plus human-readable descriptions.
+// מחזיר מצב חדש עם השינויים, בלי לגעת במקורי.
+// נקרא מ: planning.service.js
 export function applyChanges(state, changes) {
   const next = {
     ...state,
@@ -185,6 +200,8 @@ export function applyChanges(state, changes) {
 // ---------- Evaluation ----------
 
 // Forecast, delay risk and workload for a state (real or simulated).
+// מחשב צפי סיום, ציון סיכון ועומס למצב נתון.
+// נקרא מ: planning.service.js
 export function evaluate(state) {
   const { now, project } = state;
   const open = state.tasks.filter(isOpen);
@@ -236,6 +253,8 @@ export function evaluate(state) {
 }
 
 // The assumptions behind a simulation - shown next to every result.
+// מנסח את ההנחות שמאחורי תוצאת הסימולציה.
+// נקרא מ: planning.service.js
 export function assumptionsFor(state, next) {
   const list = [
     `Pace = tasks completed in the last 4 weeks (${state.doneLast4Weeks}), assumed to continue.`,

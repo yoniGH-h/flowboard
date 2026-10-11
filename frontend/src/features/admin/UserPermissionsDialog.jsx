@@ -1,3 +1,6 @@
+// תפקיד הקובץ: חלון ההרשאות של משתמש אחד.
+// משתמשים בו: UserManagementPage.jsx
+
 import { Fragment, useMemo, useState } from 'react';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -27,6 +30,8 @@ const SOURCE_LABELS = { role: 'Role', organization: 'Organization setting', user
 
 // One employee's permissions: what they may do, WHY (their role, an organization-wide change
 // to their role, or a personal exception), and controls to add / remove exceptions.
+// מציג מאיפה כל הרשאה מגיעה, ומאפשר חריגים אישיים.
+// נקרא מ: UserManagementPage.jsx
 export function UserPermissionsDialog({ user, onClose }) {
   return (
     <Dialog open={!!user} onClose={onClose} maxWidth="md" fullWidth>

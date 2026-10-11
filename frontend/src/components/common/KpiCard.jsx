@@ -1,3 +1,6 @@
+// תפקיד הקובץ: כרטיס מדד.
+// משתמשים בו: UserManagementPage.jsx, ManagementDashboardPage.jsx, PersonalDashboardPage.jsx, KanbanBoardPage.jsx +7
+
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Box from '@mui/material/Box';
@@ -6,6 +9,8 @@ import Stack from '@mui/material/Stack';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import TrendingDownIcon from '@mui/icons-material/TrendingDown';
 
+// כרטיס עם תווית, מספר ואייקון.
+// נקרא מ: UserManagementPage.jsx, ManagementDashboardPage.jsx, PersonalDashboardPage.jsx, KanbanBoardPage.jsx +7
 export function KpiCard({ label, value, icon, accentColor = '#3454D1', trend, helperText }) {
   return (
     <Card sx={{ height: '100%' }}>

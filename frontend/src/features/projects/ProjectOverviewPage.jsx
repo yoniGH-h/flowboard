@@ -1,3 +1,6 @@
+// תפקיד הקובץ: מסך סקירת פרויקט.
+// משתמשים בו: App.jsx
+
 import { useMemo, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
@@ -36,6 +39,8 @@ import { projectAbility } from '../../lib/permissions';
 import { ContactButtons } from '../../components/common/ContactButtons';
 import { RiskTrendChart } from './RiskTrendChart';
 
+// פרטי הפרויקט, סיכון, צוות, קבצים ופעילות.
+// נקרא מ: App.jsx
 export function ProjectOverviewPage() {
   const { projectId } = useParams();
   const navigate = useNavigate();

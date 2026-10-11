@@ -1,3 +1,6 @@
+// תפקיד הקובץ: נתיבי חוקי האוטומציה: ניהול החוקים, היסטוריה והרצה ידנית.
+// משתמשים בו: app.js
+
 import { Router } from 'express';
 import { z } from 'zod';
 import { requirePermission } from '../../middleware/auth.js';
@@ -29,6 +32,8 @@ const toggleSchema = z.strictObject({ enabled: z.boolean() });
 
 // ---------- Routes (automation.manage - Org Admins by default) ----------
 
+// הראוטר של חוקי האוטומציה.
+// נקרא מ: app.js
 export const automationRulesRouter = Router();
 automationRulesRouter.use(requirePermission('automation.manage'));
 

@@ -1,3 +1,6 @@
+// תפקיד הקובץ: מסך "הפרויקטים שלי".
+// משתמשים בו: App.jsx
+
 import { useMemo, useState } from 'react';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
@@ -30,6 +33,8 @@ const STATUS_FILTERS = [
   { label: 'Completed', value: 'COMPLETED' },
 ];
 
+// כרטיסי הפרויקטים שהמשתמש חבר בהם, עם חיפוש.
+// נקרא מ: App.jsx
 export function MyProjectsPage() {
   const { user, activeRole } = useAuth();
   const navigate = useNavigate();

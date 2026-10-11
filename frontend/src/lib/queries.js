@@ -1,9 +1,14 @@
+// תפקיד הקובץ: כל ה-hooks של TanStack Query: קריאות עם מטמון, ושינויים עם רענון.
+// משתמשים בו: AuditLogPage.jsx, AutomationRulesPanel.jsx, OrganizationSettingsPage.jsx, RolesPermissionsPage.jsx +29
+
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 // TanStack Query hooks for every screen: each one wraps a function from api/api.js (the
 // Express backend), caches the result, and refreshes the related data after a change.
 import * as realApi from '../api/api';
 import { useAuth } from '../auth/AuthContext';
 
+// קריאה: משתמשי הארגון.
+// נקרא מ: AuditLogPage.jsx, AutomationRulesPanel.jsx, UserManagementPage.jsx, ManagementDashboardPage.jsx +10
 export function useOrganizationUsers(filters = {}) {
   const { organization } = useAuth();
   return useQuery({
@@ -13,6 +18,8 @@ export function useOrganizationUsers(filters = {}) {
   });
 }
 
+// קריאה: רשימת הפרויקטים.
+// נקרא מ: AutomationRulesPanel.jsx, ManagementDashboardPage.jsx, PersonalDashboardPage.jsx, DecisionCenterPage.jsx +6
 export function useProjects(filters = {}) {
   const { organization } = useAuth();
   return useQuery({
@@ -22,6 +29,8 @@ export function useProjects(filters = {}) {
   });
 }
 
+// קריאה: פרויקט אחד.
+// נקרא מ: KanbanBoardPage.jsx, ProjectOverviewPage.jsx, ProjectTeamManagementPage.jsx, TaskDetailsPage.jsx
 export function useProject(projectId) {
   return useQuery({
     queryKey: ['project', projectId],
@@ -30,6 +39,8 @@ export function useProject(projectId) {
   });
 }
 
+// קריאה: הלוח של פרויקט.
+// נקרא מ: KanbanBoardPage.jsx, TaskDetailsPage.jsx
 export function useBoard(projectId) {
   return useQuery({
     queryKey: ['board', projectId],
@@ -38,6 +49,8 @@ export function useBoard(projectId) {
   });
 }
 
+// קריאה: הקבצים של פרויקט.
+// נקרא מ: ProjectOverviewPage.jsx
 export function useProjectAttachments(projectId) {
   return useQuery({
     queryKey: ['project-attachments', projectId],
@@ -46,6 +59,8 @@ export function useProjectAttachments(projectId) {
   });
 }
 
+// קריאה: הפעילות של פרויקט.
+// נקרא מ: ProjectOverviewPage.jsx
 export function useProjectActivity(projectId) {
   return useQuery({
     queryKey: ['project-activity', projectId],
@@ -54,6 +69,8 @@ export function useProjectActivity(projectId) {
   });
 }
 
+// קריאה: משימות לפי סינון.
+// נקרא מ: PersonalDashboardPage.jsx, KanbanBoardPage.jsx, ProjectOverviewPage.jsx, MyTasksPage.jsx +2
 export function useTasks(filters = {}) {
   const { organization } = useAuth();
   return useQuery({
@@ -63,6 +80,8 @@ export function useTasks(filters = {}) {
   });
 }
 
+// קריאה: משימה אחת.
+// נקרא מ: TaskDetailsPage.jsx
 export function useTask(taskId) {
   return useQuery({
     queryKey: ['task', taskId],
@@ -71,6 +90,8 @@ export function useTask(taskId) {
   });
 }
 
+// קריאה: היסטוריית משימה.
+// נקרא מ: TaskDetailsPage.jsx
 export function useTaskActivity(taskId) {
   return useQuery({
     queryKey: ['task-activity', taskId],
@@ -79,6 +100,8 @@ export function useTaskActivity(taskId) {
   });
 }
 
+// קריאה: התגובות של משימה.
+// נקרא מ: TaskDetailsPage.jsx
 export function useComments(taskId) {
   return useQuery({
     queryKey: ['comments', taskId],
@@ -87,6 +110,8 @@ export function useComments(taskId) {
   });
 }
 
+// קריאה: הקבצים של משימה.
+// נקרא מ: TaskDetailsPage.jsx
 export function useAttachments(taskId) {
   return useQuery({
     queryKey: ['attachments', taskId],
@@ -95,6 +120,8 @@ export function useAttachments(taskId) {
   });
 }
 
+// קריאה: ההתראות של המשתמש.
+// נקרא מ: PersonalDashboardPage.jsx, NotificationCenterPage.jsx, NotificationBell.jsx, Sidebar.jsx
 export function useNotifications() {
   const { user } = useAuth();
   return useQuery({
@@ -105,6 +132,8 @@ export function useNotifications() {
   });
 }
 
+// קריאה: יומן הביקורת של הארגון.
+// נקרא מ: AuditLogPage.jsx, ManagementDashboardPage.jsx
 export function useAuditLog(filters = {}) {
   const { organization } = useAuth();
   return useQuery({
@@ -114,6 +143,8 @@ export function useAuditLog(filters = {}) {
   });
 }
 
+// קריאה: חוקי האוטומציה.
+// נקרא מ: AutomationRulesPanel.jsx
 export function useAutomationRules() {
   const { organization } = useAuth();
   return useQuery({
@@ -123,6 +154,8 @@ export function useAutomationRules() {
   });
 }
 
+// קריאה: היסטוריית ההרצות של חוק.
+// נקרא מ: AutomationRulesPanel.jsx
 export function useAutomationExecutions(ruleId) {
   return useQuery({
     queryKey: ['automation-executions', ruleId],
@@ -131,6 +164,8 @@ export function useAutomationExecutions(ruleId) {
   });
 }
 
+// שינוי: מחיקת חוק אוטומציה.
+// נקרא מ: AutomationRulesPanel.jsx
 export function useDeleteAutomationRule() {
   const qc = useQueryClient();
   return useMutation({
@@ -139,6 +174,8 @@ export function useDeleteAutomationRule() {
   });
 }
 
+// שינוי: עדכון חוק אוטומציה.
+// נקרא מ: AutomationRulesPanel.jsx
 export function useUpdateAutomationRule() {
   const qc = useQueryClient();
   return useMutation({
@@ -149,6 +186,8 @@ export function useUpdateAutomationRule() {
 
 // ---------- Insights ----------
 
+// קריאה: התובנות של פרויקט.
+// נקרא מ: InsightsSection.jsx
 export function useInsights(projectId) {
   const { organization } = useAuth();
   return useQuery({
@@ -158,6 +197,8 @@ export function useInsights(projectId) {
   });
 }
 
+// קריאה: ציוני הסיכון היומיים.
+// נקרא מ: RiskTrendChart.jsx
 export function useRiskHistory(projectId) {
   return useQuery({
     queryKey: ['risk-history', projectId],
@@ -168,6 +209,8 @@ export function useRiskHistory(projectId) {
 
 // ---------- Decision Center ----------
 
+// קריאה: תמונת המצב למרכז ההחלטות.
+// נקרא מ: DecisionCenterPage.jsx
 export function usePlanningView(projectId) {
   return useQuery({
     queryKey: ['planning', projectId],
@@ -176,6 +219,8 @@ export function usePlanningView(projectId) {
   });
 }
 
+// קריאה: ההמלצות לפרויקט.
+// נקרא מ: RecommendationsPanel.jsx
 export function useRecommendations(projectId) {
   return useQuery({
     queryKey: ['recommendations', projectId],
@@ -185,10 +230,14 @@ export function useRecommendations(projectId) {
 }
 
 // What-if: nothing is saved, so this is a mutation only in the "call on demand" sense.
+// חישוב סימולציה בשרת; לא שומר דבר.
+// נקרא מ: SimulatorPanel.jsx
 export function useSimulation() {
   return useMutation({ mutationFn: ({ projectId, changes }) => realApi.simulatePlan(projectId, changes) });
 }
 
+// קריאה: ההחלטות שבוצעו.
+// נקרא מ: DecisionLogPanel.jsx
 export function useDecisions(projectId) {
   const { organization } = useAuth();
   return useQuery({
@@ -200,6 +249,8 @@ export function useDecisions(projectId) {
 }
 
 // Applying a decision really changes tasks / members / dates - refresh everything they feed.
+// שינוי: ביצוע החלטה, ורענון כל מה שהושפע.
+// נקרא מ: ApplyDecisionDialog.jsx
 export function useApplyDecision() {
   const qc = useQueryClient();
   return useMutation({
@@ -214,11 +265,15 @@ export function useApplyDecision() {
 
 // ---------- Dynamic permissions ----------
 
+// קריאה: טבלת ההרשאות לפי תפקיד.
+// נקרא מ: RolesPermissionsPage.jsx, UserPermissionsDialog.jsx
 export function usePermissionMatrix() {
   // retry: false - on a backend without this endpoint (404) the page falls back right away.
   return useQuery({ queryKey: ['permission-matrix'], queryFn: realApi.fetchPermissionMatrix, retry: false });
 }
 
+// שינוי: הרשאה של תפקיד.
+// נקרא מ: RolesPermissionsPage.jsx
 export function useSetRolePermission() {
   const qc = useQueryClient();
   return useMutation({
@@ -230,6 +285,8 @@ export function useSetRolePermission() {
   });
 }
 
+// קריאה: ההרשאות של משתמש.
+// נקרא מ: UserPermissionsDialog.jsx
 export function useUserPermissions(userId) {
   return useQuery({
     queryKey: ['user-permissions', userId],
@@ -238,6 +295,8 @@ export function useUserPermissions(userId) {
   });
 }
 
+// שינוי: חריג הרשאה למשתמש.
+// נקרא מ: UserPermissionsDialog.jsx
 export function useSetUserPermission() {
   const qc = useQueryClient();
   return useMutation({
@@ -247,6 +306,8 @@ export function useSetUserPermission() {
   });
 }
 
+// קריאה: סיכום עומס הצוות.
+// נקרא מ: ManagementDashboardPage.jsx, TeamWorkloadPage.jsx
 export function useWorkloadSummary(projectId) {
   const { organization } = useAuth();
   return useQuery({
@@ -256,6 +317,8 @@ export function useWorkloadSummary(projectId) {
   });
 }
 
+// קריאה: נתוני הדשבורד הניהולי.
+// נקרא מ: ManagementDashboardPage.jsx
 export function useDashboardSummary(projectId) {
   const { organization } = useAuth();
   return useQuery({
@@ -265,6 +328,8 @@ export function useDashboardSummary(projectId) {
   });
 }
 
+// קריאה: נתוני מסך הדוחות.
+// נקרא מ: ReportsAnalyticsPage.jsx
 export function useReportsSummary(filters = {}) {
   const { organization } = useAuth();
   return useQuery({
@@ -274,14 +339,20 @@ export function useReportsSummary(filters = {}) {
   });
 }
 
+// קריאה: התוויות של הארגון.
+// נקרא מ: KanbanBoardPage.jsx, TaskDetailsPage.jsx
 export function useLabels() {
   return useQuery({ queryKey: ['labels'], queryFn: realApi.fetchLabels });
 }
 
+// קריאה: כל הארגונים.
+// נקרא מ: OrganizationsSystemManagementPage.jsx
 export function useOrganizations() {
   return useQuery({ queryKey: ['organizations'], queryFn: realApi.fetchOrganizations });
 }
 
+// קריאה: יומן הביקורת של כל הארגונים.
+// נקרא מ: OrganizationsSystemManagementPage.jsx
 export function useAllAuditLog(filters = {}) {
   return useQuery({ queryKey: ['audit-all', filters], queryFn: () => realApi.fetchSystemAuditLog(filters) });
 }
@@ -300,18 +371,26 @@ function useBoardColumnMutation(mutationFn) {
   });
 }
 
+// שינוי: הוספת עמודה ללוח.
+// נקרא מ: BoardSettingsDialog.jsx
 export function useAddBoardColumn() {
   return useBoardColumnMutation(({ projectId, column }) => realApi.addBoardColumn(projectId, column));
 }
 
+// שינוי: עדכון עמודה.
+// נקרא מ: BoardSettingsDialog.jsx
 export function useUpdateBoardColumn() {
   return useBoardColumnMutation(({ projectId, columnId, patch }) => realApi.updateBoardColumn(projectId, columnId, patch));
 }
 
+// שינוי: מחיקת עמודה.
+// נקרא מ: BoardSettingsDialog.jsx
 export function useDeleteBoardColumn() {
   return useBoardColumnMutation(({ projectId, columnId }) => realApi.deleteBoardColumn(projectId, columnId));
 }
 
+// שינוי: הזזת משימה לעמודה, ורענון המשימות.
+// נקרא מ: KanbanBoardPage.jsx
 export function useMoveTask() {
   const qc = useQueryClient();
   return useMutation({
@@ -323,6 +402,8 @@ export function useMoveTask() {
   });
 }
 
+// שינוי: עדכון משימה.
+// נקרא מ: TaskDetailsPage.jsx
 export function useUpdateTask() {
   const qc = useQueryClient();
   return useMutation({
@@ -336,6 +417,8 @@ export function useUpdateTask() {
   });
 }
 
+// שינוי: יצירת משימה.
+// נקרא מ: TaskFormDialog.jsx
 export function useCreateTask() {
   const qc = useQueryClient();
   return useMutation({
@@ -347,6 +430,8 @@ export function useCreateTask() {
   });
 }
 
+// שינוי: ארכוב משימה.
+// נקרא מ: TaskDetailsPage.jsx
 export function useArchiveTask() {
   const qc = useQueryClient();
   return useMutation({
@@ -355,6 +440,8 @@ export function useArchiveTask() {
   });
 }
 
+// שינוי: מחיקת משימה.
+// נקרא מ: TaskDetailsPage.jsx
 export function useDeleteTask() {
   const qc = useQueryClient();
   return useMutation({
@@ -363,6 +450,8 @@ export function useDeleteTask() {
   });
 }
 
+// שינוי: הוספת תלות.
+// נקרא מ: TaskDetailsPage.jsx
 export function useAddTaskDependency() {
   const qc = useQueryClient();
   return useMutation({
@@ -371,6 +460,8 @@ export function useAddTaskDependency() {
   });
 }
 
+// שינוי: הסרת תלות.
+// נקרא מ: TaskDetailsPage.jsx
 export function useRemoveTaskDependency() {
   const qc = useQueryClient();
   return useMutation({
@@ -379,6 +470,8 @@ export function useRemoveTaskDependency() {
   });
 }
 
+// שינוי: הוספת תגובה.
+// נקרא מ: TaskDetailsPage.jsx
 export function useAddComment() {
   const qc = useQueryClient();
   return useMutation({
@@ -391,6 +484,8 @@ export function useAddComment() {
   });
 }
 
+// שינוי: עריכת תגובה.
+// נקרא מ: TaskDetailsPage.jsx
 export function useUpdateComment() {
   const qc = useQueryClient();
   return useMutation({
@@ -399,6 +494,8 @@ export function useUpdateComment() {
   });
 }
 
+// שינוי: מחיקת תגובה.
+// נקרא מ: TaskDetailsPage.jsx
 export function useDeleteComment() {
   const qc = useQueryClient();
   return useMutation({
@@ -407,6 +504,8 @@ export function useDeleteComment() {
   });
 }
 
+// שינוי: העלאת קובץ.
+// נקרא מ: TaskDetailsPage.jsx
 export function useAddAttachment() {
   const qc = useQueryClient();
   return useMutation({
@@ -418,6 +517,8 @@ export function useAddAttachment() {
   });
 }
 
+// שינוי: מחיקת קובץ.
+// נקרא מ: אין שימוש כרגע
 export function useDeleteAttachment() {
   const qc = useQueryClient();
   return useMutation({
@@ -426,6 +527,8 @@ export function useDeleteAttachment() {
   });
 }
 
+// שינוי: סימון התראה כנקראה.
+// נקרא מ: NotificationCenterPage.jsx, NotificationBell.jsx
 export function useMarkNotificationRead() {
   const qc = useQueryClient();
   return useMutation({
@@ -434,6 +537,8 @@ export function useMarkNotificationRead() {
   });
 }
 
+// שינוי: סימון כל ההתראות כנקראו.
+// נקרא מ: NotificationCenterPage.jsx, NotificationBell.jsx
 export function useMarkAllNotificationsRead() {
   const qc = useQueryClient();
   return useMutation({
@@ -442,6 +547,8 @@ export function useMarkAllNotificationsRead() {
   });
 }
 
+// שינוי: יצירת פרויקט.
+// נקרא מ: ProjectFormDialog.jsx
 export function useCreateProject() {
   const qc = useQueryClient();
   return useMutation({
@@ -450,6 +557,8 @@ export function useCreateProject() {
   });
 }
 
+// שינוי: עדכון פרויקט.
+// נקרא מ: ProjectFormDialog.jsx
 export function useUpdateProject() {
   const qc = useQueryClient();
   return useMutation({
@@ -461,6 +570,8 @@ export function useUpdateProject() {
   });
 }
 
+// שינוי: ארכוב פרויקט.
+// נקרא מ: ProjectManagementPage.jsx
 export function useArchiveProject() {
   const qc = useQueryClient();
   return useMutation({
@@ -469,6 +580,8 @@ export function useArchiveProject() {
   });
 }
 
+// שינוי: הוספת חבר צוות.
+// נקרא מ: ProjectTeamManagementPage.jsx
 export function useAddProjectMember() {
   const qc = useQueryClient();
   return useMutation({
@@ -480,6 +593,8 @@ export function useAddProjectMember() {
   });
 }
 
+// שינוי: הסרת חבר צוות.
+// נקרא מ: ProjectTeamManagementPage.jsx
 export function useRemoveProjectMember() {
   const qc = useQueryClient();
   return useMutation({
@@ -488,6 +603,8 @@ export function useRemoveProjectMember() {
   });
 }
 
+// שינוי: סטטוס משתמש.
+// נקרא מ: UserManagementPage.jsx
 export function useSetUserStatus() {
   const qc = useQueryClient();
   return useMutation({
@@ -496,6 +613,8 @@ export function useSetUserStatus() {
   });
 }
 
+// שינוי: הסרת משתמש.
+// נקרא מ: UserManagementPage.jsx
 export function useRemoveUser() {
   const qc = useQueryClient();
   return useMutation({
@@ -504,6 +623,8 @@ export function useRemoveUser() {
   });
 }
 
+// שינוי: תפקידי משתמש.
+// נקרא מ: UserManagementPage.jsx
 export function useUpdateUserRoles() {
   const qc = useQueryClient();
   return useMutation({
@@ -512,6 +633,8 @@ export function useUpdateUserRoles() {
   });
 }
 
+// שינוי: הפעלה או כיבוי של חוק.
+// נקרא מ: AutomationRulesPanel.jsx
 export function useToggleAutomationRule() {
   const qc = useQueryClient();
   return useMutation({
@@ -520,6 +643,8 @@ export function useToggleAutomationRule() {
   });
 }
 
+// שינוי: יצירת חוק אוטומציה.
+// נקרא מ: AutomationRulesPanel.jsx
 export function useCreateAutomationRule() {
   const qc = useQueryClient();
   return useMutation({
@@ -528,6 +653,8 @@ export function useCreateAutomationRule() {
   });
 }
 
+// שינוי: עדכון הפרופיל.
+// נקרא מ: ProfileSettingsPage.jsx
 export function useUpdateProfile() {
   const qc = useQueryClient();
   return useMutation({
@@ -536,6 +663,8 @@ export function useUpdateProfile() {
   });
 }
 
+// שינוי: הגדרות הארגון.
+// נקרא מ: OrganizationSettingsPage.jsx
 export function useUpdateOrganization() {
   const qc = useQueryClient();
   return useMutation({
@@ -544,6 +673,8 @@ export function useUpdateOrganization() {
   });
 }
 
+// שינוי: סטטוס ארגון.
+// נקרא מ: OrganizationsSystemManagementPage.jsx
 export function useSetOrganizationStatus() {
   const qc = useQueryClient();
   return useMutation({

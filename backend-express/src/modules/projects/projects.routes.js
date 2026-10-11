@@ -1,3 +1,6 @@
+// תפקיד הקובץ: נתיבי הפרויקטים: פרויקט, חברי צוות, לוח ועמודות.
+// משתמשים בו: app.js
+
 import { Router } from 'express';
 import { z } from 'zod';
 import { requirePermission } from '../../middleware/auth.js';
@@ -68,6 +71,8 @@ const updateColumnSchema = z.strictObject({
 // Only creating a project is checked here. Every other action depends on WHICH project it is
 // (you may manage your own projects but not someone else's), so the service checks it per
 // project with assertProjectPermission.
+// הראוטר של הפרויקטים.
+// נקרא מ: app.js
 export const projectsRouter = Router();
 
 projectsRouter.post('/', requirePermission('projects.create'), async (req, res) => {

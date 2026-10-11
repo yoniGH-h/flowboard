@@ -1,3 +1,6 @@
+// תפקיד הקובץ: מסך ניהול הארגונים (מנהל מערכת).
+// משתמשים בו: App.jsx
+
 import { useMemo, useState } from 'react';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
@@ -24,6 +27,8 @@ import { LoadingState } from '../../components/common/States';
 import { useAllAuditLog, useOrganizations, useSetOrganizationStatus } from '../../lib/queries';
 import { formatDate, formatDateTime } from '../../lib/format';
 
+// כל הארגונים במערכת: השעיה והפעלה.
+// נקרא מ: App.jsx
 export function OrganizationsSystemManagementPage() {
   const [tab, setTab] = useState('organizations');
   const { data: organizations, isLoading } = useOrganizations();

@@ -1,3 +1,6 @@
+// תפקיד הקובץ: מסך הדוחות.
+// משתמשים בו: App.jsx
+
 import { useMemo, useState } from 'react';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
@@ -34,6 +37,8 @@ const DATE_RANGES = [
   { label: 'All time', value: 0 },
 ];
 
+// גרפים וטבלאות לפי פרויקט, עובד ותאריכים.
+// נקרא מ: App.jsx
 export function ReportsAnalyticsPage() {
   const [projectFilter, setProjectFilter] = useState('ALL');
   const [userFilter, setUserFilter] = useState('ALL');

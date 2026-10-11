@@ -1,3 +1,6 @@
+// תפקיד הקובץ: תגית ציון הסיכון.
+// משתמשים בו: ProjectCard.jsx, DecisionCenterPage.jsx, ProjectManagementPage.jsx, ProjectOverviewPage.jsx +1
+
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Tooltip from '@mui/material/Tooltip';
@@ -8,6 +11,8 @@ const CONFIG = {
   HIGH: { label: 'High Risk', color: '#C62828', bg: '#FBE9E9' },
 };
 
+// תגית צבעונית עם ציון הסיכון ורמתו.
+// נקרא מ: ProjectCard.jsx, DecisionCenterPage.jsx, ProjectManagementPage.jsx, ProjectOverviewPage.jsx +1
 export function RiskBadge({ score, level, compact = false }) {
   const cfg = CONFIG[level];
   return (
@@ -32,6 +37,8 @@ export function RiskBadge({ score, level, compact = false }) {
   );
 }
 
+// ממיר ציון מספרי לרמה: נמוך, בינוני או גבוה.
+// נקרא מ: אין שימוש כרגע
 export function riskLevelFromScore(score) {
   if (score <= 30) return 'LOW';
   if (score <= 60) return 'MEDIUM';

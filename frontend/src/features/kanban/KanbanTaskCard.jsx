@@ -1,3 +1,6 @@
+// תפקיד הקובץ: כרטיס משימה בלוח.
+// משתמשים בו: KanbanColumn.jsx
+
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Typography from '@mui/material/Typography';
@@ -13,6 +16,8 @@ import { UserAvatar } from '../../components/common/UserAvatar';
 import { formatDateShort } from '../../lib/format';
 import { isOverdue } from '../../lib/taskStatus';
 
+// כרטיס שאפשר לגרור; לחיצה פותחת את המשימה.
+// נקרא מ: KanbanColumn.jsx
 export function KanbanTaskCard({ task, assignee, labels, canDrag }) {
   const navigate = useNavigate();
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({

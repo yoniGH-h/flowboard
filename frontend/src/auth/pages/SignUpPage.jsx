@@ -1,3 +1,6 @@
+// תפקיד הקובץ: מסך ההרשמה.
+// משתמשים בו: App.jsx
+
 import { useState } from 'react';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
@@ -23,6 +26,8 @@ const INITIAL_STATE = {
   confirmPassword: '',
 };
 
+// טופס הרשמה: יצירת ארגון חדש או הצטרפות לקיים.
+// נקרא מ: App.jsx
 export function SignUpPage() {
   const [mode, setMode] = useState('create');
   const [form, setForm] = useState(INITIAL_STATE);

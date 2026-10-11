@@ -1,3 +1,6 @@
+// תפקיד הקובץ: הגדרת תפריט הצד.
+// משתמשים בו: Sidebar.jsx
+
 import SpaceDashboardOutlinedIcon from '@mui/icons-material/SpaceDashboardOutlined';
 import FolderOutlinedIcon from '@mui/icons-material/FolderOutlined';
 import ChecklistOutlinedIcon from '@mui/icons-material/ChecklistOutlined';
@@ -14,6 +17,8 @@ import DomainOutlinedIcon from '@mui/icons-material/DomainOutlined';
 import PsychologyAltOutlinedIcon from '@mui/icons-material/PsychologyAltOutlined';
 import { ROLE_LEVEL } from '../lib/permissions';
 
+// הפריטים בתפריט, והדרג המינימלי שרואה כל אחד.
+// נקרא מ: Sidebar.jsx
 export const NAV_SECTIONS = [
   {
     title: 'Workspace',

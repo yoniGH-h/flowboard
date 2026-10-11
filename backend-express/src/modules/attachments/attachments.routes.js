@@ -1,3 +1,6 @@
+// תפקיד הקובץ: נתיבי הקבצים המצורפים: העלאה, רשימה, הורדה ומחיקה.
+// משתמשים בו: app.js
+
 import { randomUUID } from 'node:crypto';
 import { mkdirSync } from 'node:fs';
 import { readFile, unlink, writeFile } from 'node:fs/promises';
@@ -69,6 +72,8 @@ async function requireAccessibleAttachment(actor, attachmentId) {
 //   /api/attachments/:id/download       (download)
 //   /api/attachments/:id                (delete)
 
+// הראוטר של הקבצים המצורפים.
+// נקרא מ: app.js
 export const attachmentsRouter = Router();
 
 attachmentsRouter.get('/tasks/:taskId/attachments', async (req, res) => {

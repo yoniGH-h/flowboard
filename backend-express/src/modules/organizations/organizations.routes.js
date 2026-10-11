@@ -1,3 +1,6 @@
+// תפקיד הקובץ: נתיבי הארגונים: פרטי הארגון שלי, עדכון, וניהול כל הארגונים למנהל מערכת.
+// משתמשים בו: app.js
+
 import { Router } from 'express';
 import { z } from 'zod';
 import { prisma } from '../../db.js';
@@ -31,6 +34,8 @@ async function withCounts(organizationId) {
 
 // ---------- Routes ----------
 
+// הראוטר של הארגונים.
+// נקרא מ: app.js
 export const organizationsRouter = Router();
 
 organizationsRouter.get('/current', async (req, res) => {

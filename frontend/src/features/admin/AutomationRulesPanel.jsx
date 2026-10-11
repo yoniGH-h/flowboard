@@ -1,3 +1,6 @@
+// תפקיד הקובץ: ניהול חוקי האוטומציה.
+// משתמשים בו: OrganizationSettingsPage.jsx
+
 import { useState } from 'react';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -35,6 +38,8 @@ const ACTIONS = [
   { type: 'CREATE_NOTIFICATION', label: 'Create a reminder notification' },
 ];
 
+// רשימת החוקים: יצירה, הפעלה, מחיקה והיסטוריה.
+// נקרא מ: OrganizationSettingsPage.jsx
 export function AutomationRulesPanel() {
   const { organization } = useAuth();
   const { data: rules = [] } = useAutomationRules();

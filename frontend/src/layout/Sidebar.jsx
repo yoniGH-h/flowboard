@@ -1,3 +1,6 @@
+// תפקיד הקובץ: תפריט הצד.
+// משתמשים בו: AppShell.jsx
+
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
@@ -22,7 +25,11 @@ import { useNotifications } from '../lib/queries';
 import { UserAvatar } from '../components/common/UserAvatar';
 import { fullName } from '../lib/format';
 
+// רוחב התפריט כשהוא פתוח.
+// נקרא מ: הקובץ הזה בלבד
 export const SIDEBAR_WIDTH = 248;
+// רוחב התפריט כשהוא מכווץ.
+// נקרא מ: הקובץ הזה בלבד
 export const SIDEBAR_WIDTH_COLLAPSED = 72;
 
 const SIDEBAR_BG = '#111A2E';
@@ -174,6 +181,8 @@ function SidebarContent({ collapsed, onNavigate }) {
   );
 }
 
+// תפריט הצד במסך רחב, עם כיווץ.
+// נקרא מ: AppShell.jsx
 export function DesktopSidebar({ collapsed, onToggleCollapse }) {
   return (
     <Box
@@ -213,6 +222,8 @@ export function DesktopSidebar({ collapsed, onToggleCollapse }) {
   );
 }
 
+// תפריט הצד במסך צר, כמגירה.
+// נקרא מ: AppShell.jsx
 export function MobileSidebar({ open, onClose }) {
   return (
     <Drawer

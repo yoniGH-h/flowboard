@@ -1,3 +1,6 @@
+// תפקיד הקובץ: תפריט המשתמש.
+// משתמשים בו: Topbar.jsx
+
 import { useState } from 'react';
 import ButtonBase from '@mui/material/ButtonBase';
 import Menu from '@mui/material/Menu';
@@ -14,6 +17,8 @@ import { useAuth, ROLE_LABELS } from '../auth/AuthContext';
 import { UserAvatar } from '../components/common/UserAvatar';
 import { fullName } from '../lib/format';
 
+// קישור לפרופיל וכפתור יציאה.
+// נקרא מ: Topbar.jsx
 export function UserMenu() {
   const [anchorEl, setAnchorEl] = useState(null);
   const { user, organization, activeRole, signOut } = useAuth();

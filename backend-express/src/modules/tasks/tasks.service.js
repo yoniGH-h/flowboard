@@ -1,3 +1,6 @@
+// תפקיד הקובץ: לוגיקת המשימות: הרשאות, כללים עסקיים, כתיבה, היסטוריה והתראות.
+// משתמשים בו: meetings.routes.js, planning.service.js, tasks.reports.js, tasks.routes.js
+
 import { prisma } from '../../db.js';
 import { conflict, forbidden, notFound } from '../../utils/httpError.js';
 import { recordAudit } from '../audit-log/audit-log.service.js';
@@ -16,6 +19,8 @@ const PRIORITY_RANK = { LOW: 0, MEDIUM: 1, HIGH: 2, URGENT: 3 };
 const USER_BRIEF = { select: { id: true, firstName: true, lastName: true, avatarColor: true } };
 
 // Everything the Task Details screen needs, loaded with the task in one query.
+// מה נטען יחד עם משימה: אחראי, תוויות, תלויות, תת-משימות.
+// נקרא מ: הקובץ הזה בלבד
 export const TASK_INCLUDE = {
   assignee: USER_BRIEF,
   creator: USER_BRIEF,
@@ -46,6 +51,8 @@ function toDetail(task) {
 // Tasks visible to the actor: in projects they can see (Org Admins: the whole organization;
 // everyone else: projects they belong to). Pass a projectId that was already checked with
 // assertAccessible to narrow it to that one project.
+// תנאי שאילתה: המשימות שהמשתמש רשאי לראות.
+// נקרא מ: הקובץ הזה בלבד
 export function taskScope(actor, projectId) {
   return {
     archived: false,
@@ -55,6 +62,8 @@ export function taskScope(actor, projectId) {
 
 // Tasks in the projects the actor manages - the scope of the management screens (Management
 // Dashboard, Team Workload, Reports). A Project Manager sees only their own projects there.
+// תנאי שאילתה: המשימות בפרויקטים שהמשתמש מנהל.
+// נקרא מ: tasks.reports.js
 export function managedTaskScope(actor, projectId) {
   return {
     archived: false,
@@ -64,6 +73,8 @@ export function managedTaskScope(actor, projectId) {
 
 // Loads a task and checks it belongs to the actor's organization. Used by Comments and
 // Attachments too. A task from another organization is reported as "not found".
+// שולף משימה ומוודא שהיא בארגון של המשתמש (אחרת 404).
+// נקרא מ: meetings.routes.js
 export async function requireTaskInOrg(actor, id) {
   const task = await prisma.task.findFirst({
     where: { id, project: { organizationId: actor.organizationId } },
@@ -100,6 +111,8 @@ async function notifyAssignment(actor, task) {
 
 // ---------- CRUD ----------
 
+// יוצר משימה אחרי בדיקת הרשאה, עמודה ואחראי.
+// נקרא מ: tasks.routes.js
 export async function create(actor, dto) {
   // Allowed with tasks.manage (the project's manager) or tasks.create (e.g. an employee who
   // got it as a permission exception). The latter may only assign the task to themselves.
@@ -161,6 +174,8 @@ export async function create(actor, dto) {
   return toDetail(task);
 }
 
+// שולף משימות לפי סינון.
+// נקרא מ: tasks.routes.js
 export async function findAll(actor, query) {
   if (query.projectId) await assertAccessible(actor, query.projectId);
 
@@ -226,12 +241,16 @@ export async function findAll(actor, query) {
   };
 }
 
+// שולף משימה אחת עם כל הפרטים.
+// נקרא מ: tasks.routes.js
 export async function findOne(actor, id) {
   const task = await requireTaskInOrg(actor, id);
   await assertAccessible(actor, task.projectId);
   return toDetail(task);
 }
 
+// מעדכן את שדות המשימה.
+// נקרא מ: planning.service.js, tasks.routes.js
 export async function update(actor, id, dto) {
   const task = await requireTaskInOrg(actor, id);
   await assertProjectPermission(actor, task.projectId, 'tasks.manage');
@@ -271,6 +290,8 @@ export async function update(actor, id, dto) {
   return toDetail(updated);
 }
 
+// מעביר משימה לארכיון או מחזיר ממנו.
+// נקרא מ: planning.service.js, tasks.routes.js
 export async function setArchived(actor, id, archived) {
   const task = await requireTaskInOrg(actor, id);
   await assertProjectPermission(actor, task.projectId, 'tasks.manage');
@@ -289,6 +310,8 @@ export async function setArchived(actor, id, archived) {
   return toDetail(updated);
 }
 
+// מוחק משימה.
+// נקרא מ: tasks.routes.js
 export async function remove(actor, id) {
   const task = await requireTaskInOrg(actor, id);
   await assertProjectPermission(actor, task.projectId, 'tasks.manage');
@@ -305,6 +328,8 @@ export async function remove(actor, id) {
   });
 }
 
+// שולף את היסטוריית הפעילות של משימה.
+// נקרא מ: tasks.routes.js
 export async function getActivity(actor, id) {
   const task = await requireTaskInOrg(actor, id);
   await assertAccessible(actor, task.projectId);
@@ -317,6 +342,8 @@ export async function getActivity(actor, id) {
 
 // ---------- Moving a card on the Kanban board ----------
 
+// מעביר משימה לעמודה: הרשאה, מגבלת WIP, חסימות, התראה ואוטומציה.
+// נקרא מ: tasks.routes.js
 export async function move(actor, id, dto) {
   const task = await requireTaskInOrg(actor, id);
   const project = await assertAccessible(actor, task.projectId);
@@ -402,6 +429,8 @@ export async function move(actor, id, dto) {
   return toDetail(updated);
 }
 
+// משייך משימה לעובד ושולח לו התראה.
+// נקרא מ: planning.service.js, tasks.routes.js
 export async function assign(actor, id, assigneeId) {
   const task = await requireTaskInOrg(actor, id);
   await assertProjectPermission(actor, task.projectId, 'tasks.manage');
@@ -437,6 +466,8 @@ export async function assign(actor, id, assigneeId) {
 
 // ---------- Dependencies ("task A is blocked by task B") ----------
 
+// מוסיף תלות בין שתי משימות.
+// נקרא מ: tasks.routes.js
 export async function addDependency(actor, id, dto) {
   if (id === dto.dependsOnTaskId) throw conflict('A task cannot depend on itself');
 
@@ -478,6 +509,8 @@ export async function addDependency(actor, id, dto) {
   });
 }
 
+// מסיר תלות בין משימות.
+// נקרא מ: tasks.routes.js
 export async function removeDependency(actor, id, dependsOnTaskId) {
   const task = await requireTaskInOrg(actor, id);
   await assertProjectPermission(actor, task.projectId, 'tasks.manage');

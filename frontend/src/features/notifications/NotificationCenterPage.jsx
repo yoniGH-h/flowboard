@@ -1,3 +1,6 @@
+// תפקיד הקובץ: מסך מרכז ההתראות.
+// משתמשים בו: App.jsx
+
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
@@ -32,6 +35,8 @@ const ICONS = {
   AUTOMATION_TRIGGERED: <BoltOutlinedIcon fontSize="small" />,
 };
 
+// כל ההתראות, עם סינון וסימון כנקראו.
+// נקרא מ: App.jsx
 export function NotificationCenterPage() {
   const { user } = useAuth();
   const navigate = useNavigate();

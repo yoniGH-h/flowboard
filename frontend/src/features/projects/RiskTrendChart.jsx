@@ -1,3 +1,6 @@
+// תפקיד הקובץ: גרף מגמת הסיכון.
+// משתמשים בו: ProjectOverviewPage.jsx
+
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as ReTooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
@@ -6,6 +9,8 @@ import { formatDate } from '../../lib/format';
 
 // The project's delay-risk score over the last 30 days (one point per day, recorded by the
 // server). The dashed lines are the LOW / MEDIUM / HIGH thresholds of RiskBadge.
+// גרף קו של ציון הסיכון היומי של פרויקט.
+// נקרא מ: ProjectOverviewPage.jsx
 export function RiskTrendChart({ projectId }) {
   const { data: history, isError } = useRiskHistory(projectId);
 

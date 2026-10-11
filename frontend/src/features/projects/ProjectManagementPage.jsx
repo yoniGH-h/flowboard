@@ -1,3 +1,6 @@
+// תפקיד הקובץ: מסך ניהול הפרויקטים.
+// משתמשים בו: App.jsx
+
 import { useMemo, useState } from 'react';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
@@ -36,6 +39,8 @@ import { ProjectFormDialog } from './ProjectFormDialog';
 import { hasPermission, isOrgAdmin, ROLE_LEVEL } from '../../lib/permissions';
 import { useAuth } from '../../auth/AuthContext';
 
+// טבלת פרויקטים למנהל: יצירה, עריכה וארכוב.
+// נקרא מ: App.jsx
 export function ProjectManagementPage() {
   const navigate = useNavigate();
   const { activeRole, user } = useAuth();

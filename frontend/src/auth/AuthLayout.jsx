@@ -1,3 +1,6 @@
+// תפקיד הקובץ: המסגרת המשותפת של מסכי ההתחברות.
+// משתמשים בו: ForgotPasswordPage.jsx, ResetPasswordPage.jsx, SignInPage.jsx, SignUpPage.jsx
+
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
@@ -11,6 +14,8 @@ const HIGHLIGHTS = [
   'Role-aware views for employees, managers, and admins',
 ];
 
+// כרטיס ממורכז עם כותרת, לטפסי ההתחברות.
+// נקרא מ: ForgotPasswordPage.jsx, ResetPasswordPage.jsx, SignInPage.jsx, SignUpPage.jsx
 export function AuthLayout({ title, subtitle, children }) {
   return (
     <Box sx={{ minHeight: '100vh', display: 'flex', backgroundColor: 'background.default' }}>

@@ -1,3 +1,6 @@
+// תפקיד הקובץ: מסך מרכז ההחלטות.
+// משתמשים בו: App.jsx
+
 import { useState } from 'react';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -21,6 +24,8 @@ import { DecisionLogPanel } from './DecisionLogPanel';
 
 // Decision Center: spot a problem, get a recommendation, test changes in the what-if
 // simulator before committing, apply them, and later see whether the decision worked.
+// המלצות, סימולטור ויומן החלטות לפרויקט.
+// נקרא מ: App.jsx
 export function DecisionCenterPage() {
   // Only the projects the manager manages (scope=all = managed projects for a Project Manager).
   const { data: projects, isLoading } = useProjects({ scope: 'all' });

@@ -1,3 +1,6 @@
+// תפקיד הקובץ: נתיבי המשתמשים: הפרופיל שלי, רשימת הארגון, וניהול סטטוס ותפקידים.
+// משתמשים בו: app.js
+
 import { Router } from 'express';
 import { z } from 'zod';
 import { requirePermission } from '../../middleware/auth.js';
@@ -26,6 +29,8 @@ const updateRolesSchema = z.strictObject({
   roles: z.array(RoleName).min(1),
 });
 
+// הראוטר של המשתמשים.
+// נקרא מ: app.js
 export const usersRouter = Router();
 
 // Includes `permissions` - the effective permission keys (role defaults + organization

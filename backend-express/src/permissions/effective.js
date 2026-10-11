@@ -1,3 +1,6 @@
+// תפקיד הקובץ: חישוב ההרשאות בפועל בשלוש שכבות: תפקיד, שינויי הארגון, חריג אישי.
+// משתמשים בו: auth.js, permissions.service.js
+
 // Effective permissions = what a user is actually allowed to do, built in three layers:
 //
 //   1. role defaults            (catalog.js ROLE_DEFAULTS - union of every role the user holds)
@@ -10,6 +13,8 @@ import { prisma } from '../db.js';
 import { EDITABLE_ROLES, PERMISSIONS, ROLE_DEFAULTS } from './catalog.js';
 
 // Loads everything needed to compute one user's permissions (2 small queries).
+// טוען מהמסד את שינויי הארגון ואת החריגים של משתמש.
+// נקרא מ: permissions.service.js
 export async function loadPermissionInputs(organizationId, userId) {
   const [orgChanges, userOverrides] = await Promise.all([
     prisma.organizationRolePermission.findMany({ where: { organizationId } }),
@@ -22,6 +27,8 @@ const isActive = (override, now) => !override.expiresAt || override.expiresAt > 
 
 // Does this role have this permission in this organization (layers 1 + 2)?
 // Returns { granted, source: 'role' | 'organization' }.
+// האם לתפקיד יש את ההרשאה בארגון הזה, ומאיזה מקור.
+// נקרא מ: permissions.service.js
 export function roleHasPermission(roleName, key, orgChanges) {
   const change = EDITABLE_ROLES.includes(roleName)
     ? orgChanges.find((c) => c.roleName === roleName && c.permissionKey === key)
@@ -33,6 +40,8 @@ export function roleHasPermission(roleName, key, orgChanges) {
 // The full explanation for every permission in the catalog - used by the permissions
 // screen ("why can Dana do this?"). Each entry: { key, granted, source, expiresAt?, reason? }
 //   source: 'role' | 'organization' | 'user'
+// מחזיר לכל הרשאה אם ניתנה ומאיזו שכבה.
+// נקרא מ: permissions.service.js
 export function explainPermissions(roles, { orgChanges, userOverrides }, now = new Date()) {
   return PERMISSIONS.map(({ key, scope }) => {
     // Layers 1 + 2: granted if ANY of the user's roles has it.
@@ -59,6 +68,8 @@ export function explainPermissions(roles, { orgChanges, userOverrides }, now = n
 }
 
 // Just the set of permission keys the user has - what every request is checked against.
+// מחזיר את קבוצת מפתחות ההרשאה שיש למשתמש.
+// נקרא מ: auth.js
 export function effectivePermissions(roles, inputs, now = new Date()) {
   return new Set(
     explainPermissions(roles, inputs, now)

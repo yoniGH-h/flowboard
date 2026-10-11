@@ -1,8 +1,13 @@
+// תפקיד הקובץ: מופע axios המשותף: מוסיף אסימון לכל בקשה, מחדש אסימון שפג ומנסה שוב.
+// משתמשים בו: api.js, authApi.js
+
 import axios from 'axios';
 import { clearTokens, getAccessToken, notifySessionExpired, setTokens } from './session';
 
 const baseURL = import.meta.env.VITE_API_URL ?? 'http://localhost:3000/api';
 
+// מופע axios עם כתובת הבסיס של השרת וה-interceptors.
+// נקרא מ: api.js, authApi.js
 export const http = axios.create({ baseURL, withCredentials: true });
 
 http.interceptors.request.use((config) => {
@@ -66,6 +71,8 @@ http.interceptors.response.use(
   },
 );
 
+// שולף מהשגיאה את ההודעה שהשרת שלח.
+// נקרא מ: api.js, authApi.js
 export function getErrorMessage(error, fallback = 'Something went wrong. Please try again.') {
   if (axios.isAxiosError(error)) {
     const body = error.response?.data;

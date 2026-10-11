@@ -1,3 +1,6 @@
+// תפקיד הקובץ: מסך הפרופיל.
+// משתמשים בו: App.jsx
+
 import { useState } from 'react';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
@@ -17,6 +20,8 @@ import { useUpdateProfile } from '../../lib/queries';
 import { changePassword } from '../../api/authApi';
 import { fullName } from '../../lib/format';
 
+// עריכת פרטים אישיים ושינוי סיסמה.
+// נקרא מ: App.jsx
 export function ProfileSettingsPage() {
   const { user, organization, availableRoles, refreshUser } = useAuth();
   const updateProfile = useUpdateProfile();

@@ -1,3 +1,6 @@
+// תפקיד הקובץ: נתיבי יומן הביקורת: צפייה ברמת הארגון וברמת המערכת.
+// משתמשים בו: app.js
+
 import { Router } from 'express';
 import { z } from 'zod';
 import { requirePermission } from '../../middleware/auth.js';
@@ -12,6 +15,8 @@ const querySchema = z.strictObject({
   search: z.string().optional(), // matches action or entity type
 });
 
+// הראוטר של יומן הביקורת.
+// נקרא מ: app.js
 export const auditLogRouter = Router();
 
 // GET /api/audit-log - the caller's organization only.

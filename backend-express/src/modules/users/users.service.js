@@ -1,3 +1,6 @@
+// תפקיד הקובץ: לוגיקת המשתמשים: פרופיל, רשימה, סטטוס, תפקידים והסרה.
+// משתמשים בו: users.routes.js
+
 import { prisma } from '../../db.js';
 import { forbidden, notFound } from '../../utils/httpError.js';
 import { ROLE_LEVEL } from '../../utils/permissions.js';
@@ -25,6 +28,8 @@ function toProfile(user) {
   return { ...rest, roles: roles.map((r) => r.role.name) };
 }
 
+// שולף משתמש אחד בארגון, עם התפקידים וההרשאות.
+// נקרא מ: users.routes.js
 export async function findById(userId, organizationId) {
   const user = await prisma.user.findFirst({
     where: { id: userId, organizationId },
@@ -34,6 +39,8 @@ export async function findById(userId, organizationId) {
   return toProfile(user);
 }
 
+// מעדכן את פרטי הפרופיל של המשתמש.
+// נקרא מ: users.routes.js
 export async function updateProfile(userId, dto) {
   // The "active role" picker can only select a role the user actually holds.
   if (dto.defaultRole) {
@@ -50,6 +57,8 @@ export async function updateProfile(userId, dto) {
   return toProfile(user);
 }
 
+// שולף את משתמשי הארגון, עם חיפוש ודפדוף.
+// נקרא מ: users.routes.js
 export async function listForOrganization(organizationId, query) {
   const where = {
     organizationId,
@@ -78,6 +87,8 @@ export async function listForOrganization(organizationId, query) {
   return { items: users.map(toProfile), total, page: query.page, pageSize: query.pageSize };
 }
 
+// משנה סטטוס של משתמש (פעיל או מושעה).
+// נקרא מ: users.routes.js
 export async function updateStatus(actor, targetUserId, status) {
   const target = await requireSameOrgUser(actor.organizationId, targetUserId);
   if (target.id === actor.userId && status === 'SUSPENDED') {
@@ -101,6 +112,8 @@ export async function updateStatus(actor, targetUserId, status) {
   return toProfile(updated);
 }
 
+// משנה את התפקידים של משתמש.
+// נקרא מ: users.routes.js
 export async function updateRoles(actor, targetUserId, roleNames) {
   const target = await requireSameOrgUser(actor.organizationId, targetUserId);
 
@@ -141,6 +154,8 @@ export async function updateRoles(actor, targetUserId, roleNames) {
 
 // "Remove" is a soft delete: the account is suspended and hidden, and all its sessions are
 // revoked, but its history (tasks, comments, audit entries) stays intact.
+// מסיר משתמש מהארגון ושומר על ההיסטוריה שלו.
+// נקרא מ: users.routes.js
 export async function remove(actor, targetUserId) {
   const target = await requireSameOrgUser(actor.organizationId, targetUserId);
   if (target.id === actor.userId) {

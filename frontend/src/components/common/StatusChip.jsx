@@ -1,3 +1,6 @@
+// תפקיד הקובץ: תגיות סטטוס.
+// משתמשים בו: ProjectCard.jsx, ProjectManagementPage.jsx, ProjectOverviewPage.jsx, ReportsAnalyticsPage.jsx +1
+
 import Chip from '@mui/material/Chip';
 
 const PROJECT_STATUS_CONFIG = {
@@ -16,11 +19,15 @@ const COLUMN_CATEGORY_CONFIG = {
   DONE: { label: 'Done', color: 'success' },
 };
 
+// תגית סטטוס של פרויקט.
+// נקרא מ: ProjectCard.jsx, ProjectManagementPage.jsx, ProjectOverviewPage.jsx, ReportsAnalyticsPage.jsx
 export function ProjectStatusChip({ status }) {
   const cfg = PROJECT_STATUS_CONFIG[status];
   return <Chip size="small" label={cfg.label} color={cfg.color} variant={cfg.color === 'default' ? 'outlined' : 'filled'} />;
 }
 
+// תגית קטגוריה של עמודה.
+// נקרא מ: MyTasksPage.jsx
 export function ColumnCategoryChip({ category }) {
   const cfg = COLUMN_CATEGORY_CONFIG[category];
   return <Chip size="small" label={cfg.label} color={cfg.color} variant={cfg.color === 'default' ? 'outlined' : 'filled'} />;

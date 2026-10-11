@@ -1,3 +1,6 @@
+// תפקיד הקובץ: טופס פרויקט.
+// משתמשים בו: ProjectManagementPage.jsx
+
 import { useState } from 'react';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -13,6 +16,8 @@ import { useAuth } from '../../auth/AuthContext';
 import { useCreateProject, useUpdateProject } from '../../lib/queries';
 import { isOrgAdmin } from '../../lib/permissions';
 
+// חלון יצירה או עריכה של פרויקט.
+// נקרא מ: ProjectManagementPage.jsx
 export function ProjectFormDialog({ open, onClose, managers, project }) {
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>

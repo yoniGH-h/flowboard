@@ -1,3 +1,6 @@
+// תפקיד הקובץ: נקודת הכניסה של השרת: מפעיל את Express ואת Socket.IO, ושני טיימרים למשימות רקע.
+// משתמשים בו: מופעל על ידי npm start / npm run dev
+
 // Entry point: `npm start` (or `npm run dev` to restart on every file change).
 import { createServer } from 'node:http';
 import { app } from './app.js';

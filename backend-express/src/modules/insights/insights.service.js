@@ -1,3 +1,6 @@
+// תפקיד הקובץ: מחשב תובנות למנהל מתוך הנתונים הקיימים: צפי, צווארי בקבוק ומגמת סיכון.
+// משתמשים בו: insights.routes.js
+
 // Insights: conclusions a manager can act on, computed from data FlowBoard already collects.
 //
 //   1. Delivery forecast  - at the pace of the last 4 weeks, when will each project finish,
@@ -26,6 +29,8 @@ const round1 = (n) => Math.round(n * 10) / 10;
 const shortDate = (d) => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 const plural = (n, word) => `${n} ${word}${n === 1 ? '' : 's'}`;
 
+// מחזיר את כל התובנות של פרויקט אחד.
+// נקרא מ: insights.routes.js
 export async function getInsights(actor, projectId) {
   if (projectId) await assertProjectPermission(actor, projectId, 'tasks.manage');
 

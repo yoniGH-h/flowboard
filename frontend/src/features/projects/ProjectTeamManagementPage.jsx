@@ -1,3 +1,6 @@
+// תפקיד הקובץ: מסך ניהול צוות הפרויקט.
+// משתמשים בו: App.jsx
+
 import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Box from '@mui/material/Box';
@@ -26,6 +29,8 @@ import { LoadingState } from '../../components/common/States';
 import { useAddProjectMember, useOrganizationUsers, useProject, useRemoveProjectMember } from '../../lib/queries';
 import { fullName } from '../../lib/format';
 
+// הוספה והסרה של חברי צוות.
+// נקרא מ: App.jsx
 export function ProjectTeamManagementPage() {
   const { projectId } = useParams();
   const { data: project, isLoading } = useProject(projectId);

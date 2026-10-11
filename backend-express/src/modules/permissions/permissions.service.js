@@ -1,3 +1,6 @@
+// תפקיד הקובץ: ניהול הרשאות על ידי מנהל הארגון: שינוי לתפקיד וחריג למשתמש.
+// משתמשים בו: permissions.routes.js
+
 // Managing permissions: an Org Admin (anyone with permissions.manage) can
 //   - change what a role may do in their organization, and
 //   - give a single employee an exception (extra permission / removed permission).
@@ -44,6 +47,8 @@ function requireKnownPermission(key) {
 
 // Everything the Roles & Permissions screen needs: the catalog, and for each role whether it
 // has each permission in this organization (and whether that's the default or a change).
+// מחזיר לכל תפקיד אילו הרשאות יש לו בארגון.
+// נקרא מ: permissions.routes.js
 export async function getMatrix(actor) {
   const orgChanges = await prisma.organizationRolePermission.findMany({
     where: { organizationId: actor.organizationId },
@@ -72,6 +77,8 @@ export async function getMatrix(actor) {
 }
 
 // granted: true = the role gets it, false = the role loses it, null = back to the default.
+// נותן או שולל הרשאה מתפקיד בארגון, או מחזיר לברירת המחדל.
+// נקרא מ: permissions.routes.js
 export async function setRolePermission(actor, roleName, key, granted) {
   requireKnownPermission(key);
   if (!EDITABLE_ROLES.includes(roleName)) throw forbidden('This role cannot be changed');
@@ -120,6 +127,8 @@ async function requireTargetUser(actor, userId) {
 }
 
 // A user's effective permissions, with where each one comes from, plus their exceptions.
+// מחזיר את ההרשאות של משתמש ומאיפה כל אחת מגיעה.
+// נקרא מ: permissions.routes.js
 export async function getUserPermissions(actor, userId) {
   const user = await requireTargetUser(actor, userId);
   const inputs = await loadPermissionInputs(actor.organizationId, user.id);
@@ -157,6 +166,8 @@ function canEditUser(actor, user) {
 
 // granted: true = extra permission, false = removed permission, null = remove the exception.
 // expiresAt (optional) makes the exception temporary.
+// קובע או מסיר חריג הרשאה אישי למשתמש.
+// נקרא מ: permissions.routes.js
 export async function setUserOverride(actor, userId, key, { granted, expiresAt, reason }) {
   requireKnownPermission(key);
   const user = await requireTargetUser(actor, userId);

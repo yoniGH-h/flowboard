@@ -1,9 +1,14 @@
+// תפקיד הקובץ: שביל ניווט ("פירורי לחם").
+// משתמשים בו: KanbanBoardPage.jsx, ProjectOverviewPage.jsx, ProjectTeamManagementPage.jsx, TaskDetailsPage.jsx
+
 import MuiBreadcrumbs from '@mui/material/Breadcrumbs';
 import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import { Link as RouterLink } from 'react-router-dom';
 
+// מציג את המיקום הנוכחי כשרשרת קישורים.
+// נקרא מ: KanbanBoardPage.jsx, ProjectOverviewPage.jsx, ProjectTeamManagementPage.jsx, TaskDetailsPage.jsx
 export function Breadcrumbs({ items }) {
   return (
     <MuiBreadcrumbs separator={<NavigateNextIcon sx={{ fontSize: 16 }} />} sx={{ mb: 1 }} aria-label="Breadcrumb">

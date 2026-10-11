@@ -1,3 +1,6 @@
+// תפקיד הקובץ: מסך עומס הצוות.
+// משתמשים בו: App.jsx
+
 import { useMemo, useState } from 'react';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -23,6 +26,8 @@ import { fullName } from '../../lib/format';
 
 const CAPACITY_TASKS = 6; // tasks considered "full capacity" for the workload bar, prototype heuristic
 
+// כמה משימות פתוחות ושעות יש לכל עובד, ומי מעל הקיבולת.
+// נקרא מ: App.jsx
 export function TeamWorkloadPage() {
   const [projectFilter, setProjectFilter] = useState('ALL');
   const { data: users, isLoading: usersLoading } = useOrganizationUsers();

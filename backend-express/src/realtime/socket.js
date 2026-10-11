@@ -1,3 +1,6 @@
+// תפקיד הקובץ: זמן אמת ב-Socket.IO: אימות החיבור, חדר לכל משתמש ושליחת אירועים.
+// משתמשים בו: notifications.service.js, server.js
+
 // Real-time push over Socket.IO. Each connection authenticates with the same access token
 // the REST API uses, then joins a room named after its own user id - so pushing to a user is
 // just `io.to('user:<id>').emit(...)`, with no socket-to-user bookkeeping.
@@ -14,6 +17,8 @@ let io = null;
 
 const roomFor = (userId) => `user:${userId}`;
 
+// מפעיל את Socket.IO על שרת ה-HTTP ומגדיר אימות וחדרים.
+// נקרא מ: server.js
 export function initRealtime(httpServer) {
   io = new Server(httpServer, {
     cors: { origin: config.corsOrigins, credentials: true },
@@ -43,6 +48,8 @@ export function initRealtime(httpServer) {
   return io;
 }
 
+// שולח אירוע לכל החיבורים של משתמש אחד.
+// נקרא מ: notifications.service.js
 export function emitToUser(userId, event, payload) {
   io?.to(roomFor(userId)).emit(event, payload);
 }

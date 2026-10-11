@@ -1,3 +1,6 @@
+// תפקיד הקובץ: החיפוש בסרגל העליון.
+// משתמשים בו: Topbar.jsx
+
 import { useMemo, useState } from 'react';
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
@@ -10,6 +13,8 @@ import TaskAltOutlinedIcon from '@mui/icons-material/TaskAltOutlined';
 import { useNavigate } from 'react-router-dom';
 import { useProjects, useTasks } from '../lib/queries';
 
+// שדה חיפוש של פרויקטים ומשימות.
+// נקרא מ: Topbar.jsx
 export function GlobalSearch() {
   const [term, setTerm] = useState('');
   const navigate = useNavigate();

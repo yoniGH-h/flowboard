@@ -1,3 +1,6 @@
+// תפקיד הקובץ: נתיבי ניהול ההרשאות: טבלת התפקידים וחריגים אישיים.
+// משתמשים בו: app.js
+
 import { Router } from 'express';
 import { z } from 'zod';
 import { requirePermission } from '../../middleware/auth.js';
@@ -14,6 +17,8 @@ const userOverrideSchema = z.strictObject({
 });
 
 // Everything here needs permissions.manage (Org Admins by default).
+// הראוטר של ניהול ההרשאות.
+// נקרא מ: app.js
 export const permissionsRouter = Router();
 permissionsRouter.use(requirePermission('permissions.manage'));
 

@@ -1,3 +1,6 @@
+// תפקיד הקובץ: חלון הגדרות הלוח.
+// משתמשים בו: KanbanBoardPage.jsx
+
 import { useState } from 'react';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -86,6 +89,8 @@ function ColumnRow({ column, index, count, taskCount, onRename, onWip, onMove, o
   );
 }
 
+// ניהול עמודות: הוספה, שינוי שם, סדר, מגבלת WIP ומחיקה.
+// נקרא מ: KanbanBoardPage.jsx
 export function BoardSettingsDialog({ open, onClose, projectId, columns, tasks }) {
   const addColumn = useAddBoardColumn();
   const updateColumn = useUpdateBoardColumn();

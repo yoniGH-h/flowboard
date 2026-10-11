@@ -1,3 +1,6 @@
+// תפקיד הקובץ: כפתורי יצירת קשר עם חבר צוות: שיחה קולית ופגישת Zoom.
+// משתמשים בו: ProjectOverviewPage.jsx, ProjectTeamManagementPage.jsx, TaskDetailsPage.jsx
+
 import { useState } from 'react';
 import Stack from '@mui/material/Stack';
 import IconButton from '@mui/material/IconButton';
@@ -25,6 +28,8 @@ const MODES = {
 // Voice call + Zoom meeting buttons for contacting a teammate (hidden for yourself).
 // Both create a real Zoom meeting through the backend (POST /api/meetings): the caller joins
 // as host in a new tab, and the teammate gets a real-time notification with a join link.
+// כפתורי שיחה ו-Zoom מול משתמש מסוים.
+// נקרא מ: ProjectOverviewPage.jsx, ProjectTeamManagementPage.jsx, TaskDetailsPage.jsx
 export function ContactButtons({ user, projectId, taskId, size = 'small' }) {
   const { user: me } = useAuth();
   const [mode, setMode] = useState(null);

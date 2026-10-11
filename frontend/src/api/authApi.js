@@ -1,7 +1,12 @@
+// תפקיד הקובץ: הקריאות לשרת בנושא התחברות: כניסה, הרשמה, סיסמאות והמשתמש הנוכחי.
+// משתמשים בו: AuthContext.jsx, ForgotPasswordPage.jsx, ResetPasswordPage.jsx, SignInPage.jsx +3
+
 // Authentication against the Express backend: sign-in, sign-up, session and password reset.
 import { http, getErrorMessage } from './http';
 import { setTokens, clearTokens } from './session';
 
+// מחזיר את התפקיד הגבוה ביותר מתוך רשימה.
+// נקרא מ: AuthContext.jsx
 export function highestRole(roles) {
   const order = ['SYSTEM_ADMIN', 'ORG_ADMIN', 'PROJECT_MANAGER', 'EMPLOYEE'];
   return order.find((r) => roles.includes(r)) ?? 'EMPLOYEE';
@@ -12,6 +17,8 @@ async function hydrateSession() {
   return { user, organization };
 }
 
+// כניסה עם אימייל וסיסמה.
+// נקרא מ: SignInPage.jsx, SignInPage.test.jsx
 export async function signIn(email, password) {
   try {
     const { data } = await http.post('/auth/sign-in', { email, password });
@@ -22,6 +29,8 @@ export async function signIn(email, password) {
   }
 }
 
+// הרשמה עם יצירת ארגון חדש.
+// נקרא מ: SignUpPage.jsx
 export async function signUpCreateOrganization(input) {
   try {
     const { data } = await http.post('/auth/sign-up', input);
@@ -32,6 +41,8 @@ export async function signUpCreateOrganization(input) {
   }
 }
 
+// הרשמה לארגון קיים.
+// נקרא מ: SignUpPage.jsx
 export async function signUpJoinOrganization(input) {
   try {
     const { data } = await http.post('/auth/join-organization', {
@@ -48,11 +59,15 @@ export async function signUpJoinOrganization(input) {
   }
 }
 
+// מבקש איפוס סיסמה.
+// נקרא מ: ForgotPasswordPage.jsx
 export async function requestPasswordReset(email) {
   const { data } = await http.post('/auth/forgot-password', { email });
   return { sent: true, resetToken: data.resetToken };
 }
 
+// קובע סיסמה חדשה לפי אסימון האיפוס.
+// נקרא מ: ResetPasswordPage.jsx
 export async function resetPassword(token, newPassword) {
   try {
     await http.post('/auth/reset-password', { token, newPassword });
@@ -64,6 +79,8 @@ export async function resetPassword(token, newPassword) {
 
 // Profile & Settings: change the signed-in user's password. The server signs out every other
 // session and returns new tokens for this one.
+// משנה סיסמה למשתמש מחובר.
+// נקרא מ: ProfileSettingsPage.jsx
 export async function changePassword(currentPassword, newPassword) {
   try {
     const { data } = await http.post('/auth/change-password', { currentPassword, newPassword });
@@ -73,11 +90,15 @@ export async function changePassword(currentPassword, newPassword) {
   }
 }
 
+// יציאה: מודיע לשרת ומוחק את האסימון.
+// נקרא מ: AuthContext.jsx
 export async function signOut() {
   clearTokens();
   await http.post('/auth/logout', {}).catch(() => undefined);
 }
 
+// שולף את המשתמש המחובר ואת הארגון שלו.
+// נקרא מ: AuthContext.jsx
 export async function fetchCurrentSession() {
   try {
     return await hydrateSession();

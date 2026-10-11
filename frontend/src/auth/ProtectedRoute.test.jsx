@@ -1,3 +1,6 @@
+// תפקיד הקובץ: בדיקות יחידה לשמירה על מסכים לפי דרג.
+// משתמשים בו: מורץ על ידי Vitest (npm test)
+
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';

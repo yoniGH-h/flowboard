@@ -1,3 +1,6 @@
+// תפקיד הקובץ: פעמון ההתראות.
+// משתמשים בו: Topbar.jsx
+
 import { useState } from 'react';
 import IconButton from '@mui/material/IconButton';
 import Badge from '@mui/material/Badge';
@@ -14,6 +17,8 @@ import { useAuth } from '../auth/AuthContext';
 import { formatRelativeToNow } from '../lib/format';
 import { EmptyState } from '../components/common/States';
 
+// אייקון עם מונה, ורשימת ההתראות האחרונות.
+// נקרא מ: Topbar.jsx
 export function NotificationBell() {
   const [anchorEl, setAnchorEl] = useState(null);
   const { user } = useAuth();

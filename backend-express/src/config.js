@@ -1,3 +1,6 @@
+// תפקיד הקובץ: כל ההגדרות שהשרת קורא מקובץ ‎.env‏, במקום אחד.
+// משתמשים בו: app.js, db.js, auth.js, errorHandler.js +6
+
 // Every setting the server reads from the environment (.env), in one place.
 import 'dotenv/config';
 import path from 'node:path';
@@ -13,6 +16,8 @@ function required(name) {
   return value;
 }
 
+// אובייקט ההגדרות: פורט, מסד נתונים, סודות JWT, קבצים ו-Zoom.
+// נקרא מ: app.js, db.js, auth.js, errorHandler.js +6
 export const config = {
   port: Number(process.env.PORT ?? 3000),
   databaseUrl: required('DATABASE_URL'),

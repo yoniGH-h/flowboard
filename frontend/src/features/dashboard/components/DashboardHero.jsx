@@ -1,3 +1,6 @@
+// תפקיד הקובץ: החלק העליון של הדשבורד.
+// משתמשים בו: ManagementDashboardPage.jsx, PersonalDashboardPage.jsx
+
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
@@ -11,6 +14,8 @@ function greeting() {
   return 'Good evening';
 }
 
+// ברכה למשתמש וסיכום קצר.
+// נקרא מ: ManagementDashboardPage.jsx, PersonalDashboardPage.jsx
 export function DashboardHero({
   firstName,
   subtitle = "Here's what's happening today.",

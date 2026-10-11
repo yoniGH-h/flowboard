@@ -1,3 +1,6 @@
+// תפקיד הקובץ: מסך קביעת סיסמה חדשה.
+// משתמשים בו: App.jsx
+
 import { useState } from 'react';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
@@ -8,6 +11,8 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { AuthLayout } from '../AuthLayout';
 import { resetPassword } from '../../api/authApi';
 
+// טופס סיסמה חדשה, לפי האסימון שבכתובת.
+// נקרא מ: App.jsx
 export function ResetPasswordPage() {
   const [searchParams] = useSearchParams();
   const token = searchParams.get('token') ?? '';

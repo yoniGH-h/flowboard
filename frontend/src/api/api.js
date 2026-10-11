@@ -1,3 +1,6 @@
+// תפקיד הקובץ: כל הקריאות לשרת (חוץ מהתחברות): פונקציה אחת לכל כתובת API.
+// משתמשים בו: AuthContext.jsx, ContactButtons.jsx, TaskDetailsPage.jsx, queries.js +1
+
 // Real API layer for Projects, Project Members, Boards, Tasks, Comments, Attachments,
 // Labels, and the org member directory - backed by the Express backend.
 import { http, getErrorMessage } from './http';
@@ -7,6 +10,8 @@ function isNotFound(error) {
 }
 
 // ---------- Users ----------
+// שולף את משתמשי הארגון.
+// נקרא מ: queries.js
 export async function fetchUsers(_organizationId, filters = {}) {
   const params = { pageSize: 100 };
   if (filters.search) params.search = filters.search;
@@ -15,11 +20,15 @@ export async function fetchUsers(_organizationId, filters = {}) {
   return data.items;
 }
 
+// מעדכן את הפרופיל של המשתמש.
+// נקרא מ: AuthContext.jsx, queries.js
 export async function updateUserProfile(_userId, patch) {
   const { data } = await http.patch('/users/me', patch);
   return data;
 }
 
+// משנה סטטוס של משתמש.
+// נקרא מ: queries.js
 export async function setUserStatus(userId, status) {
   try {
     const { data } = await http.patch(`/users/${userId}/status`, { status });
@@ -29,6 +38,8 @@ export async function setUserStatus(userId, status) {
   }
 }
 
+// משנה את התפקידים של משתמש.
+// נקרא מ: queries.js
 export async function updateUserRoles(userId, roles) {
   try {
     const { data } = await http.patch(`/users/${userId}/roles`, { roles });
@@ -38,6 +49,8 @@ export async function updateUserRoles(userId, roles) {
   }
 }
 
+// מסיר משתמש מהארגון.
+// נקרא מ: queries.js
 export async function removeUser(userId) {
   try {
     await http.delete(`/users/${userId}`);
@@ -75,6 +88,8 @@ function mapProject(p) {
   };
 }
 
+// שולף את רשימת הפרויקטים.
+// נקרא מ: queries.js
 export async function fetchProjects(filters = {}) {
   const params = { scope: filters.scope ?? 'mine' };
   if (filters.status) params.status = filters.status;
@@ -87,6 +102,8 @@ export async function fetchProjects(filters = {}) {
   return list;
 }
 
+// שולף פרויקט אחד.
+// נקרא מ: queries.js
 export async function fetchProject(projectId) {
   try {
     const { data } = await http.get(`/projects/${projectId}`);
@@ -97,6 +114,8 @@ export async function fetchProject(projectId) {
   }
 }
 
+// יוצר פרויקט.
+// נקרא מ: queries.js
 export async function createProject(input) {
   try {
     const { data } = await http.post('/projects', {
@@ -113,6 +132,8 @@ export async function createProject(input) {
   }
 }
 
+// מעדכן פרויקט.
+// נקרא מ: queries.js
 export async function updateProject(projectId, patch) {
   try {
     const { data } = await http.patch(`/projects/${projectId}`, {
@@ -129,11 +150,15 @@ export async function updateProject(projectId, patch) {
   }
 }
 
+// מעביר פרויקט לארכיון או מחזיר ממנו.
+// נקרא מ: queries.js
 export async function archiveProject(projectId, archived) {
   const { data } = await http.patch(`/projects/${projectId}/archive`, { archived });
   return mapProject(data);
 }
 
+// מוסיף חבר צוות לפרויקט.
+// נקרא מ: queries.js
 export async function addProjectMember(projectId, userId) {
   try {
     const { data } = await http.post(`/projects/${projectId}/members`, { userId });
@@ -143,11 +168,15 @@ export async function addProjectMember(projectId, userId) {
   }
 }
 
+// מסיר חבר צוות מפרויקט.
+// נקרא מ: queries.js
 export async function removeProjectMember(projectId, userId) {
   const { data } = await http.delete(`/projects/${projectId}/members/${userId}`);
   return mapProject(data);
 }
 
+// שולף את הלוח של פרויקט.
+// נקרא מ: queries.js
 export async function fetchBoard(projectId) {
   try {
     const { data } = await http.get(`/projects/${projectId}/board`);
@@ -161,6 +190,8 @@ export async function fetchBoard(projectId) {
 // ---------- Board columns (Board settings - the project's manager) ----------
 // Each call returns the whole board again, so the screen can show it right away.
 
+// מוסיף עמודה ללוח.
+// נקרא מ: queries.js
 export async function addBoardColumn(projectId, column) {
   try {
     const { data } = await http.post(`/projects/${projectId}/board/columns`, column);
@@ -170,6 +201,8 @@ export async function addBoardColumn(projectId, column) {
   }
 }
 
+// מעדכן עמודה בלוח.
+// נקרא מ: queries.js
 export async function updateBoardColumn(projectId, columnId, patch) {
   try {
     const { data } = await http.patch(`/projects/${projectId}/board/columns/${columnId}`, patch);
@@ -179,6 +212,8 @@ export async function updateBoardColumn(projectId, columnId, patch) {
   }
 }
 
+// מוחק עמודה מהלוח.
+// נקרא מ: queries.js
 export async function deleteBoardColumn(projectId, columnId) {
   try {
     const { data } = await http.delete(`/projects/${projectId}/board/columns/${columnId}`);
@@ -188,11 +223,15 @@ export async function deleteBoardColumn(projectId, columnId) {
   }
 }
 
+// שולף את הקבצים של פרויקט.
+// נקרא מ: queries.js
 export async function fetchProjectAttachments(projectId) {
   const { data } = await http.get(`/projects/${projectId}/attachments`);
   return data;
 }
 
+// שולף את הפעילות של פרויקט.
+// נקרא מ: queries.js
 export async function fetchProjectActivity(projectId) {
   const { data } = await http.get(`/projects/${projectId}/activity`);
   return data;
@@ -228,6 +267,8 @@ function mapTask(t) {
   };
 }
 
+// שולף משימות לפי סינון.
+// נקרא מ: queries.js
 export async function fetchTasks(filters = {}) {
   const params = { pageSize: 100 };
   if (filters.projectId) params.projectId = filters.projectId;
@@ -244,6 +285,8 @@ export async function fetchTasks(filters = {}) {
   return data.items.map(mapTask);
 }
 
+// שולף משימה אחת.
+// נקרא מ: queries.js
 export async function fetchTask(taskId) {
   try {
     const { data } = await http.get(`/tasks/${taskId}`);
@@ -254,6 +297,8 @@ export async function fetchTask(taskId) {
   }
 }
 
+// יוצר משימה.
+// נקרא מ: queries.js
 export async function createTask(input) {
   try {
     const { data } = await http.post('/tasks', {
@@ -274,16 +319,22 @@ export async function createTask(input) {
   }
 }
 
+// מוסיף תלות בין משימות.
+// נקרא מ: queries.js
 export async function addTaskDependency(taskId, dependsOnTaskId, type = 'BLOCKS') {
   const { data } = await http.post(`/tasks/${taskId}/dependencies`, { dependsOnTaskId, type });
   return data;
 }
 
+// מסיר תלות בין משימות.
+// נקרא מ: queries.js
 export async function removeTaskDependency(taskId, dependsOnTaskId) {
   await http.delete(`/tasks/${taskId}/dependencies/${dependsOnTaskId}`);
   return true;
 }
 
+// מעביר משימה לעמודה אחרת.
+// נקרא מ: queries.js
 export async function moveTask(taskId, columnId) {
   try {
     const { data } = await http.patch(`/tasks/${taskId}/move`, { columnId });
@@ -293,6 +344,8 @@ export async function moveTask(taskId, columnId) {
   }
 }
 
+// משייך משימה לעובד.
+// נקרא מ: הקובץ הזה בלבד
 export async function assignTask(taskId, assigneeId) {
   try {
     const { data } = await http.patch(`/tasks/${taskId}/assign`, { assigneeId });
@@ -302,6 +355,8 @@ export async function assignTask(taskId, assigneeId) {
   }
 }
 
+// מעדכן משימה.
+// נקרא מ: queries.js
 export async function updateTask(taskId, patch) {
   if (Object.prototype.hasOwnProperty.call(patch, 'columnId')) {
     return moveTask(taskId, patch.columnId);
@@ -327,11 +382,15 @@ export async function updateTask(taskId, patch) {
   }
 }
 
+// מעביר משימה לארכיון או מחזיר ממנו.
+// נקרא מ: queries.js
 export async function archiveTask(taskId, archived) {
   const { data } = await http.patch(`/tasks/${taskId}/archive`, { archived });
   return mapTask(data);
 }
 
+// מוחק משימה.
+// נקרא מ: queries.js
 export async function deleteTask(taskId) {
   await http.delete(`/tasks/${taskId}`);
   return true;
@@ -339,6 +398,8 @@ export async function deleteTask(taskId) {
 
 // Server-side rollup for Team Workload - counts/sums computed by the database
 // (Prisma groupBy) rather than fetched-and-reduced client-side.
+// שולף את סיכום עומס הצוות.
+// נקרא מ: queries.js
 export async function fetchWorkloadSummary(projectId) {
   const { data } = await http.get('/tasks/workload-summary', { params: projectId ? { projectId } : {} });
   return data;
@@ -346,6 +407,8 @@ export async function fetchWorkloadSummary(projectId) {
 
 // Server-side rollup for the Management Dashboard - status/priority/weekly-completion
 // counts computed by the database rather than fetched-and-reduced client-side.
+// שולף את נתוני הדשבורד הניהולי.
+// נקרא מ: queries.js
 export async function fetchDashboardSummary(projectId) {
   const { data } = await http.get('/tasks/dashboard-summary', { params: projectId ? { projectId } : {} });
   return data;
@@ -355,6 +418,8 @@ export async function fetchDashboardSummary(projectId) {
 // completion/on-time/per-user stats computed by the database rather than fetched-and-reduced
 // client-side. `userActivity` always reflects the whole project scope (unaffected by the
 // assignee/date filters), matching the "User activity report" table's long-standing behavior.
+// שולף את נתוני מסך הדוחות.
+// נקרא מ: queries.js
 export async function fetchReportsSummary(filters = {}) {
   const params = {};
   if (filters.projectId) params.projectId = filters.projectId;
@@ -364,17 +429,23 @@ export async function fetchReportsSummary(filters = {}) {
   return data;
 }
 
+// שולף את היסטוריית הפעילות של משימה.
+// נקרא מ: queries.js
 export async function fetchTaskActivity(taskId) {
   const { data } = await http.get(`/tasks/${taskId}/activity`);
   return data;
 }
 
 // ---------- Comments ----------
+// שולף את התגובות של משימה.
+// נקרא מ: queries.js
 export async function fetchComments(taskId) {
   const { data } = await http.get(`/tasks/${taskId}/comments`);
   return data;
 }
 
+// מוסיף תגובה למשימה.
+// נקרא מ: queries.js
 export async function addComment(taskId, _authorId, body) {
   try {
     const { data } = await http.post(`/tasks/${taskId}/comments`, { body });
@@ -384,6 +455,8 @@ export async function addComment(taskId, _authorId, body) {
   }
 }
 
+// עורך תגובה.
+// נקרא מ: queries.js
 export async function updateComment(commentId, body) {
   try {
     const { data } = await http.patch(`/comments/${commentId}`, { body });
@@ -393,12 +466,16 @@ export async function updateComment(commentId, body) {
   }
 }
 
+// מוחק תגובה.
+// נקרא מ: queries.js
 export async function deleteComment(commentId) {
   await http.delete(`/comments/${commentId}`);
   return true;
 }
 
 // ---------- Attachments ----------
+// שולף את הקבצים של משימה.
+// נקרא מ: queries.js
 export async function fetchAttachments(taskId) {
   const { data } = await http.get(`/tasks/${taskId}/attachments`);
   return data;
@@ -406,6 +483,8 @@ export async function fetchAttachments(taskId) {
 
 const MAX_UPLOAD_MB = 10;
 
+// מעלה קובץ למשימה.
+// נקרא מ: queries.js
 export async function addAttachment(taskId, file) {
   if (file.size > MAX_UPLOAD_MB * 1024 * 1024) {
     throw new Error(`File exceeds the maximum allowed size of ${MAX_UPLOAD_MB} MB`);
@@ -422,6 +501,8 @@ export async function addAttachment(taskId, file) {
 
 // Downloads require the JWT bearer header, so a plain <a href> won't work -
 // fetch as a blob (via the authenticated axios instance) and trigger a client-side save.
+// מוריד קובץ מצורף ושומר אותו במחשב.
+// נקרא מ: TaskDetailsPage.jsx
 export async function downloadAttachment(attachmentId, fileName) {
   const response = await http.get(`/attachments/${attachmentId}/download`, { responseType: 'blob' });
   const url = URL.createObjectURL(response.data);
@@ -434,12 +515,16 @@ export async function downloadAttachment(attachmentId, fileName) {
   URL.revokeObjectURL(url);
 }
 
+// מוחק קובץ מצורף.
+// נקרא מ: queries.js
 export async function deleteAttachment(attachmentId) {
   await http.delete(`/attachments/${attachmentId}`);
   return true;
 }
 
 // ---------- Labels ----------
+// שולף את התוויות של הארגון.
+// נקרא מ: queries.js
 export async function fetchLabels() {
   const { data } = await http.get('/labels');
   return data;
@@ -468,6 +553,8 @@ function mapAuditLogEntry(entry) {
   };
 }
 
+// שולף את יומן הביקורת של הארגון.
+// נקרא מ: queries.js
 export async function fetchAuditLog(filters = {}) {
   const params = { pageSize: 100 };
   if (filters.action) params.action = filters.action;
@@ -480,6 +567,8 @@ export async function fetchAuditLog(filters = {}) {
 
 // System Administrator scope - a cross-org feed backed by GET /audit-log/system, which
 // (unlike the org-scoped endpoint above) also joins each entry's organization name.
+// שולף את יומן הביקורת של כל הארגונים.
+// נקרא מ: queries.js
 export async function fetchSystemAuditLog(filters = {}) {
   const params = { pageSize: 100 };
   if (filters.action) params.action = filters.action;
@@ -495,6 +584,8 @@ export async function fetchSystemAuditLog(filters = {}) {
 }
 
 // ---------- Organizations ----------
+// מעדכן את הגדרות הארגון.
+// נקרא מ: queries.js
 export async function updateOrganization(_orgId, patch) {
   try {
     const { data } = await http.patch('/organizations/current', patch);
@@ -505,17 +596,23 @@ export async function updateOrganization(_orgId, patch) {
 }
 
 // ---------- Organizations (System Administrator scope) ----------
+// שולף את כל הארגונים (למנהל מערכת).
+// נקרא מ: queries.js
 export async function fetchOrganizations() {
   const { data } = await http.get('/organizations');
   return data;
 }
 
+// משעה או מפעיל ארגון.
+// נקרא מ: queries.js
 export async function setOrganizationStatus(orgId, status) {
   const { data } = await http.patch(`/organizations/${orgId}/status`, { status });
   return data;
 }
 
 // ---------- Notifications ----------
+// ממיר התראה מהמבנה של השרת למבנה של האתר.
+// נקרא מ: useNotificationsSocket.js
 export function mapNotification(n) {
   return {
     id: n.id,
@@ -532,11 +629,15 @@ export function mapNotification(n) {
   };
 }
 
+// שולף את ההתראות של המשתמש.
+// נקרא מ: queries.js
 export async function fetchNotifications(_userId) {
   const { data } = await http.get('/notifications');
   return data.map(mapNotification);
 }
 
+// מסמן התראה כנקראה.
+// נקרא מ: queries.js
 export async function markNotificationRead(notificationId) {
   try {
     const { data } = await http.patch(`/notifications/${notificationId}/read`);
@@ -546,17 +647,23 @@ export async function markNotificationRead(notificationId) {
   }
 }
 
+// מסמן את כל ההתראות כנקראו.
+// נקרא מ: queries.js
 export async function markAllNotificationsRead(_userId) {
   await http.patch('/notifications/read-all');
   return true;
 }
 
 // ---------- Automation Rules ----------
+// שולף את חוקי האוטומציה.
+// נקרא מ: queries.js
 export async function fetchAutomationRules(_organizationId) {
   const { data } = await http.get('/automation-rules');
   return data;
 }
 
+// מפעיל או מכבה חוק אוטומציה.
+// נקרא מ: queries.js
 export async function toggleAutomationRule(ruleId, enabled) {
   try {
     const { data } = await http.patch(`/automation-rules/${ruleId}/toggle`, { enabled });
@@ -569,6 +676,8 @@ export async function toggleAutomationRule(ruleId, enabled) {
 // `rule.organizationId` is accepted (the panel still sends it, mirroring the mock signature)
 // but dropped before the request - the backend always derives the organization from the
 // caller's JWT, and the endpoint's ValidationPipe rejects unknown body fields.
+// יוצר חוק אוטומציה.
+// נקרא מ: queries.js
 export async function createAutomationRule(rule) {
   try {
     const { data } = await http.post('/automation-rules', {
@@ -585,6 +694,8 @@ export async function createAutomationRule(rule) {
   }
 }
 
+// מעדכן חוק אוטומציה.
+// נקרא מ: queries.js
 export async function updateAutomationRule(ruleId, rule) {
   const { data } = await http.patch(`/automation-rules/${ruleId}`, {
     projectId: rule.projectId ?? null,
@@ -597,11 +708,15 @@ export async function updateAutomationRule(ruleId, rule) {
   return data;
 }
 
+// מוחק חוק אוטומציה.
+// נקרא מ: queries.js
 export async function deleteAutomationRule(ruleId) {
   await http.delete(`/automation-rules/${ruleId}`);
   return true;
 }
 
+// שולף את היסטוריית ההרצות של חוק.
+// נקרא מ: queries.js
 export async function fetchAutomationExecutions(ruleId) {
   const { data } = await http.get(`/automation-rules/${ruleId}/executions`);
   return data;
@@ -610,12 +725,16 @@ export async function fetchAutomationExecutions(ruleId) {
 // ---------- Insights (Express backend) ----------
 
 // Forecast, estimate accuracy, where work waits, risk trend + plain-language conclusions.
+// שולף את התובנות של פרויקט.
+// נקרא מ: queries.js
 export async function fetchInsights(projectId) {
   const { data } = await http.get('/insights', { params: projectId ? { projectId } : {} });
   return data;
 }
 
 // Daily delay-risk scores of one project: [{ day, riskScore, riskLevel }]
+// שולף את ציוני הסיכון היומיים של פרויקט.
+// נקרא מ: queries.js
 export async function fetchRiskHistory(projectId, days = 30) {
   const { data } = await http.get(`/projects/${projectId}/risk-history`, { params: { days } });
   return data;
@@ -624,11 +743,15 @@ export async function fetchRiskHistory(projectId, days = 30) {
 // ---------- Decision Center (Express backend) ----------
 // changes = { reassign: [{ taskId, toUserId }], deferTaskIds, addMemberIds, unblockTaskIds, newTargetDate }
 
+// שולף את תמונת המצב למרכז ההחלטות.
+// נקרא מ: queries.js
 export async function fetchPlanningView(projectId) {
   const { data } = await http.get(`/planning/projects/${projectId}`);
   return data;
 }
 
+// שולח שינויים לסימולציה ומקבל "לפני ואחרי".
+// נקרא מ: queries.js
 export async function simulatePlan(projectId, changes) {
   try {
     const { data } = await http.post(`/planning/projects/${projectId}/simulate`, { changes });
@@ -638,11 +761,15 @@ export async function simulatePlan(projectId, changes) {
   }
 }
 
+// שולף את ההמלצות לפרויקט.
+// נקרא מ: queries.js
 export async function fetchRecommendations(projectId) {
   const { data } = await http.get(`/planning/projects/${projectId}/recommendations`);
   return data;
 }
 
+// מבצע החלטה בפועל.
+// נקרא מ: queries.js
 export async function applyDecision(projectId, { changes, source, note }) {
   try {
     const { data } = await http.post(`/planning/projects/${projectId}/decisions`, { changes, source, note: note || undefined });
@@ -652,6 +779,8 @@ export async function applyDecision(projectId, { changes, source, note }) {
   }
 }
 
+// שולף את ההחלטות שבוצעו.
+// נקרא מ: queries.js
 export async function fetchDecisions(projectId) {
   const { data } = await http.get('/planning/decisions', { params: projectId ? { projectId } : {} });
   return data;
@@ -659,12 +788,16 @@ export async function fetchDecisions(projectId) {
 
 // ---------- Permissions (dynamic: role matrix + per-employee exceptions) ----------
 
+// שולף את טבלת ההרשאות לפי תפקיד.
+// נקרא מ: queries.js
 export async function fetchPermissionMatrix() {
   const { data } = await http.get('/permissions/matrix');
   return data;
 }
 
 // granted: true = give the role this permission, false = take it away, null = back to default
+// נותן או שולל הרשאה מתפקיד.
+// נקרא מ: queries.js
 export async function setRolePermission(roleName, key, granted) {
   try {
     const { data } = await http.put(`/permissions/roles/${roleName}/${key}`, { granted });
@@ -674,12 +807,16 @@ export async function setRolePermission(roleName, key, granted) {
   }
 }
 
+// שולף את ההרשאות של משתמש אחד.
+// נקרא מ: queries.js
 export async function fetchUserPermissions(userId) {
   const { data } = await http.get(`/permissions/users/${userId}`);
   return data;
 }
 
 // granted: true = extra permission, false = removed permission, null = remove the exception
+// קובע או מסיר חריג הרשאה למשתמש.
+// נקרא מ: queries.js
 export async function setUserPermission(userId, key, { granted, expiresAt, reason }) {
   try {
     const { data } = await http.put(`/permissions/users/${userId}/${key}`, {
@@ -696,6 +833,8 @@ export async function setUserPermission(userId, key, { granted, expiresAt, reaso
 // ---------- Meetings (Zoom voice / video calls) ----------
 // The server creates a Zoom meeting and notifies the invitee. Returns { startUrl, joinUrl }:
 // startUrl opens the meeting as host for the caller.
+// פותח שיחה או פגישת Zoom עם חבר צוות.
+// נקרא מ: ContactButtons.jsx
 export async function startMeeting({ inviteeId, mode, projectId, taskId }) {
   try {
     const { data } = await http.post('/meetings', { inviteeId, mode, projectId, taskId });

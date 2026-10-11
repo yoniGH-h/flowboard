@@ -1,3 +1,6 @@
+// תפקיד הקובץ: הדשבורד הניהולי.
+// משתמשים בו: App.jsx
+
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
@@ -52,6 +55,8 @@ import { useAuth } from '../../auth/AuthContext';
 
 const HEALTH_COLORS = { onTrack: '#2E7D32', atRisk: '#C62828', offTrack: '#8A5A00' };
 
+// מדדים, גרפים ופרויקטים בסיכון, למנהלים.
+// נקרא מ: App.jsx
 export function ManagementDashboardPage() {
   const navigate = useNavigate();
   const { user } = useAuth();

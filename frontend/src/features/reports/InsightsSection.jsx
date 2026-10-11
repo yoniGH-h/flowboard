@@ -1,3 +1,6 @@
+// תפקיד הקובץ: אזור התובנות במסך הדוחות.
+// משתמשים בו: ReportsAnalyticsPage.jsx
+
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Alert from '@mui/material/Alert';
@@ -42,6 +45,8 @@ const FORECAST_STATUS = {
 
 // "Insights" on Reports & Analytics: conclusions a manager can act on, computed by the server
 // from data FlowBoard already has (see backend-express/src/modules/insights).
+// צפי סיום, דיוק הערכות, צווארי בקבוק ומגמת סיכון.
+// נקרא מ: ReportsAnalyticsPage.jsx
 export function InsightsSection({ projectId, users }) {
   const { data, isLoading, isError } = useInsights(projectId);
   const navigate = useNavigate();

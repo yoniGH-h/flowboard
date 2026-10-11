@@ -1,7 +1,12 @@
+// תפקיד הקובץ: כותרת עמוד אחידה.
+// משתמשים בו: AuditLogPage.jsx, OrganizationSettingsPage.jsx, RolesPermissionsPage.jsx, UserManagementPage.jsx +14
+
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
+// כותרת, תיאור, שביל ניווט וכפתורי פעולה.
+// נקרא מ: AuditLogPage.jsx, OrganizationSettingsPage.jsx, RolesPermissionsPage.jsx, UserManagementPage.jsx +14
 export function PageHeader({ title, description, actions, breadcrumb }) {
   return (
     <Box sx={{ mb: 3 }}>

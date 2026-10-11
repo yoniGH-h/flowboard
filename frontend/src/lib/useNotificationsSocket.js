@@ -1,3 +1,6 @@
+// תפקיד הקובץ: האזנה להתראות בזמן אמת ועדכון המטמון.
+// משתמשים בו: AppShell.jsx
+
 import { useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '../auth/AuthContext';
@@ -8,6 +11,8 @@ import { mapNotification } from '../api/api';
 // session (mounted in AppShell, which only renders behind ProtectedRoute) and keeps the
 // `['notifications', userId]` TanStack Query cache in sync via server push, instead of the
 // `refetchInterval` poll that hook used before this existed.
+// פותח חיבור ומוסיף כל התראה חדשה לרשימה.
+// נקרא מ: AppShell.jsx
 export function useNotificationsSocket() {
   const { user } = useAuth();
   const queryClient = useQueryClient();

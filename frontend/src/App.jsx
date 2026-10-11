@@ -1,3 +1,6 @@
+// תפקיד הקובץ: טבלת הנתיבים של האתר: איזה מסך מוצג בכל כתובת, ומי רשאי לראות אותו.
+// משתמשים בו: main.jsx
+
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { lazy, Suspense } from 'react';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -35,6 +38,8 @@ const OrganizationsSystemManagementPage = lazyNamed(() => import('./features/sys
 import { NotFoundPage } from './pages/NotFoundPage';
 import { ForbiddenPage } from './pages/ForbiddenPage';
 
+// הרכיב הראשי: כל הנתיבים, עם שמירה לפי התחברות ודרג.
+// נקרא מ: main.jsx
 export default function App() {
   return (
     <Suspense fallback={<Box sx={{ display: 'grid', placeItems: 'center', minHeight: '40vh' }}><CircularProgress aria-label="Loading page" /></Box>}>

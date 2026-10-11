@@ -1,3 +1,6 @@
+// תפקיד הקובץ: נתיב פתיחת שיחה קולית או פגישת Zoom עם חבר צוות.
+// משתמשים בו: app.js
+
 import { Router } from 'express';
 import { requirePermission } from '../../middleware/auth.js';
 import rateLimit from 'express-rate-limit';
@@ -21,6 +24,8 @@ const startMeetingSchema = z.strictObject({
 // Creating Zoom meetings costs API quota - a few calls per minute per client is plenty.
 const meetingLimit = rateLimit({ windowMs: 60_000, limit: 10, standardHeaders: 'draft-8', legacyHeaders: false });
 
+// הראוטר של הפגישות.
+// נקרא מ: app.js
 export const meetingsRouter = Router();
 
 // POST /api/meetings - start a voice / Zoom call with a teammate.

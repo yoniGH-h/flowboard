@@ -1,3 +1,6 @@
+// תפקיד הקובץ: בונה את אפליקציית Express: שרשרת ה-middleware ואחריה כל הנתיבים תחת /api.
+// משתמשים בו: server.js
+
 // Builds the Express application: global middleware, then every route under /api.
 // (server.js starts it listening; keeping the two apart lets tests import the app alone.)
 import { randomUUID } from 'node:crypto';
@@ -28,6 +31,8 @@ import { rolesRouter } from './modules/roles/roles.routes.js';
 import { tasksRouter } from './modules/tasks/tasks.routes.js';
 import { usersRouter } from './modules/users/users.routes.js';
 
+// אפליקציית Express המוכנה, עם כל ה-middleware והנתיבים.
+// נקרא מ: server.js
 export const app = express();
 
 // ---------- Global middleware (runs on every request, in this order) ----------

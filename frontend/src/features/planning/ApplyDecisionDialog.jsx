@@ -1,3 +1,6 @@
+// תפקיד הקובץ: חלון אישור לביצוע החלטה.
+// משתמשים בו: RecommendationsPanel.jsx, SimulatorPanel.jsx
+
 import { useState } from 'react';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -14,6 +17,8 @@ import { useApplyDecision } from '../../lib/queries';
 
 // Confirms applying changes for real. They are carried out through the normal task / project
 // actions (with their notifications and audit entries) and recorded in the decision log.
+// מציג את השינויים, מקבל הערה ומבצע.
+// נקרא מ: RecommendationsPanel.jsx, SimulatorPanel.jsx
 export function ApplyDecisionDialog({ open, onClose, onApplied, projectId, changes, summary, source }) {
   const applyDecision = useApplyDecision();
   const [note, setNote] = useState('');

@@ -1,3 +1,6 @@
+// תפקיד הקובץ: החלפת התפקיד הפעיל.
+// משתמשים בו: Topbar.jsx
+
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
@@ -7,6 +10,8 @@ import Tooltip from '@mui/material/Tooltip';
 import ManageAccountsOutlinedIcon from '@mui/icons-material/ManageAccountsOutlined';
 import { useAuth, ROLE_LABELS } from '../auth/AuthContext';
 
+// בחירה באיזה תפקיד לצפות באתר.
+// נקרא מ: Topbar.jsx
 export function RoleSwitcher() {
   const { availableRoles, activeRole, setActiveRole } = useAuth();
   if (availableRoles.length <= 1) return null;
