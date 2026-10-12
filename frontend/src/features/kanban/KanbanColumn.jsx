@@ -11,6 +11,7 @@ import { EmptyState } from '../../components/common/States';
 
 // עמודה שאפשר לשחרר בה כרטיס, עם מונה ומגבלת WIP.
 // נקרא מ: KanbanBoardPage.jsx
+// קורא ל: EmptyState, KanbanTaskCard
 export function KanbanColumn({ column, tasks, userMap, labelMap, canDragTask }) {
   const { setNodeRef, isOver } = useDroppable({ id: column.id });
   const overLimit = !!column.wipLimit && tasks.length > column.wipLimit;

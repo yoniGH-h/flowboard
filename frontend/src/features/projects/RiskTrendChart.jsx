@@ -10,6 +10,7 @@ import { formatDate } from '../../lib/format';
 // השרת). הקווים המקווקווים הם הספים LOW / MEDIUM / HIGH של RiskBadge.
 // גרף קו של ציון הסיכון היומי של פרויקט.
 // נקרא מ: ProjectOverviewPage.jsx
+// קורא ל: useRiskHistory, formatDate
 export function RiskTrendChart({ projectId }) {
   const { data: history, isError } = useRiskHistory(projectId);
 

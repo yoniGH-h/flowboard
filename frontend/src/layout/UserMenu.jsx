@@ -18,6 +18,7 @@ import { fullName } from '../lib/format';
 
 // קישור לפרופיל וכפתור יציאה.
 // נקרא מ: Topbar.jsx
+// קורא ל: useAuth, UserAvatar, fullName
 export function UserMenu() {
   const [anchorEl, setAnchorEl] = useState(null);
   const { user, organization, activeRole, signOut } = useAuth();

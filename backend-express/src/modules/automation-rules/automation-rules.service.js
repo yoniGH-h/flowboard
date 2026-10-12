@@ -21,16 +21,23 @@ const DUE_SOON_WINDOW_DAYS = 2;
 const TASK_FOR_ACTION_INCLUDE = { project: { select: { organizationId: true, managerId: true } } };
 
 // Prisma דורש Prisma.DbNull (ולא null רגיל) כדי לרוקן עמודת Json שיכולה להיות ריקה.
+// ממיר null לערך ש-Prisma דורש לעמודת JSON.
+// נקרא מ: update
+// קורא ל: —
 const jsonOrNull = (value) => (value === null ? Prisma.DbNull : value);
 
 // ---------- יצירה, קריאה, עדכון ומחיקה ----------
 
 // שולף את כל החוקים של הארגון.
 // נקרא מ: automation-rules.routes.js
+// קורא ל: מסד הנתונים (automationRule)
 export function findForOrganization(organizationId) {
   return prisma.automationRule.findMany({ where: { organizationId }, orderBy: { createdAt: 'desc' } });
 }
 
+// מוודא שהפרויקט שייך לארגון.
+// נקרא מ: create, update
+// קורא ל: notFound, מסד הנתונים (project)
 async function assertProjectInOrg(actor, projectId) {
   if (!projectId) return;
   const project = await prisma.project.findFirst({
@@ -41,6 +48,7 @@ async function assertProjectInOrg(actor, projectId) {
 
 // יוצר חוק חדש.
 // נקרא מ: automation-rules.routes.js
+// קורא ל: assertProjectInOrg, מסד הנתונים (automationRule)
 export async function create(actor, dto) {
   await assertProjectInOrg(actor, dto.projectId);
   return prisma.automationRule.create({
@@ -58,6 +66,7 @@ export async function create(actor, dto) {
 
 // מעדכן חוק קיים.
 // נקרא מ: automation-rules.routes.js
+// קורא ל: requireRule, assertProjectInOrg, jsonOrNull, מסד הנתונים (automationRule)
 export async function update(actor, ruleId, dto) {
   const rule = await requireRule(actor, ruleId);
   await assertProjectInOrg(actor, dto.projectId);
@@ -76,6 +85,7 @@ export async function update(actor, ruleId, dto) {
 
 // מפעיל או מכבה חוק.
 // נקרא מ: automation-rules.routes.js
+// קורא ל: requireRule, מסד הנתונים (automationRule)
 export async function toggle(actor, ruleId, enabled) {
   const rule = await requireRule(actor, ruleId);
   return prisma.automationRule.update({ where: { id: rule.id }, data: { enabled } });
@@ -83,6 +93,7 @@ export async function toggle(actor, ruleId, enabled) {
 
 // מוחק חוק.
 // נקרא מ: automation-rules.routes.js
+// קורא ל: requireRule, מסד הנתונים (automationRule)
 export async function remove(actor, ruleId) {
   const rule = await requireRule(actor, ruleId);
   await prisma.automationRule.delete({ where: { id: rule.id } });
@@ -92,6 +103,7 @@ export async function remove(actor, ruleId) {
 // היסטוריית ההרצות של החוק (הצלחה או כישלון לכל משימה).
 // שולף את היסטוריית ההרצות של חוק.
 // נקרא מ: automation-rules.routes.js
+// קורא ל: requireRule, מסד הנתונים (automationRuleExecution)
 export async function executions(actor, ruleId) {
   const rule = await requireRule(actor, ruleId);
   return prisma.automationRuleExecution.findMany({
@@ -101,6 +113,9 @@ export async function executions(actor, ruleId) {
   });
 }
 
+// שולף חוק ומוודא שהוא בארגון של המשתמש.
+// נקרא מ: update, toggle, remove, executions
+// קורא ל: notFound, מסד הנתונים (automationRule)
 async function requireRule(actor, ruleId) {
   const rule = await prisma.automationRule.findFirst({
     where: { id: ruleId, organizationId: actor.organizationId },
@@ -115,6 +130,7 @@ async function requireRule(actor, ruleId) {
 // לעמודה (כל הזזה היא אירוע בפני עצמו, אז אין כאן רישום של "רץ פעם אחת").
 // מפעיל חוקים של "משימה נכנסה לעמודה".
 // נקרא מ: tasks.service.js
+// קורא ל: findMatchingRules, executeAction, מסד הנתונים (task)
 export async function handleTaskMoved(taskId, newCategory) {
   if (newCategory !== 'REVIEW') return;
 
@@ -128,6 +144,7 @@ export async function handleTaskMoved(taskId, newCategory) {
 // נקראת מ-move() ב-tasks.service כשתת-משימה מגיעה ל-Done.
 // מפעיל חוקים של "כל תת-המשימות הושלמו".
 // נקרא מ: tasks.service.js
+// קורא ל: findMatchingRules, executeAction, מסד הנתונים (task)
 export async function handleSubtaskCompleted(parentTaskId) {
   const parent = await prisma.task.findUnique({
     where: { id: parentTaskId },
@@ -146,6 +163,7 @@ export async function handleSubtaskCompleted(parentTaskId) {
 // שנשארת באיחור במשך ימים לא שולחת התראה בכל סריקה.
 // סריקה תקופתית: חוקים של משימה באיחור ושל מועד מתקרב.
 // נקרא מ: automation-rules.routes.js, server.js
+// קורא ל: findMatchingRules, fireForTasks
 export async function runScans(organizationId) {
   let actionsExecuted = 0;
 
@@ -164,6 +182,9 @@ export async function runScans(organizationId) {
   return { rulesEvaluated: overdueRules.length + approachingRules.length, actionsExecuted };
 }
 
+// מריץ חוק על המשימות המתאימות שעוד לא רץ עליהן.
+// נקרא מ: runScans
+// קורא ל: executeAction, recordFiring, מסד הנתונים (task)
 async function fireForTasks(rule, dueDateFilter) {
   const tasks = await prisma.task.findMany({
     where: {
@@ -186,6 +207,9 @@ async function fireForTasks(rule, dueDateFilter) {
 }
 
 // חוקים פעילים עם סוג הטריגר הזה. חוק עם projectId = null חל על כל הפרויקטים.
+// מוצא חוקים פעילים לפי סוג הטריגר.
+// נקרא מ: handleTaskMoved, handleSubtaskCompleted, runScans
+// קורא ל: מסד הנתונים (automationRule)
 function findMatchingRules(organizationId, projectId, triggerType) {
   return prisma.automationRule.findMany({
     where: {
@@ -197,6 +221,9 @@ function findMatchingRules(organizationId, projectId, triggerType) {
   });
 }
 
+// רושם שהחוק רץ על המשימה.
+// נקרא מ: fireForTasks
+// קורא ל: מסד הנתונים (automationRuleFiring)
 async function recordFiring(ruleId, taskId) {
   try {
     await prisma.automationRuleFiring.create({ data: { ruleId, taskId } });
@@ -208,6 +235,9 @@ async function recordFiring(ruleId, taskId) {
 
 // מריץ את הפעולה של החוק ורושם את התוצאה. חוק שנכשל לא שובר את הבקשה
 // שהפעילה אותו (למשל הזזת כרטיס) - הכישלון נרשם בהיסטוריית החוק.
+// מריץ את פעולת החוק ורושם הצלחה או כישלון.
+// נקרא מ: handleTaskMoved, handleSubtaskCompleted, fireForTasks
+// קורא ל: executeActionBody, מסד הנתונים (automationRuleExecution)
 async function executeAction(rule, task) {
   try {
     await executeActionBody(rule, task);
@@ -223,6 +253,9 @@ async function executeAction(rule, task) {
   }
 }
 
+// מבצע את הפעולה לפי הסוג שלה.
+// נקרא מ: executeAction
+// קורא ל: notifyForTask, recordStatusChange, מסד הנתונים (boardColumn, task, projectMember)
 async function executeActionBody(rule, task) {
   switch (rule.action?.type) {
     case 'NOTIFY_ASSIGNEE_AND_MANAGER': {
@@ -262,6 +295,9 @@ async function executeActionBody(rule, task) {
   }
 }
 
+// שולח התראה של חוק אוטומציה.
+// נקרא מ: executeActionBody
+// קורא ל: createNotification
 function notifyForTask(rule, task, userId) {
   return createNotification({
     organizationId: task.project.organizationId,

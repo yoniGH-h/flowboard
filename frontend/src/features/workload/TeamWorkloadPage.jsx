@@ -27,6 +27,7 @@ const CAPACITY_TASKS = 6; // מספר המשימות שנחשב "קיבולת מ
 
 // כמה משימות פתוחות ושעות יש לכל עובד, ומי מעל הקיבולת.
 // נקרא מ: App.jsx
+// קורא ל: useOrganizationUsers, useProjects, useWorkloadSummary, LoadingState, PageHeader, KpiCard +3
 export function TeamWorkloadPage() {
   const [projectFilter, setProjectFilter] = useState('ALL');
   const { data: users, isLoading: usersLoading } = useOrganizationUsers();

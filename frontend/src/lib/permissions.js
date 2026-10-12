@@ -10,13 +10,15 @@ export const ROLE_LEVEL = {
 };
 
 // האם התפקיד בדרג הנדרש ומעלה.
-// נקרא מ: הקובץ הזה בלבד
+// נקרא מ: isManager, isOrgAdmin
+// קורא ל: —
 export function hasAtLeastLevel(role, minLevel) {
   return ROLE_LEVEL[role] >= minLevel;
 }
 
 // האם התפקיד הוא מנהל פרויקט ומעלה.
-// נקרא מ: MyProjectsPage.jsx
+// נקרא מ: MyProjectsPage.jsx, וגם בקובץ הזה
+// קורא ל: hasAtLeastLevel
 export function isManager(role) {
   return hasAtLeastLevel(role, ROLE_LEVEL.PROJECT_MANAGER);
 }
@@ -27,6 +29,7 @@ export function isManager(role) {
 // אמצעי הניהול.
 // האם המשתמש רשאי לנהל את הפרויקט הזה.
 // נקרא מ: אין שימוש כרגע
+// קורא ל: isManager
 export function canManageProject(role, project) {
   return isManager(role) && !!project?.canManage;
 }
@@ -35,6 +38,7 @@ export function canManageProject(role, project) {
 // (ברירות המחדל של התפקיד + שינויי הארגון + חריגים אישיים).
 // האם למשתמש יש הרשאה מסוימת.
 // נקרא מ: ContactButtons.jsx, ProjectManagementPage.jsx
+// קורא ל: —
 export function hasPermission(user, key) {
   return !!user?.permissions?.includes(key);
 }
@@ -47,6 +51,7 @@ const MANAGING_ABILITIES = new Set(['update', 'manageMembers', 'configureBoard',
 
 // האם למשתמש יש יכולת מסוימת בפרויקט (לפי מה שהשרת שלח).
 // נקרא מ: KanbanBoardPage.jsx, ProjectOverviewPage.jsx, TaskDetailsPage.jsx
+// קורא ל: isManager
 export function projectAbility(role, project, ability) {
   if (!project) return false;
   const managing = MANAGING_ABILITIES.has(ability);
@@ -55,12 +60,14 @@ export function projectAbility(role, project, ability) {
 
 // האם התפקיד הוא מנהל ארגון ומעלה.
 // נקרא מ: ProjectFormDialog.jsx, ProjectManagementPage.jsx
+// קורא ל: hasAtLeastLevel
 export function isOrgAdmin(role) {
   return hasAtLeastLevel(role, ROLE_LEVEL.ORG_ADMIN);
 }
 
 // האם התפקיד הוא מנהל מערכת.
 // נקרא מ: אין שימוש כרגע
+// קורא ל: —
 export function isSystemAdmin(role) {
   return role === 'SYSTEM_ADMIN';
 }

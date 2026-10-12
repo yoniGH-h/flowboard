@@ -15,6 +15,9 @@ import { useDecisions } from '../../lib/queries';
 import { formatDate } from '../../lib/format';
 
 // "אז -> נחזה -> עכשיו" למספר אחד שבו נמוך יותר טוב יותר (סיכון, ימי איחור).
+// מציג "אז, נחזה, עכשיו" למספר אחד.
+// נקרא מ: DecisionLogPanel
+// קורא ל: —
 function Trajectory({ before, predicted, now, unit = '' }) {
   if (before == null && now == null) return <Typography variant="body2">—</Typography>;
   const show = (v) => (v == null ? '—' : `${v}${unit}`);
@@ -40,6 +43,7 @@ function Trajectory({ before, predicted, now, unit = '' }) {
 // כל החלטה שהתקבלה במרכז ההחלטות, ואיך הפרויקט התפתח אחריה.
 // ההחלטות שבוצעו: מה נחזה ומה קרה בפועל.
 // נקרא מ: DecisionCenterPage.jsx
+// קורא ל: useDecisions, formatDate, Trajectory
 export function DecisionLogPanel({ projectId }) {
   const { data: decisions, isLoading } = useDecisions(projectId);
 

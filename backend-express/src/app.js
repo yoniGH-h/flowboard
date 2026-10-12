@@ -56,9 +56,15 @@ if (config.rateLimitEnabled) {
 const api = express.Router();
 
 // נתיבים ציבוריים (בלי אסימון).
+// בדיקה שהשרת חי.
+// נקרא מ: אין קריאה מהאתר
+// קורא ל: —
 api.get('/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
+// בדיקה שהשרת מחובר למסד הנתונים.
+// נקרא מ: אין קריאה מהאתר
+// קורא ל: —
 api.get('/ready', async (_req, res) => {
   await prisma.$queryRaw`SELECT 1`;
   res.json({ status: 'ready', database: 'connected', timestamp: new Date().toISOString() });

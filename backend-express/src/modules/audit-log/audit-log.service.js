@@ -7,6 +7,7 @@ import { prisma } from '../../db.js';
 // מנהלי ארגון יכולים לקרוא את השורות במסך יומן הביקורת.
 // רושם שורה ביומן הביקורת: מי עשה, מה ועל מה.
 // נקרא מ: attachments.routes.js, auth.service.js, comments.routes.js, meetings.routes.js +6
+// קורא ל: מסד הנתונים (auditLogEntry)
 export function recordAudit({ organizationId, actorId, action, entityType, entityId, projectId, taskId, metadata }) {
   return prisma.auditLogEntry.create({
     data: {
@@ -22,6 +23,9 @@ export function recordAudit({ organizationId, actorId, action, entityType, entit
   });
 }
 
+// בונה את תנאי הסינון של היומן.
+// נקרא מ: findPage
+// קורא ל: —
 function buildWhere(filters, organizationId) {
   return {
     organizationId,
@@ -37,6 +41,9 @@ function buildWhere(filters, organizationId) {
   };
 }
 
+// שולף עמוד אחד של רשומות יומן.
+// נקרא מ: findForOrganization, findAcrossOrganizations
+// קורא ל: buildWhere, מסד הנתונים (auditLogEntry)
 async function findPage(filters, organizationId, include) {
   const where = buildWhere(filters, organizationId);
   const [items, total] = await prisma.$transaction([
@@ -63,6 +70,7 @@ const ACTOR = { select: { firstName: true, lastName: true, email: true } };
 
 // שולף את רשומות היומן של ארגון אחד, עם סינון.
 // נקרא מ: audit-log.routes.js
+// קורא ל: findPage
 export function findForOrganization(organizationId, filters) {
   return findPage(filters, organizationId, { actor: ACTOR });
 }
@@ -71,6 +79,7 @@ export function findForOrganization(organizationId, filters) {
 // הארגון שלה כדי שהרשימה המשולבת תהיה קריאה.
 // שולף רשומות יומן מכל הארגונים (למנהל מערכת).
 // נקרא מ: audit-log.routes.js
+// קורא ל: findPage
 export function findAcrossOrganizations(filters) {
   return findPage(filters, undefined, { actor: ACTOR, organization: { select: { name: true } } });
 }

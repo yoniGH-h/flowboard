@@ -34,6 +34,7 @@ const STATUS_FILTERS = [
 
 // כרטיסי הפרויקטים שהמשתמש חבר בהם, עם חיפוש.
 // נקרא מ: App.jsx
+// קורא ל: useAuth, useProjects, useOrganizationUsers, LoadingState, PageHeader, isManager +4
 export function MyProjectsPage() {
   const { user, activeRole } = useAuth();
   const navigate = useNavigate();

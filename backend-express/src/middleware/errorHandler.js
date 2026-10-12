@@ -7,6 +7,7 @@ import { HttpError } from '../utils/httpError.js';
 // כתובת לא מוכרת תחת /api -> 404 באותו מבנה JSON של כל שגיאה אחרת.
 // מחזיר 404 לכתובת שלא קיימת תחת /api.
 // נקרא מ: app.js
+// קורא ל: —
 export function notFoundHandler(req, res) {
   res.status(404).json({
     statusCode: 404,
@@ -22,6 +23,7 @@ export function notFoundHandler(req, res) {
 // האתר קורא את message (מחרוזת או מערך מחרוזות) ומציג אותו למשתמש.
 // מטפל השגיאות המרכזי: קובע קוד והודעה ומחזיר JSON.
 // נקרא מ: app.js
+// קורא ל: HttpError
 // eslint-disable-next-line no-unused-vars
 export function errorHandler(err, req, res, _next) {
   let status = 500;

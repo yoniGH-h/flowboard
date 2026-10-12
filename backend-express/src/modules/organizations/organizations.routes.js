@@ -21,6 +21,9 @@ const updateStatusSchema = z.strictObject({ status: OrganizationStatus });
 
 // ---------- לוגיקה ----------
 
+// שולף ארגון עם מספר המשתמשים והפרויקטים.
+// נקרא מ: GET /current, PATCH /current, GET /, PATCH /:id/status
+// קורא ל: notFound, מסד הנתונים (organization, user, project)
 async function withCounts(organizationId) {
   const [organization, memberCount, projectCount] = await prisma.$transaction([
     prisma.organization.findUnique({ where: { id: organizationId } }),
@@ -37,10 +40,16 @@ async function withCounts(organizationId) {
 // נקרא מ: app.js
 export const organizationsRouter = Router();
 
+// מחזיר את הארגון של המשתמש.
+// נקרא מ: hydrateSession (authApi.js)
+// קורא ל: withCounts
 organizationsRouter.get('/current', async (req, res) => {
   res.json(await withCounts(req.user.organizationId));
 });
 
+// מעדכן את הגדרות הארגון.
+// נקרא מ: updateOrganization (api.js)
+// קורא ל: requirePermission, parse, recordAudit, withCounts, מסד הנתונים (organization)
 organizationsRouter.patch('/current', requirePermission('organization.settings.manage'), async (req, res) => {
   const dto = parse(updateOrganizationSchema, req.body);
   const { organizationId, userId } = req.user;
@@ -58,11 +67,17 @@ organizationsRouter.patch('/current', requirePermission('organization.settings.m
 });
 
 // מנהל מערכת: כל הארגונים בפלטפורמה.
+// מחזיר את כל הארגונים (מנהל מערכת).
+// נקרא מ: fetchOrganizations (api.js)
+// קורא ל: requirePermission, withCounts, מסד הנתונים (organization)
 organizationsRouter.get('/', requirePermission('organizations.manage'), async (_req, res) => {
   const organizations = await prisma.organization.findMany({ orderBy: { createdAt: 'asc' } });
   res.json(await Promise.all(organizations.map((org) => withCounts(org.id))));
 });
 
+// משעה או מפעיל ארגון (מנהל מערכת).
+// נקרא מ: setOrganizationStatus (api.js)
+// קורא ל: requirePermission, parse, forbidden, notFound, recordAudit, withCounts +1
 organizationsRouter.patch('/:id/status', requirePermission('organizations.manage'), async (req, res) => {
   const { status } = parse(updateStatusSchema, req.body);
   const organizationId = req.params.id;

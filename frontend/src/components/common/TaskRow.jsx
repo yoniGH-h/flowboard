@@ -15,6 +15,7 @@ import { isOverdue } from '../../lib/taskStatus';
 
 // שורה עם כותרת, אחראי, עדיפות ומועד; לחיצה פותחת את המשימה.
 // נקרא מ: PersonalDashboardPage.jsx, MyTasksPage.jsx
+// קורא ל: isOverdue, UserAvatar, formatDateShort, PriorityChip
 export function TaskRow({ task, assignee, projectName, showProject = false }) {
   const navigate = useNavigate();
   const overdue = isOverdue(task);

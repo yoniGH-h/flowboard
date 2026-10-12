@@ -20,6 +20,7 @@ const COLUMN_CATEGORY_CONFIG = {
 
 // תגית סטטוס של פרויקט.
 // נקרא מ: ProjectCard.jsx, ProjectManagementPage.jsx, ProjectOverviewPage.jsx, ReportsAnalyticsPage.jsx
+// קורא ל: —
 export function ProjectStatusChip({ status }) {
   const cfg = PROJECT_STATUS_CONFIG[status];
   return <Chip size="small" label={cfg.label} color={cfg.color} variant={cfg.color === 'default' ? 'outlined' : 'filled'} />;
@@ -27,6 +28,7 @@ export function ProjectStatusChip({ status }) {
 
 // תגית קטגוריה של עמודה.
 // נקרא מ: MyTasksPage.jsx
+// קורא ל: —
 export function ColumnCategoryChip({ category }) {
   const cfg = COLUMN_CATEGORY_CONFIG[category];
   return <Chip size="small" label={cfg.label} color={cfg.color} variant={cfg.color === 'default' ? 'outlined' : 'filled'} />;

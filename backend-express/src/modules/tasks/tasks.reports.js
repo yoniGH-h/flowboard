@@ -19,6 +19,9 @@ const TREND_WEEKS = 8;
 //   planned   = אחוז המשימות שהמועד שלהן היה עד סוף אותו שבוע
 //   completed = אחוז המשימות שהושלמו בפועל עד סוף אותו שבוע
 // כש-"completed" נשאר מתחת ל-"planned", העבודה מפגרת אחרי המועדים.
+// בונה את נקודות גרף ההתקדמות ל-8 שבועות.
+// נקרא מ: getDashboardSummary
+// קורא ל: —
 function buildCompletionTrend(tasks, now) {
   const total = tasks.length;
   const percent = (n) => (total > 0 ? Math.round((n / total) * 100) : 0);
@@ -35,6 +38,9 @@ function buildCompletionTrend(tasks, now) {
 }
 
 // דוח על פרויקט מסוים דורש לנהל את הפרויקט הזה.
+// מוודא שהמשתמש מנהל את הפרויקט.
+// נקרא מ: getWorkloadSummary, getDashboardSummary, getReportsSummary
+// קורא ל: assertProjectPermission
 async function assertManagedProject(actor, projectId) {
   if (projectId) await assertProjectPermission(actor, projectId, 'tasks.manage');
 }
@@ -42,6 +48,7 @@ async function assertManagedProject(actor, projectId) {
 // עומס צוות: לכל אחראי - משימות פתוחות, משימות באיחור ושעות מוערכות.
 // מחשב לכל עובד משימות פתוחות, איחורים ושעות.
 // נקרא מ: tasks.routes.js
+// קורא ל: assertManagedProject, מסד הנתונים (task)
 export async function getWorkloadSummary(actor, projectId) {
   await assertManagedProject(actor, projectId);
 
@@ -79,6 +86,7 @@ export async function getWorkloadSummary(actor, projectId) {
 // והמשימות בעדיפות הגבוהה ביותר.
 // מחשב את נתוני הדשבורד הניהולי, כולל גרף ההתקדמות.
 // נקרא מ: tasks.routes.js
+// קורא ל: assertManagedProject, managedTaskScope, buildCompletionTrend, מסד הנתונים (task)
 export async function getDashboardSummary(actor, projectId) {
   await assertManagedProject(actor, projectId);
 
@@ -170,6 +178,7 @@ export async function getDashboardSummary(actor, projectId) {
 // הכוללים של כל חבר צוות), וזה מה שמוצג בטבלה "User activity report".
 // מחשב את נתוני מסך הדוחות לפי הסינון.
 // נקרא מ: tasks.routes.js
+// קורא ל: assertManagedProject, managedTaskScope, מסד הנתונים (task)
 export async function getReportsSummary(actor, filters) {
   await assertManagedProject(actor, filters.projectId);
 

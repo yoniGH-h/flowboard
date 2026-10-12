@@ -9,6 +9,7 @@ import { useAuth } from '../auth/AuthContext';
 
 // קריאה: משתמשי הארגון.
 // נקרא מ: AuditLogPage.jsx, AutomationRulesPanel.jsx, UserManagementPage.jsx, ManagementDashboardPage.jsx +10
+// קורא ל: useAuth, realApi.fetchUsers
 export function useOrganizationUsers(filters = {}) {
   const { organization } = useAuth();
   return useQuery({
@@ -20,6 +21,7 @@ export function useOrganizationUsers(filters = {}) {
 
 // קריאה: רשימת הפרויקטים.
 // נקרא מ: AutomationRulesPanel.jsx, ManagementDashboardPage.jsx, PersonalDashboardPage.jsx, DecisionCenterPage.jsx +6
+// קורא ל: useAuth, realApi.fetchProjects
 export function useProjects(filters = {}) {
   const { organization } = useAuth();
   return useQuery({
@@ -31,6 +33,7 @@ export function useProjects(filters = {}) {
 
 // קריאה: פרויקט אחד.
 // נקרא מ: KanbanBoardPage.jsx, ProjectOverviewPage.jsx, ProjectTeamManagementPage.jsx, TaskDetailsPage.jsx
+// קורא ל: realApi.fetchProject
 export function useProject(projectId) {
   return useQuery({
     queryKey: ['project', projectId],
@@ -41,6 +44,7 @@ export function useProject(projectId) {
 
 // קריאה: הלוח של פרויקט.
 // נקרא מ: KanbanBoardPage.jsx, TaskDetailsPage.jsx
+// קורא ל: realApi.fetchBoard
 export function useBoard(projectId) {
   return useQuery({
     queryKey: ['board', projectId],
@@ -51,6 +55,7 @@ export function useBoard(projectId) {
 
 // קריאה: הקבצים של פרויקט.
 // נקרא מ: ProjectOverviewPage.jsx
+// קורא ל: realApi.fetchProjectAttachments
 export function useProjectAttachments(projectId) {
   return useQuery({
     queryKey: ['project-attachments', projectId],
@@ -61,6 +66,7 @@ export function useProjectAttachments(projectId) {
 
 // קריאה: הפעילות של פרויקט.
 // נקרא מ: ProjectOverviewPage.jsx
+// קורא ל: realApi.fetchProjectActivity
 export function useProjectActivity(projectId) {
   return useQuery({
     queryKey: ['project-activity', projectId],
@@ -71,6 +77,7 @@ export function useProjectActivity(projectId) {
 
 // קריאה: משימות לפי סינון.
 // נקרא מ: PersonalDashboardPage.jsx, KanbanBoardPage.jsx, ProjectOverviewPage.jsx, MyTasksPage.jsx +2
+// קורא ל: useAuth, realApi.fetchTasks
 export function useTasks(filters = {}) {
   const { organization } = useAuth();
   return useQuery({
@@ -82,6 +89,7 @@ export function useTasks(filters = {}) {
 
 // קריאה: משימה אחת.
 // נקרא מ: TaskDetailsPage.jsx
+// קורא ל: realApi.fetchTask
 export function useTask(taskId) {
   return useQuery({
     queryKey: ['task', taskId],
@@ -92,6 +100,7 @@ export function useTask(taskId) {
 
 // קריאה: היסטוריית משימה.
 // נקרא מ: TaskDetailsPage.jsx
+// קורא ל: realApi.fetchTaskActivity
 export function useTaskActivity(taskId) {
   return useQuery({
     queryKey: ['task-activity', taskId],
@@ -102,6 +111,7 @@ export function useTaskActivity(taskId) {
 
 // קריאה: התגובות של משימה.
 // נקרא מ: TaskDetailsPage.jsx
+// קורא ל: realApi.fetchComments
 export function useComments(taskId) {
   return useQuery({
     queryKey: ['comments', taskId],
@@ -112,6 +122,7 @@ export function useComments(taskId) {
 
 // קריאה: הקבצים של משימה.
 // נקרא מ: TaskDetailsPage.jsx
+// קורא ל: realApi.fetchAttachments
 export function useAttachments(taskId) {
   return useQuery({
     queryKey: ['attachments', taskId],
@@ -122,6 +133,7 @@ export function useAttachments(taskId) {
 
 // קריאה: ההתראות של המשתמש.
 // נקרא מ: PersonalDashboardPage.jsx, NotificationCenterPage.jsx, NotificationBell.jsx, Sidebar.jsx
+// קורא ל: useAuth, realApi.fetchNotifications
 export function useNotifications() {
   const { user } = useAuth();
   return useQuery({
@@ -134,6 +146,7 @@ export function useNotifications() {
 
 // קריאה: יומן הביקורת של הארגון.
 // נקרא מ: AuditLogPage.jsx, ManagementDashboardPage.jsx
+// קורא ל: useAuth, realApi.fetchAuditLog
 export function useAuditLog(filters = {}) {
   const { organization } = useAuth();
   return useQuery({
@@ -145,6 +158,7 @@ export function useAuditLog(filters = {}) {
 
 // קריאה: חוקי האוטומציה.
 // נקרא מ: AutomationRulesPanel.jsx
+// קורא ל: useAuth, realApi.fetchAutomationRules
 export function useAutomationRules() {
   const { organization } = useAuth();
   return useQuery({
@@ -156,6 +170,7 @@ export function useAutomationRules() {
 
 // קריאה: היסטוריית ההרצות של חוק.
 // נקרא מ: AutomationRulesPanel.jsx
+// קורא ל: realApi.fetchAutomationExecutions
 export function useAutomationExecutions(ruleId) {
   return useQuery({
     queryKey: ['automation-executions', ruleId],
@@ -166,6 +181,7 @@ export function useAutomationExecutions(ruleId) {
 
 // שינוי: מחיקת חוק אוטומציה.
 // נקרא מ: AutomationRulesPanel.jsx
+// קורא ל: realApi.deleteAutomationRule
 export function useDeleteAutomationRule() {
   const qc = useQueryClient();
   return useMutation({
@@ -176,6 +192,7 @@ export function useDeleteAutomationRule() {
 
 // שינוי: עדכון חוק אוטומציה.
 // נקרא מ: AutomationRulesPanel.jsx
+// קורא ל: realApi.updateAutomationRule
 export function useUpdateAutomationRule() {
   const qc = useQueryClient();
   return useMutation({
@@ -188,6 +205,7 @@ export function useUpdateAutomationRule() {
 
 // קריאה: התובנות של פרויקט.
 // נקרא מ: InsightsSection.jsx
+// קורא ל: useAuth, realApi.fetchInsights
 export function useInsights(projectId) {
   const { organization } = useAuth();
   return useQuery({
@@ -199,6 +217,7 @@ export function useInsights(projectId) {
 
 // קריאה: ציוני הסיכון היומיים.
 // נקרא מ: RiskTrendChart.jsx
+// קורא ל: realApi.fetchRiskHistory
 export function useRiskHistory(projectId) {
   return useQuery({
     queryKey: ['risk-history', projectId],
@@ -211,6 +230,7 @@ export function useRiskHistory(projectId) {
 
 // קריאה: תמונת המצב למרכז ההחלטות.
 // נקרא מ: DecisionCenterPage.jsx
+// קורא ל: realApi.fetchPlanningView
 export function usePlanningView(projectId) {
   return useQuery({
     queryKey: ['planning', projectId],
@@ -221,6 +241,7 @@ export function usePlanningView(projectId) {
 
 // קריאה: ההמלצות לפרויקט.
 // נקרא מ: RecommendationsPanel.jsx
+// קורא ל: realApi.fetchRecommendations
 export function useRecommendations(projectId) {
   return useQuery({
     queryKey: ['recommendations', projectId],
@@ -232,12 +253,14 @@ export function useRecommendations(projectId) {
 // "מה אם": שום דבר לא נשמר, ולכן זו mutation רק במובן של "קריאה לפי דרישה".
 // חישוב סימולציה בשרת; לא שומר דבר.
 // נקרא מ: SimulatorPanel.jsx
+// קורא ל: realApi.simulatePlan
 export function useSimulation() {
   return useMutation({ mutationFn: ({ projectId, changes }) => realApi.simulatePlan(projectId, changes) });
 }
 
 // קריאה: ההחלטות שבוצעו.
 // נקרא מ: DecisionLogPanel.jsx
+// קורא ל: useAuth, realApi.fetchDecisions
 export function useDecisions(projectId) {
   const { organization } = useAuth();
   return useQuery({
@@ -251,6 +274,7 @@ export function useDecisions(projectId) {
 // ביצוע החלטה באמת משנה משימות, חברי צוות ותאריכים - מרעננים את כל מה שניזון מהם.
 // שינוי: ביצוע החלטה, ורענון כל מה שהושפע.
 // נקרא מ: ApplyDecisionDialog.jsx
+// קורא ל: realApi.applyDecision
 export function useApplyDecision() {
   const qc = useQueryClient();
   return useMutation({
@@ -267,6 +291,7 @@ export function useApplyDecision() {
 
 // קריאה: טבלת ההרשאות לפי תפקיד.
 // נקרא מ: RolesPermissionsPage.jsx, UserPermissionsDialog.jsx
+// קורא ל: realApi.fetchPermissionMatrix
 export function usePermissionMatrix() {
   // retry: false - אם הנתיב לא קיים בשרת (404), העמוד עובר מיד לתצוגה החלופית.
   return useQuery({ queryKey: ['permission-matrix'], queryFn: realApi.fetchPermissionMatrix, retry: false });
@@ -274,6 +299,7 @@ export function usePermissionMatrix() {
 
 // שינוי: הרשאה של תפקיד.
 // נקרא מ: RolesPermissionsPage.jsx
+// קורא ל: realApi.setRolePermission
 export function useSetRolePermission() {
   const qc = useQueryClient();
   return useMutation({
@@ -287,6 +313,7 @@ export function useSetRolePermission() {
 
 // קריאה: ההרשאות של משתמש.
 // נקרא מ: UserPermissionsDialog.jsx
+// קורא ל: realApi.fetchUserPermissions
 export function useUserPermissions(userId) {
   return useQuery({
     queryKey: ['user-permissions', userId],
@@ -297,6 +324,7 @@ export function useUserPermissions(userId) {
 
 // שינוי: חריג הרשאה למשתמש.
 // נקרא מ: UserPermissionsDialog.jsx
+// קורא ל: realApi.setUserPermission
 export function useSetUserPermission() {
   const qc = useQueryClient();
   return useMutation({
@@ -308,6 +336,7 @@ export function useSetUserPermission() {
 
 // קריאה: סיכום עומס הצוות.
 // נקרא מ: ManagementDashboardPage.jsx, TeamWorkloadPage.jsx
+// קורא ל: useAuth, realApi.fetchWorkloadSummary
 export function useWorkloadSummary(projectId) {
   const { organization } = useAuth();
   return useQuery({
@@ -319,6 +348,7 @@ export function useWorkloadSummary(projectId) {
 
 // קריאה: נתוני הדשבורד הניהולי.
 // נקרא מ: ManagementDashboardPage.jsx
+// קורא ל: useAuth, realApi.fetchDashboardSummary
 export function useDashboardSummary(projectId) {
   const { organization } = useAuth();
   return useQuery({
@@ -330,6 +360,7 @@ export function useDashboardSummary(projectId) {
 
 // קריאה: נתוני מסך הדוחות.
 // נקרא מ: ReportsAnalyticsPage.jsx
+// קורא ל: useAuth, realApi.fetchReportsSummary
 export function useReportsSummary(filters = {}) {
   const { organization } = useAuth();
   return useQuery({
@@ -341,18 +372,21 @@ export function useReportsSummary(filters = {}) {
 
 // קריאה: התוויות של הארגון.
 // נקרא מ: KanbanBoardPage.jsx, TaskDetailsPage.jsx
+// קורא ל: realApi.fetchLabels
 export function useLabels() {
   return useQuery({ queryKey: ['labels'], queryFn: realApi.fetchLabels });
 }
 
 // קריאה: כל הארגונים.
 // נקרא מ: OrganizationsSystemManagementPage.jsx
+// קורא ל: realApi.fetchOrganizations
 export function useOrganizations() {
   return useQuery({ queryKey: ['organizations'], queryFn: realApi.fetchOrganizations });
 }
 
 // קריאה: יומן הביקורת של כל הארגונים.
 // נקרא מ: OrganizationsSystemManagementPage.jsx
+// קורא ל: realApi.fetchSystemAuditLog
 export function useAllAuditLog(filters = {}) {
   return useQuery({ queryKey: ['audit-all', filters], queryFn: () => realApi.fetchSystemAuditLog(filters) });
 }
@@ -360,6 +394,9 @@ export function useAllAuditLog(filters = {}) {
 // ---------- שינויים (Mutations) ----------
 
 // הגדרות הלוח: אחרי כל שינוי בעמודות, מרעננים את הלוח ואת המשימות שבו.
+// בסיס משותף לשינויי עמודות: שולח ומרענן את הלוח.
+// נקרא מ: useAddBoardColumn, useUpdateBoardColumn, useDeleteBoardColumn
+// קורא ל: —
 function useBoardColumnMutation(mutationFn) {
   const qc = useQueryClient();
   return useMutation({
@@ -373,24 +410,28 @@ function useBoardColumnMutation(mutationFn) {
 
 // שינוי: הוספת עמודה ללוח.
 // נקרא מ: BoardSettingsDialog.jsx
+// קורא ל: useBoardColumnMutation, realApi.addBoardColumn
 export function useAddBoardColumn() {
   return useBoardColumnMutation(({ projectId, column }) => realApi.addBoardColumn(projectId, column));
 }
 
 // שינוי: עדכון עמודה.
 // נקרא מ: BoardSettingsDialog.jsx
+// קורא ל: useBoardColumnMutation, realApi.updateBoardColumn
 export function useUpdateBoardColumn() {
   return useBoardColumnMutation(({ projectId, columnId, patch }) => realApi.updateBoardColumn(projectId, columnId, patch));
 }
 
 // שינוי: מחיקת עמודה.
 // נקרא מ: BoardSettingsDialog.jsx
+// קורא ל: useBoardColumnMutation, realApi.deleteBoardColumn
 export function useDeleteBoardColumn() {
   return useBoardColumnMutation(({ projectId, columnId }) => realApi.deleteBoardColumn(projectId, columnId));
 }
 
 // שינוי: הזזת משימה לעמודה, ורענון המשימות.
 // נקרא מ: KanbanBoardPage.jsx
+// קורא ל: realApi.moveTask
 export function useMoveTask() {
   const qc = useQueryClient();
   return useMutation({
@@ -404,6 +445,7 @@ export function useMoveTask() {
 
 // שינוי: עדכון משימה.
 // נקרא מ: TaskDetailsPage.jsx
+// קורא ל: realApi.updateTask
 export function useUpdateTask() {
   const qc = useQueryClient();
   return useMutation({
@@ -419,6 +461,7 @@ export function useUpdateTask() {
 
 // שינוי: יצירת משימה.
 // נקרא מ: TaskFormDialog.jsx
+// קורא ל: realApi.createTask
 export function useCreateTask() {
   const qc = useQueryClient();
   return useMutation({
@@ -432,6 +475,7 @@ export function useCreateTask() {
 
 // שינוי: ארכוב משימה.
 // נקרא מ: TaskDetailsPage.jsx
+// קורא ל: realApi.archiveTask
 export function useArchiveTask() {
   const qc = useQueryClient();
   return useMutation({
@@ -442,6 +486,7 @@ export function useArchiveTask() {
 
 // שינוי: מחיקת משימה.
 // נקרא מ: TaskDetailsPage.jsx
+// קורא ל: realApi.deleteTask
 export function useDeleteTask() {
   const qc = useQueryClient();
   return useMutation({
@@ -452,6 +497,7 @@ export function useDeleteTask() {
 
 // שינוי: הוספת תלות.
 // נקרא מ: TaskDetailsPage.jsx
+// קורא ל: realApi.addTaskDependency
 export function useAddTaskDependency() {
   const qc = useQueryClient();
   return useMutation({
@@ -462,6 +508,7 @@ export function useAddTaskDependency() {
 
 // שינוי: הסרת תלות.
 // נקרא מ: TaskDetailsPage.jsx
+// קורא ל: realApi.removeTaskDependency
 export function useRemoveTaskDependency() {
   const qc = useQueryClient();
   return useMutation({
@@ -472,6 +519,7 @@ export function useRemoveTaskDependency() {
 
 // שינוי: הוספת תגובה.
 // נקרא מ: TaskDetailsPage.jsx
+// קורא ל: realApi.addComment
 export function useAddComment() {
   const qc = useQueryClient();
   return useMutation({
@@ -486,6 +534,7 @@ export function useAddComment() {
 
 // שינוי: עריכת תגובה.
 // נקרא מ: TaskDetailsPage.jsx
+// קורא ל: realApi.updateComment
 export function useUpdateComment() {
   const qc = useQueryClient();
   return useMutation({
@@ -496,6 +545,7 @@ export function useUpdateComment() {
 
 // שינוי: מחיקת תגובה.
 // נקרא מ: TaskDetailsPage.jsx
+// קורא ל: realApi.deleteComment
 export function useDeleteComment() {
   const qc = useQueryClient();
   return useMutation({
@@ -506,6 +556,7 @@ export function useDeleteComment() {
 
 // שינוי: העלאת קובץ.
 // נקרא מ: TaskDetailsPage.jsx
+// קורא ל: realApi.addAttachment
 export function useAddAttachment() {
   const qc = useQueryClient();
   return useMutation({
@@ -519,6 +570,7 @@ export function useAddAttachment() {
 
 // שינוי: מחיקת קובץ.
 // נקרא מ: אין שימוש כרגע
+// קורא ל: realApi.deleteAttachment
 export function useDeleteAttachment() {
   const qc = useQueryClient();
   return useMutation({
@@ -529,6 +581,7 @@ export function useDeleteAttachment() {
 
 // שינוי: סימון התראה כנקראה.
 // נקרא מ: NotificationCenterPage.jsx, NotificationBell.jsx
+// קורא ל: realApi.markNotificationRead
 export function useMarkNotificationRead() {
   const qc = useQueryClient();
   return useMutation({
@@ -539,6 +592,7 @@ export function useMarkNotificationRead() {
 
 // שינוי: סימון כל ההתראות כנקראו.
 // נקרא מ: NotificationCenterPage.jsx, NotificationBell.jsx
+// קורא ל: realApi.markAllNotificationsRead
 export function useMarkAllNotificationsRead() {
   const qc = useQueryClient();
   return useMutation({
@@ -549,6 +603,7 @@ export function useMarkAllNotificationsRead() {
 
 // שינוי: יצירת פרויקט.
 // נקרא מ: ProjectFormDialog.jsx
+// קורא ל: realApi.createProject
 export function useCreateProject() {
   const qc = useQueryClient();
   return useMutation({
@@ -559,6 +614,7 @@ export function useCreateProject() {
 
 // שינוי: עדכון פרויקט.
 // נקרא מ: ProjectFormDialog.jsx
+// קורא ל: realApi.updateProject
 export function useUpdateProject() {
   const qc = useQueryClient();
   return useMutation({
@@ -572,6 +628,7 @@ export function useUpdateProject() {
 
 // שינוי: ארכוב פרויקט.
 // נקרא מ: ProjectManagementPage.jsx
+// קורא ל: realApi.archiveProject
 export function useArchiveProject() {
   const qc = useQueryClient();
   return useMutation({
@@ -582,6 +639,7 @@ export function useArchiveProject() {
 
 // שינוי: הוספת חבר צוות.
 // נקרא מ: ProjectTeamManagementPage.jsx
+// קורא ל: realApi.addProjectMember
 export function useAddProjectMember() {
   const qc = useQueryClient();
   return useMutation({
@@ -595,6 +653,7 @@ export function useAddProjectMember() {
 
 // שינוי: הסרת חבר צוות.
 // נקרא מ: ProjectTeamManagementPage.jsx
+// קורא ל: realApi.removeProjectMember
 export function useRemoveProjectMember() {
   const qc = useQueryClient();
   return useMutation({
@@ -605,6 +664,7 @@ export function useRemoveProjectMember() {
 
 // שינוי: סטטוס משתמש.
 // נקרא מ: UserManagementPage.jsx
+// קורא ל: realApi.setUserStatus
 export function useSetUserStatus() {
   const qc = useQueryClient();
   return useMutation({
@@ -615,6 +675,7 @@ export function useSetUserStatus() {
 
 // שינוי: הסרת משתמש.
 // נקרא מ: UserManagementPage.jsx
+// קורא ל: realApi.removeUser
 export function useRemoveUser() {
   const qc = useQueryClient();
   return useMutation({
@@ -625,6 +686,7 @@ export function useRemoveUser() {
 
 // שינוי: תפקידי משתמש.
 // נקרא מ: UserManagementPage.jsx
+// קורא ל: realApi.updateUserRoles
 export function useUpdateUserRoles() {
   const qc = useQueryClient();
   return useMutation({
@@ -635,6 +697,7 @@ export function useUpdateUserRoles() {
 
 // שינוי: הפעלה או כיבוי של חוק.
 // נקרא מ: AutomationRulesPanel.jsx
+// קורא ל: realApi.toggleAutomationRule
 export function useToggleAutomationRule() {
   const qc = useQueryClient();
   return useMutation({
@@ -645,6 +708,7 @@ export function useToggleAutomationRule() {
 
 // שינוי: יצירת חוק אוטומציה.
 // נקרא מ: AutomationRulesPanel.jsx
+// קורא ל: realApi.createAutomationRule
 export function useCreateAutomationRule() {
   const qc = useQueryClient();
   return useMutation({
@@ -655,6 +719,7 @@ export function useCreateAutomationRule() {
 
 // שינוי: עדכון הפרופיל.
 // נקרא מ: ProfileSettingsPage.jsx
+// קורא ל: realApi.updateUserProfile
 export function useUpdateProfile() {
   const qc = useQueryClient();
   return useMutation({
@@ -665,6 +730,7 @@ export function useUpdateProfile() {
 
 // שינוי: הגדרות הארגון.
 // נקרא מ: OrganizationSettingsPage.jsx
+// קורא ל: realApi.updateOrganization
 export function useUpdateOrganization() {
   const qc = useQueryClient();
   return useMutation({
@@ -675,6 +741,7 @@ export function useUpdateOrganization() {
 
 // שינוי: סטטוס ארגון.
 // נקרא מ: OrganizationsSystemManagementPage.jsx
+// קורא ל: realApi.setOrganizationStatus
 export function useSetOrganizationStatus() {
   const qc = useQueryClient();
   return useMutation({

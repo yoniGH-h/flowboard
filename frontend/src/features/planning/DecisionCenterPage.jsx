@@ -25,6 +25,7 @@ import { DecisionLogPanel } from './DecisionLogPanel';
 // "מה אם" לפני שמתחייבים, מבצעים אותם, ואחר כך רואים אם ההחלטה הצליחה.
 // המלצות, סימולטור ויומן החלטות לפרויקט.
 // נקרא מ: App.jsx
+// קורא ל: useProjects, usePlanningView, LoadingState, formatDate, PageHeader, RiskBadge +3
 export function DecisionCenterPage() {
   // רק הפרויקטים שהמנהל מנהל (scope=all = הפרויקטים המנוהלים, עבור מנהל פרויקט).
   const { data: projects, isLoading } = useProjects({ scope: 'all' });

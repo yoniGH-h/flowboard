@@ -12,6 +12,7 @@ const CONFIG = {
 
 // תגית צבעונית עם ציון הסיכון ורמתו.
 // נקרא מ: ProjectCard.jsx, DecisionCenterPage.jsx, ProjectManagementPage.jsx, ProjectOverviewPage.jsx +1
+// קורא ל: —
 export function RiskBadge({ score, level, compact = false }) {
   const cfg = CONFIG[level];
   return (
@@ -38,6 +39,7 @@ export function RiskBadge({ score, level, compact = false }) {
 
 // ממיר ציון מספרי לרמה: נמוך, בינוני או גבוה.
 // נקרא מ: אין שימוש כרגע
+// קורא ל: —
 export function riskLevelFromScore(score) {
   if (score <= 30) return 'LOW';
   if (score <= 60) return 'MEDIUM';

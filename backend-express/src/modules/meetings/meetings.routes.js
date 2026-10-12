@@ -30,6 +30,9 @@ export const meetingsRouter = Router();
 // POST /api/meetings - פתיחת שיחה קולית או פגישת Zoom עם חבר צוות.
 // הפותח מקבל { startUrl, joinUrl } ופותח את startUrl (נכנס כמארח); המוזמן מקבל
 // בזמן אמת התראת MEETING_INVITE, שהכפתור "Join call" שלה פותח את joinUrl.
+// פותח שיחה או פגישת Zoom ושולח הזמנה למוזמן.
+// נקרא מ: startMeeting (api.js)
+// קורא ל: requirePermission, parse, isZoomConfigured, HttpError, badRequest, notFound +6
 meetingsRouter.post('/', requirePermission('calls.start'), meetingLimit, async (req, res) => {
   const dto = parse(startMeetingSchema, req.body);
   const actor = req.user;

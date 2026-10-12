@@ -14,10 +14,14 @@ import { authenticateAccessToken } from '../middleware/auth.js';
 
 let io = null;
 
+// מחזיר את שם החדר של משתמש.
+// נקרא מ: initRealtime, emitToUser
+// קורא ל: —
 const roomFor = (userId) => `user:${userId}`;
 
 // מפעיל את Socket.IO על שרת ה-HTTP ומגדיר אימות וחדרים.
 // נקרא מ: server.js
+// קורא ל: authenticateAccessToken, roomFor
 export function initRealtime(httpServer) {
   io = new Server(httpServer, {
     cors: { origin: config.corsOrigins, credentials: true },
@@ -49,6 +53,7 @@ export function initRealtime(httpServer) {
 
 // שולח אירוע לכל החיבורים של משתמש אחד.
 // נקרא מ: notifications.service.js
+// קורא ל: roomFor
 export function emitToUser(userId, event, payload) {
   io?.to(roomFor(userId)).emit(event, payload);
 }

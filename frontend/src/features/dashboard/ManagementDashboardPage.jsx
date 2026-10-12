@@ -57,6 +57,7 @@ const HEALTH_COLORS = { onTrack: '#2E7D32', atRisk: '#C62828', offTrack: '#8A5A0
 
 // מדדים, גרפים ופרויקטים בסיכון, למנהלים.
 // נקרא מ: App.jsx
+// קורא ל: useAuth, useProjects, useDashboardSummary, useWorkloadSummary, useOrganizationUsers, useAuditLog +9
 export function ManagementDashboardPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -489,6 +490,9 @@ export function ManagementDashboardPage() {
   );
 }
 
+// שורה ברשימת הסיכונים.
+// נקרא מ: ManagementDashboardPage
+// קורא ל: —
 function RiskRow({ icon, color, title, detail, onClick }) {
   return (
     <Stack

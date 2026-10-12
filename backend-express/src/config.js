@@ -7,6 +7,9 @@ import path from 'node:path';
 // התיקייה backend-express, כדי שנתיבים יחסיים ב-.env לא יהיו תלויים במקום שממנו הופעל node.
 const ROOT = path.resolve(import.meta.dirname, '..');
 
+// קורא משתנה סביבה שחובה להגדיר; עוצר את השרת אם חסר.
+// נקרא מ: הקובץ הזה
+// קורא ל: —
 function required(name) {
   const value = process.env[name];
   if (!value) {

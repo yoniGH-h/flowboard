@@ -39,6 +39,7 @@ const DATE_RANGES = [
 
 // גרפים וטבלאות לפי פרויקט, עובד ותאריכים.
 // נקרא מ: App.jsx
+// קורא ל: useProjects, useOrganizationUsers, useReportsSummary, LoadingState, PageHeader, fullName +4
 export function ReportsAnalyticsPage() {
   const [projectFilter, setProjectFilter] = useState('ALL');
   const [userFilter, setUserFilter] = useState('ALL');

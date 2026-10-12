@@ -18,6 +18,7 @@ import { useApplyDecision } from '../../lib/queries';
 // (עם ההתראות והרישום ביומן שלהן) ונרשמים ביומן ההחלטות.
 // מציג את השינויים, מקבל הערה ומבצע.
 // נקרא מ: RecommendationsPanel.jsx, SimulatorPanel.jsx
+// קורא ל: useApplyDecision
 export function ApplyDecisionDialog({ open, onClose, onApplied, projectId, changes, summary, source }) {
   const applyDecision = useApplyDecision();
   const [note, setNote] = useState('');

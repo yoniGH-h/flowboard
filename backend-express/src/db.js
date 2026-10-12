@@ -21,6 +21,7 @@ const context = new AsyncLocalStorage();
 
 // מריץ פונקציה בתוך טרנזקציה אחת: הכל נשמר או הכל מתבטל.
 // נקרא מ: planning.service.js
+// קורא ל: —
 export async function inTransaction(fn) {
   const afterCommitQueue = [];
   const result = await client.$transaction((tx) => context.run({ tx, afterCommitQueue }, fn), {
@@ -33,6 +34,7 @@ export async function inTransaction(fn) {
 // מריץ את task עכשיו, או - בתוך inTransaction - מיד אחרי שהטרנזקציה נשמרה.
 // מריץ פעולה רק אחרי שהטרנזקציה נשמרה (או מיד, אם אין טרנזקציה).
 // נקרא מ: notifications.service.js
+// קורא ל: —
 export function afterCommit(task) {
   const store = context.getStore();
   if (store) store.afterCommitQueue.push(task);

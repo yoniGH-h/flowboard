@@ -7,6 +7,7 @@ import { ForbiddenState } from '../components/common/States';
 
 // המסך שמוצג למי שאין לו הרשאה לעמוד.
 // נקרא מ: App.jsx
+// קורא ל: ForbiddenState
 export function ForbiddenPage() {
   const navigate = useNavigate();
   return (

@@ -10,6 +10,7 @@ import TrendingDownIcon from '@mui/icons-material/TrendingDown';
 
 // כרטיס עם תווית, מספר ואייקון.
 // נקרא מ: UserManagementPage.jsx, ManagementDashboardPage.jsx, PersonalDashboardPage.jsx, KanbanBoardPage.jsx +7
+// קורא ל: —
 export function KpiCard({ label, value, icon, accentColor = '#3454D1', trend, helperText }) {
   return (
     <Card sx={{ height: '100%' }}>

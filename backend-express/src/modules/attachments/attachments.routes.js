@@ -33,8 +33,14 @@ const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: MAX
 const UPLOADED_BY = { select: { id: true, firstName: true, lastName: true, avatarColor: true } };
 
 // multer מפענח את שם הקובץ המקורי כ-latin1; ממירים אותו חזרה כדי ששמות בעברית יישמרו.
+// מתקן את קידוד שם הקובץ, כדי ששמות בעברית יישמרו.
+// נקרא מ: POST /tasks/:taskId/attachments
+// קורא ל: —
 const decodeFileName = (name) => Buffer.from(name, 'latin1').toString('utf8');
 
+// מחזיר את סיומת הקובץ; דוחה סיומת שאינה מותרת.
+// נקרא מ: POST /tasks/:taskId/attachments
+// קורא ל: badRequest
 function extensionOf(fileName) {
   const ext = fileName.includes('.') ? fileName.split('.').pop().toLowerCase() : '';
   if (!ALLOWED_EXTENSIONS.has(ext)) {
@@ -45,6 +51,9 @@ function extensionOf(fileName) {
 
 // המשימה חייבת להיות בפרויקט שלמשתמש יש גישה אליו - וכשניתן permission,
 // חייבת להיות לו ההרשאה הזו בפרויקט.
+// שולף משימה ומוודא גישה (והרשאה, אם נדרשת).
+// נקרא מ: GET /tasks/:taskId/attachments, POST /tasks/:taskId/attachments
+// קורא ל: notFound, assertProjectPermission, assertAccessible, מסד הנתונים (task)
 async function requireAccessibleTask(actor, taskId, permission) {
   const task = await prisma.task.findFirst({
     where: { id: taskId, project: { organizationId: actor.organizationId } },
@@ -55,6 +64,9 @@ async function requireAccessibleTask(actor, taskId, permission) {
   return task;
 }
 
+// שולף קובץ מצורף ומוודא גישה למשימה שלו.
+// נקרא מ: GET /attachments/:id/download, DELETE /attachments/:id
+// קורא ל: notFound, assertAccessible, מסד הנתונים (attachment)
 async function requireAccessibleAttachment(actor, attachmentId) {
   const attachment = await prisma.attachment.findFirst({
     where: { id: attachmentId, task: { project: { organizationId: actor.organizationId } } },
@@ -75,6 +87,9 @@ async function requireAccessibleAttachment(actor, attachmentId) {
 // נקרא מ: app.js
 export const attachmentsRouter = Router();
 
+// מחזיר את הקבצים של משימה.
+// נקרא מ: fetchAttachments (api.js)
+// קורא ל: requireAccessibleTask, מסד הנתונים (attachment)
 attachmentsRouter.get('/tasks/:taskId/attachments', async (req, res) => {
   await requireAccessibleTask(req.user, req.params.taskId);
   res.json(
@@ -87,6 +102,9 @@ attachmentsRouter.get('/tasks/:taskId/attachments', async (req, res) => {
 });
 
 // שדה הטופס חייב להיקרא "file".
+// מעלה קובץ למשימה: בדיקת סוג והרשאה, שמירה בדיסק ובמסד.
+// נקרא מ: addAttachment (api.js)
+// קורא ל: badRequest, decodeFileName, extensionOf, requireAccessibleTask, recordAudit, מסד הנתונים (attachment, activityEntry)
 attachmentsRouter.post('/tasks/:taskId/attachments', upload.single('file'), async (req, res) => {
   const actor = req.user;
   const taskId = req.params.taskId;
@@ -130,6 +148,9 @@ attachmentsRouter.post('/tasks/:taskId/attachments', upload.single('file'), asyn
 });
 
 // הורדה דורשת את הכותרת Authorization, ולכן האתר שולף את הקובץ כ-blob.
+// מוריד קובץ מצורף.
+// נקרא מ: downloadAttachment (api.js)
+// קורא ל: requireAccessibleAttachment, notFound
 attachmentsRouter.get('/attachments/:id/download', async (req, res) => {
   const { attachment } = await requireAccessibleAttachment(req.user, req.params.id);
 
@@ -146,6 +167,9 @@ attachmentsRouter.get('/attachments/:id/download', async (req, res) => {
 });
 
 // מי שהעלה את הקובץ, או מנהל הפרויקט, רשאים למחוק אותו.
+// מוחק קובץ מצורף (מי שהעלה, או מנהל הפרויקט).
+// נקרא מ: deleteAttachment (api.js)
+// קורא ל: requireAccessibleAttachment, forbidden, מסד הנתונים (attachment)
 attachmentsRouter.delete('/attachments/:id', async (req, res) => {
   const { attachment, canModerate } = await requireAccessibleAttachment(req.user, req.params.id);
   if (attachment.uploadedById !== req.user.userId && !canModerate) {

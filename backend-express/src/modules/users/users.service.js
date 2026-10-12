@@ -22,13 +22,17 @@ const PROFILE_SELECT = {
 };
 
 // { roles: [{ role: { name: 'EMPLOYEE' } }] } -> { roles: ['EMPLOYEE'] }
+// ממיר משתמש מהמסד למבנה של האתר (בלי סיסמה).
+// נקרא מ: findById, updateProfile, listForOrganization, updateStatus
+// קורא ל: —
 function toProfile(user) {
   const { roles, ...rest } = user;
   return { ...rest, roles: roles.map((r) => r.role.name) };
 }
 
 // שולף משתמש אחד בארגון, עם התפקידים וההרשאות.
-// נקרא מ: users.routes.js
+// נקרא מ: users.routes.js, וגם בקובץ הזה
+// קורא ל: notFound, toProfile, מסד הנתונים (user)
 export async function findById(userId, organizationId) {
   const user = await prisma.user.findFirst({
     where: { id: userId, organizationId },
@@ -40,6 +44,7 @@ export async function findById(userId, organizationId) {
 
 // מעדכן את פרטי הפרופיל של המשתמש.
 // נקרא מ: users.routes.js
+// קורא ל: forbidden, toProfile, מסד הנתונים (userRole, user)
 export async function updateProfile(userId, dto) {
   // בבורר "התפקיד הפעיל" אפשר לבחור רק תפקיד שהמשתמש באמת מחזיק.
   if (dto.defaultRole) {
@@ -58,6 +63,7 @@ export async function updateProfile(userId, dto) {
 
 // שולף את משתמשי הארגון, עם חיפוש ודפדוף.
 // נקרא מ: users.routes.js
+// קורא ל: toProfile, מסד הנתונים (user)
 export async function listForOrganization(organizationId, query) {
   const where = {
     organizationId,
@@ -88,6 +94,7 @@ export async function listForOrganization(organizationId, query) {
 
 // משנה סטטוס של משתמש (פעיל או מושעה).
 // נקרא מ: users.routes.js
+// קורא ל: requireSameOrgUser, forbidden, recordAudit, toProfile, מסד הנתונים (user)
 export async function updateStatus(actor, targetUserId, status) {
   const target = await requireSameOrgUser(actor.organizationId, targetUserId);
   if (target.id === actor.userId && status === 'SUSPENDED') {
@@ -113,6 +120,7 @@ export async function updateStatus(actor, targetUserId, status) {
 
 // משנה את התפקידים של משתמש.
 // נקרא מ: users.routes.js
+// קורא ל: requireSameOrgUser, forbidden, recordAudit, findById, מסד הנתונים (role, userRole, user)
 export async function updateRoles(actor, targetUserId, roleNames) {
   const target = await requireSameOrgUser(actor.organizationId, targetUserId);
 
@@ -155,6 +163,7 @@ export async function updateRoles(actor, targetUserId, roleNames) {
 // מבוטלים, אבל ההיסטוריה שלו (משימות, תגובות, רשומות ביומן) נשארת.
 // מסיר משתמש מהארגון ושומר על ההיסטוריה שלו.
 // נקרא מ: users.routes.js
+// קורא ל: requireSameOrgUser, forbidden, recordAudit, מסד הנתונים (refreshToken, user)
 export async function remove(actor, targetUserId) {
   const target = await requireSameOrgUser(actor.organizationId, targetUserId);
   if (target.id === actor.userId) {
@@ -182,6 +191,9 @@ export async function remove(actor, targetUserId) {
 }
 
 // הפרדה בין ארגונים: מזהה משתמש מארגון אחר מתנהג כאילו אינו קיים.
+// שולף משתמש ומוודא שהוא באותו ארגון.
+// נקרא מ: updateStatus, updateRoles, remove
+// קורא ל: notFound, מסד הנתונים (user)
 async function requireSameOrgUser(organizationId, userId) {
   const user = await prisma.user.findFirst({ where: { id: userId, organizationId } });
   if (!user) throw notFound('User not found');

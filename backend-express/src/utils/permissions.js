@@ -11,7 +11,8 @@ export const ROLE_LEVEL = {
 };
 
 // מחזיר את הדרג הגבוה ביותר מבין תפקידי המשתמש.
-// נקרא מ: auth.js, permissions.service.js
+// נקרא מ: auth.js, permissions.service.js, וגם בקובץ הזה
+// קורא ל: —
 export function highestRoleLevel(roles) {
   return roles.reduce((max, role) => Math.max(max, ROLE_LEVEL[role] ?? 0), 0);
 }
@@ -21,6 +22,7 @@ export function highestRoleLevel(roles) {
 // (ראו managesProject בקובץ modules/projects/projects.service.js).
 // האם המשתמש מנהל פרויקט ומעלה.
 // נקרא מ: permissions.service.js, projects.service.js
+// קורא ל: highestRoleLevel
 export function isManager(user) {
   return highestRoleLevel(user.roles) >= ROLE_LEVEL.PROJECT_MANAGER;
 }
@@ -28,6 +30,7 @@ export function isManager(user) {
 // מנהל ארגון ומעלה: שולט בכל הפרויקטים בארגון.
 // האם המשתמש מנהל ארגון ומעלה.
 // נקרא מ: projects.service.js
+// קורא ל: highestRoleLevel
 export function isOrgAdmin(user) {
   return highestRoleLevel(user.roles) >= ROLE_LEVEL.ORG_ADMIN;
 }

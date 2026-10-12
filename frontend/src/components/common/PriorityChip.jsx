@@ -15,6 +15,7 @@ const CONFIG = {
 
 // תגית צבעונית לפי עדיפות.
 // נקרא מ: TaskRow.jsx, ManagementDashboardPage.jsx, KanbanTaskCard.jsx, MyTasksPage.jsx +1
+// קורא ל: —
 export function PriorityChip({ priority }) {
   const cfg = CONFIG[priority];
   return (

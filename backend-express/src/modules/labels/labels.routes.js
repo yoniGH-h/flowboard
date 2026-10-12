@@ -7,6 +7,9 @@ import { prisma } from '../../db.js';
 // נקרא מ: app.js
 export const labelsRouter = Router();
 
+// מחזיר את התוויות של הארגון.
+// נקרא מ: fetchLabels (api.js)
+// קורא ל: מסד הנתונים (label)
 labelsRouter.get('/', async (req, res) => {
   res.json(
     await prisma.label.findMany({

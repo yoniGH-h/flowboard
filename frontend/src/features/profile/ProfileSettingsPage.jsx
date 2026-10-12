@@ -22,6 +22,7 @@ import { fullName } from '../../lib/format';
 
 // עריכת פרטים אישיים ושינוי סיסמה.
 // נקרא מ: App.jsx
+// קורא ל: useAuth, useUpdateProfile, changePassword, PageHeader, UserAvatar, fullName
 export function ProfileSettingsPage() {
   const { user, organization, availableRoles, refreshUser } = useAuth();
   const updateProfile = useUpdateProfile();

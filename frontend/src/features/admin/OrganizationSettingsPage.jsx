@@ -34,6 +34,7 @@ const DEFAULT_WORKFLOW = [
 
 // עריכת פרטי הארגון וחוקי האוטומציה.
 // נקרא מ: App.jsx
+// קורא ל: useAuth, useUpdateOrganization, PageHeader, AutomationRulesPanel
 export function OrganizationSettingsPage() {
   const { organization, refreshUser } = useAuth();
   const updateOrg = useUpdateOrganization();

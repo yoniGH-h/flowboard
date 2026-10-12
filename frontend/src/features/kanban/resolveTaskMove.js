@@ -6,6 +6,7 @@
 // של dnd-kit בדפדפן.
 // מחזיר את פרטי ההזזה, או null אם הכרטיס לא עבר עמודה.
 // נקרא מ: KanbanBoardPage.jsx, resolveTaskMove.test.js
+// קורא ל: —
 export function resolveTaskMove(tasks, activeId, overId) {
   if (!overId) return null;
   const task = tasks.find((t) => t.id === activeId);

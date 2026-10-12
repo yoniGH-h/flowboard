@@ -15,6 +15,7 @@ const HIGHLIGHTS = [
 
 // כרטיס ממורכז עם כותרת, לטפסי ההתחברות.
 // נקרא מ: ForgotPasswordPage.jsx, ResetPasswordPage.jsx, SignInPage.jsx, SignUpPage.jsx
+// קורא ל: —
 export function AuthLayout({ title, subtitle, children }) {
   return (
     <Box sx={{ minHeight: '100vh', display: 'flex', backgroundColor: 'background.default' }}>

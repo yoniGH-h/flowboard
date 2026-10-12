@@ -17,6 +17,9 @@ const AUTHOR = { select: { id: true, firstName: true, lastName: true, avatarColo
 
 // המשימה חייבת להיות בארגון של המשתמש ובפרויקט שיש לו גישה אליו - וכשניתן
 // permission, חייבת להיות לו ההרשאה הזו בפרויקט של המשימה.
+// שולף משימה ומוודא גישה (והרשאה, אם נדרשת).
+// נקרא מ: GET /tasks/:taskId/comments, POST /tasks/:taskId/comments
+// קורא ל: notFound, assertProjectPermission, assertAccessible, מסד הנתונים (task)
 async function requireAccessibleTask(actor, taskId, permission) {
   const task = await prisma.task.findFirst({
     where: { id: taskId, project: { organizationId: actor.organizationId } },
@@ -27,6 +30,9 @@ async function requireAccessibleTask(actor, taskId, permission) {
   return task;
 }
 
+// שולף תגובה ומוודא גישה למשימה שלה.
+// נקרא מ: PATCH /comments/:id, DELETE /comments/:id
+// קורא ל: notFound, assertAccessible, מסד הנתונים (comment)
 async function requireAccessibleComment(actor, commentId) {
   const comment = await prisma.comment.findFirst({
     where: { id: commentId, task: { project: { organizationId: actor.organizationId } } },
@@ -46,6 +52,9 @@ async function requireAccessibleComment(actor, commentId) {
 // נקרא מ: app.js
 export const commentsRouter = Router();
 
+// מחזיר את התגובות של משימה.
+// נקרא מ: fetchComments (api.js)
+// קורא ל: requireAccessibleTask, מסד הנתונים (comment)
 commentsRouter.get('/tasks/:taskId/comments', async (req, res) => {
   await requireAccessibleTask(req.user, req.params.taskId);
   res.json(
@@ -57,6 +66,9 @@ commentsRouter.get('/tasks/:taskId/comments', async (req, res) => {
   );
 });
 
+// מוסיף תגובה ושולח התראה לאחראי וליוצר.
+// נקרא מ: addComment (api.js)
+// קורא ל: parse, requireAccessibleTask, recordAudit, createNotification, מסד הנתונים (comment, activityEntry)
 commentsRouter.post('/tasks/:taskId/comments', async (req, res) => {
   const { body } = parse(commentSchema, req.body);
   const actor = req.user;
@@ -99,6 +111,9 @@ commentsRouter.post('/tasks/:taskId/comments', async (req, res) => {
 });
 
 // רק מי שכתב את התגובה רשאי לערוך אותה.
+// עורך תגובה (רק מי שכתב אותה).
+// נקרא מ: updateComment (api.js)
+// קורא ל: parse, requireAccessibleComment, forbidden, מסד הנתונים (comment)
 commentsRouter.patch('/comments/:id', async (req, res) => {
   const { body } = parse(commentSchema, req.body);
   const comment = await requireAccessibleComment(req.user, req.params.id);
@@ -116,6 +131,9 @@ commentsRouter.patch('/comments/:id', async (req, res) => {
 });
 
 // מי שכתב את התגובה, או מנהל הפרויקט (מודרציה), רשאים למחוק אותה.
+// מוחק תגובה (מי שכתב, או מנהל הפרויקט).
+// נקרא מ: deleteComment (api.js)
+// קורא ל: requireAccessibleComment, forbidden, מסד הנתונים (comment)
 commentsRouter.delete('/comments/:id', async (req, res) => {
   const comment = await requireAccessibleComment(req.user, req.params.id);
   if (comment.authorId !== req.user.userId && !comment.canModerate) {

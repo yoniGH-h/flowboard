@@ -10,6 +10,7 @@ import { badRequest } from './httpError.js';
 
 // בודק קלט מול סכמה; זורק 400 עם פירוט אם לא תקין.
 // נקרא מ: audit-log.routes.js, auth.routes.js, automation-rules.routes.js, comments.routes.js +8
+// קורא ל: badRequest
 export function parse(schema, input) {
   const result = schema.safeParse(input ?? {});
   if (!result.success) {

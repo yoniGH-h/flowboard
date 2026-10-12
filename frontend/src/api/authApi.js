@@ -6,11 +6,15 @@ import { setTokens, clearTokens } from './session';
 
 // מחזיר את התפקיד הגבוה ביותר מתוך רשימה.
 // נקרא מ: AuthContext.jsx
+// קורא ל: —
 export function highestRole(roles) {
   const order = ['SYSTEM_ADMIN', 'ORG_ADMIN', 'PROJECT_MANAGER', 'EMPLOYEE'];
   return order.find((r) => roles.includes(r)) ?? 'EMPLOYEE';
 }
 
+// שולף את המשתמש והארגון אחרי התחברות.
+// נקרא מ: signIn, signUpCreateOrganization, signUpJoinOrganization, fetchCurrentSession
+// קורא ל: —
 async function hydrateSession() {
   const [{ data: user }, { data: organization }] = await Promise.all([http.get('/users/me'), http.get('/organizations/current')]);
   return { user, organization };
@@ -18,6 +22,7 @@ async function hydrateSession() {
 
 // כניסה עם אימייל וסיסמה.
 // נקרא מ: SignInPage.jsx, SignInPage.test.jsx
+// קורא ל: setTokens, hydrateSession, getErrorMessage
 export async function signIn(email, password) {
   try {
     const { data } = await http.post('/auth/sign-in', { email, password });
@@ -30,6 +35,7 @@ export async function signIn(email, password) {
 
 // הרשמה עם יצירת ארגון חדש.
 // נקרא מ: SignUpPage.jsx
+// קורא ל: setTokens, hydrateSession, getErrorMessage
 export async function signUpCreateOrganization(input) {
   try {
     const { data } = await http.post('/auth/sign-up', input);
@@ -42,6 +48,7 @@ export async function signUpCreateOrganization(input) {
 
 // הרשמה לארגון קיים.
 // נקרא מ: SignUpPage.jsx
+// קורא ל: setTokens, hydrateSession, getErrorMessage
 export async function signUpJoinOrganization(input) {
   try {
     const { data } = await http.post('/auth/join-organization', {
@@ -60,6 +67,7 @@ export async function signUpJoinOrganization(input) {
 
 // מבקש איפוס סיסמה.
 // נקרא מ: ForgotPasswordPage.jsx
+// קורא ל: —
 export async function requestPasswordReset(email) {
   const { data } = await http.post('/auth/forgot-password', { email });
   return { sent: true, resetToken: data.resetToken };
@@ -67,6 +75,7 @@ export async function requestPasswordReset(email) {
 
 // קובע סיסמה חדשה לפי אסימון האיפוס.
 // נקרא מ: ResetPasswordPage.jsx
+// קורא ל: getErrorMessage
 export async function resetPassword(token, newPassword) {
   try {
     await http.post('/auth/reset-password', { token, newPassword });
@@ -80,6 +89,7 @@ export async function resetPassword(token, newPassword) {
 // ומחזיר אסימונים חדשים לחיבור הזה.
 // משנה סיסמה למשתמש מחובר.
 // נקרא מ: ProfileSettingsPage.jsx
+// קורא ל: setTokens, getErrorMessage
 export async function changePassword(currentPassword, newPassword) {
   try {
     const { data } = await http.post('/auth/change-password', { currentPassword, newPassword });
@@ -91,6 +101,7 @@ export async function changePassword(currentPassword, newPassword) {
 
 // יציאה: מודיע לשרת ומוחק את האסימון.
 // נקרא מ: AuthContext.jsx
+// קורא ל: clearTokens
 export async function signOut() {
   clearTokens();
   await http.post('/auth/logout', {}).catch(() => undefined);
@@ -98,6 +109,7 @@ export async function signOut() {
 
 // שולף את המשתמש המחובר ואת הארגון שלו.
 // נקרא מ: AuthContext.jsx
+// קורא ל: hydrateSession
 export async function fetchCurrentSession() {
   try {
     return await hydrateSession();

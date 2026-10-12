@@ -13,15 +13,24 @@ import { formatDate } from '../../lib/format';
 // לפני -> אחרי של שינוי "מה אם": צפי, ימי איחור, משימות פתוחות, סיכון לעיכוב (ובגרסה
 // המלאה גם כל גורם סיכון), ושל מי העומס משתנה.
 
+// מנסח את הצפי לטקסט.
+// נקרא מ: ImpactSummary
+// קורא ל: formatDate
 function forecastText(f) {
   if (f.status === 'done') return 'All done';
   if (f.status === 'stalled') return 'Stalled';
   return `${formatDate(f.forecastDate)}${f.confident ? '' : ' (rough)'}`;
 }
 
+// מנסח את ימי האיחור לטקסט.
+// נקרא מ: ImpactSummary
+// קורא ל: —
 const lateText = (f) => (f.daysLate == null ? '—' : f.daysLate > 0 ? `${f.daysLate} days late` : 'On time');
 
 // נמוך יותר טוב יותר, גם בימי איחור וגם בסיכון. מחזיר צבע לערך ה"אחרי".
+// בוחר צבע לפי שיפור או הרעה.
+// נקרא מ: ImpactSummary
+// קורא ל: —
 function deltaColor(before, after) {
   if (before == null || after == null || before === after) return 'text.primary';
   return after < before ? 'success.main' : 'error.main';
@@ -29,6 +38,7 @@ function deltaColor(before, after) {
 
 // השוואת סיכון, צפי ועומס לפני ואחרי שינוי.
 // נקרא מ: RecommendationsPanel.jsx, SimulatorPanel.jsx
+// קורא ל: forecastText, lateText, deltaColor, formatDate
 export function ImpactSummary({ before, after, loadChanges = [], compact = false }) {
   if (compact) {
     const late = (f) => (f.daysLate == null ? f.status : f.daysLate > 0 ? `+${f.daysLate}d` : 'on time');

@@ -36,6 +36,7 @@ import { formatDateShort } from '../../lib/format';
 
 // המשימות שמשויכות למשתמש, עם סינון ומיון.
 // נקרא מ: App.jsx
+// קורא ל: useAuth, useTasks, useProjects, useOrganizationUsers, isOverdue, isDueSoon +9
 export function MyTasksPage() {
   const { user } = useAuth();
   const navigate = useNavigate();

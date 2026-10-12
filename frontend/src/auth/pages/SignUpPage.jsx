@@ -27,6 +27,7 @@ const INITIAL_STATE = {
 
 // טופס הרשמה: יצירת ארגון חדש או הצטרפות לקיים.
 // נקרא מ: App.jsx
+// קורא ל: useAuth, signUpCreateOrganization, signUpJoinOrganization, AuthLayout
 export function SignUpPage() {
   const [mode, setMode] = useState('create');
   const [form, setForm] = useState(INITIAL_STATE);

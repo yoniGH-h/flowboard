@@ -8,6 +8,7 @@ import { ROLE_LEVEL } from '../lib/permissions';
 
 // מעביר למסך ההתחברות את מי שלא מחובר.
 // נקרא מ: App.jsx
+// קורא ל: useAuth
 export function ProtectedRoute() {
   const { isAuthenticated, isLoading } = useAuth();
   const location = useLocation();
@@ -26,6 +27,7 @@ export function ProtectedRoute() {
 
 // מעביר למסך 403 את מי שהדרג שלו נמוך מהנדרש.
 // נקרא מ: App.jsx, ProtectedRoute.test.jsx
+// קורא ל: useAuth
 export function RequireRoleLevel({ minLevel, children }) {
   const { activeRole } = useAuth();
   if (ROLE_LEVEL[activeRole] < minLevel) {

@@ -16,6 +16,7 @@ const SERVER_BASE = (import.meta.env.VITE_API_URL ?? 'http://localhost:3000/api'
 // שאסימון גישה שחודש נקלט אוטומטית אחרי ניתוק.
 // יוצר חיבור ומחזיר ארבע פעולות: on, off, start, stop.
 // נקרא מ: useNotificationsSocket.js
+// קורא ל: getAccessToken
 export function createNotificationsConnection() {
   const socket = io(SERVER_BASE || undefined, {
     autoConnect: false,

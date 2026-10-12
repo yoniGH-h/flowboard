@@ -20,6 +20,7 @@ const PRIORITIES = ['LOW', 'MEDIUM', 'HIGH', 'URGENT'];
 
 // חלון יצירת משימה.
 // נקרא מ: KanbanBoardPage.jsx, TaskDetailsPage.jsx
+// קורא ל: useAuth, useCreateTask, fullName
 export function TaskFormDialog({ open, onClose, projectId, columns, defaultColumnId, members, labels, parentTaskId = null, titlePrefix = 'Create task' }) {
   const { user } = useAuth();
   const createTask = useCreateTask();

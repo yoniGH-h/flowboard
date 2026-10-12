@@ -41,6 +41,7 @@ import { useAuth } from '../../auth/AuthContext';
 
 // טבלת פרויקטים למנהל: יצירה, עריכה וארכוב.
 // נקרא מ: App.jsx
+// קורא ל: useAuth, useProjects, useOrganizationUsers, useArchiveProject, LoadingState, PageHeader +10
 export function ProjectManagementPage() {
   const navigate = useNavigate();
   const { activeRole, user } = useAuth();

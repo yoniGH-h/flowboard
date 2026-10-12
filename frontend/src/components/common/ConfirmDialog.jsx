@@ -9,6 +9,7 @@ import Button from '@mui/material/Button';
 
 // חלון "האם אתה בטוח?" עם כפתורי אישור וביטול.
 // נקרא מ: UserManagementPage.jsx, ProjectManagementPage.jsx, ProjectTeamManagementPage.jsx, OrganizationsSystemManagementPage.jsx +1
+// קורא ל: —
 export function ConfirmDialog({ open, title, description, confirmLabel = 'Confirm', danger = false, loading = false, onConfirm, onClose }) {
   return (
     <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth aria-labelledby="confirm-dialog-title">

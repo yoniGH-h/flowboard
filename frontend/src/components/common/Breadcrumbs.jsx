@@ -8,6 +8,7 @@ import { Link as RouterLink } from 'react-router-dom';
 
 // מציג את המיקום הנוכחי כשרשרת קישורים.
 // נקרא מ: KanbanBoardPage.jsx, ProjectOverviewPage.jsx, ProjectTeamManagementPage.jsx, TaskDetailsPage.jsx
+// קורא ל: —
 export function Breadcrumbs({ items }) {
   return (
     <MuiBreadcrumbs separator={<NavigateNextIcon sx={{ fontSize: 16 }} />} sx={{ mb: 1 }} aria-label="Breadcrumb">

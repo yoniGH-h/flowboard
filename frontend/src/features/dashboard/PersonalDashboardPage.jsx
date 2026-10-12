@@ -28,6 +28,7 @@ import { useNotifications } from '../../lib/queries';
 
 // המשימות, הפרויקטים והפעילות של המשתמש.
 // נקרא מ: App.jsx
+// קורא ל: useAuth, useTasks, useProjects, useOrganizationUsers, useNotifications, isOverdue +9
 export function PersonalDashboardPage() {
   const { user } = useAuth();
   const navigate = useNavigate();

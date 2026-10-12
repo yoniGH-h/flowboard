@@ -10,6 +10,7 @@ import { useAuth, ROLE_LABELS } from '../auth/AuthContext';
 
 // בחירה באיזה תפקיד לצפות באתר.
 // נקרא מ: Topbar.jsx
+// קורא ל: useAuth
 export function RoleSwitcher() {
   const { availableRoles, activeRole, setActiveRole } = useAuth();
   if (availableRoles.length <= 1) return null;

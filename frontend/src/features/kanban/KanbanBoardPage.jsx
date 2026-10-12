@@ -38,6 +38,7 @@ import { isOverdue } from '../../lib/taskStatus';
 
 // הלוח: עמודות, כרטיסים, סינון וגרירה בין עמודות.
 // נקרא מ: App.jsx
+// קורא ל: useAuth, useProject, useBoard, useTasks, useOrganizationUsers, useLabels +12
 export function KanbanBoardPage() {
   const { projectId } = useParams();
   const { user, activeRole } = useAuth();

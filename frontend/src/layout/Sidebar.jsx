@@ -26,10 +26,10 @@ import { UserAvatar } from '../components/common/UserAvatar';
 import { fullName } from '../lib/format';
 
 // רוחב התפריט כשהוא פתוח.
-// נקרא מ: הקובץ הזה בלבד
+// נקרא מ: הקובץ הזה
 export const SIDEBAR_WIDTH = 248;
 // רוחב התפריט כשהוא מכווץ.
-// נקרא מ: הקובץ הזה בלבד
+// נקרא מ: הקובץ הזה
 export const SIDEBAR_WIDTH_COLLAPSED = 72;
 
 const SIDEBAR_BG = '#111A2E';
@@ -38,6 +38,9 @@ const SIDEBAR_TEXT = '#9BA5C0';
 const SIDEBAR_TEXT_MUTED = '#7A84A6'; // עומד ביחס הניגודיות 4.5:1 של WCAG AA מול SIDEBAR_BG (הצבע #5C6685 הגיע רק ל-3:1 בערך)
 const SIDEBAR_DIVIDER = 'rgba(255,255,255,0.08)';
 
+// תוכן התפריט: הקבוצות והפריטים.
+// נקרא מ: DesktopSidebar, MobileSidebar
+// קורא ל: useAuth, useNotifications, UserAvatar, fullName
 function SidebarContent({ collapsed, onNavigate }) {
   const { activeRole, user } = useAuth();
   const navigate = useNavigate();
@@ -183,6 +186,7 @@ function SidebarContent({ collapsed, onNavigate }) {
 
 // תפריט הצד במסך רחב, עם כיווץ.
 // נקרא מ: AppShell.jsx
+// קורא ל: SidebarContent
 export function DesktopSidebar({ collapsed, onToggleCollapse }) {
   return (
     <Box
@@ -224,6 +228,7 @@ export function DesktopSidebar({ collapsed, onToggleCollapse }) {
 
 // תפריט הצד במסך צר, כמגירה.
 // נקרא מ: AppShell.jsx
+// קורא ל: SidebarContent
 export function MobileSidebar({ open, onClose }) {
   return (
     <Drawer

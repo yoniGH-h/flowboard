@@ -5,6 +5,7 @@
 // ובנתוני המשימות האמיתיים.
 // האם המשימה באיחור.
 // נקרא מ: TaskRow.jsx, PersonalDashboardPage.jsx, KanbanBoardPage.jsx, KanbanTaskCard.jsx +2
+// קורא ל: —
 export function isOverdue(task) {
   if (!task.dueDate || task.completedAt) return false;
   return new Date(task.dueDate).getTime() < Date.now();
@@ -12,6 +13,7 @@ export function isOverdue(task) {
 
 // האם המועד של המשימה מתקרב.
 // נקרא מ: PersonalDashboardPage.jsx, MyTasksPage.jsx
+// קורא ל: —
 export function isDueSoon(task, withinDays = 3) {
   if (!task.dueDate || task.completedAt) return false;
   const due = new Date(task.dueDate).getTime();

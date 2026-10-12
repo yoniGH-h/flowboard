@@ -28,6 +28,9 @@ const scanTimer = setInterval(async () => {
 
 // ציון הסיכון של היום נשמר לכל פרויקט פעם בשעה (ופעם אחת בהפעלה), וכך נבנית
 // ההיסטוריה שמאחורי גרף מגמת הסיכון.
+// שומר את ציוני הסיכון של היום.
+// נקרא מ: הקובץ הזה
+// קורא ל: recordRiskSnapshots
 async function snapshotRisk() {
   try {
     await recordRiskSnapshots();
@@ -44,6 +47,9 @@ httpServer.listen(config.port, () => {
 });
 
 // Ctrl+C: מפסיקים לקבל בקשות וסוגרים את החיבור למסד בצורה מסודרת.
+// סוגר את השרת ואת החיבור למסד בצורה מסודרת.
+// נקרא מ: הקובץ הזה
+// קורא ל: —
 async function shutdown() {
   clearInterval(scanTimer);
   clearInterval(riskTimer);

@@ -12,6 +12,7 @@ import { mapNotification } from '../api/api';
 // במקום לשאול את השרת שוב ושוב.
 // פותח חיבור ומוסיף כל התראה חדשה לרשימה.
 // נקרא מ: AppShell.jsx
+// קורא ל: useAuth, createNotificationsConnection, mapNotification
 export function useNotificationsSocket() {
   const { user } = useAuth();
   const queryClient = useQueryClient();

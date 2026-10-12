@@ -12,6 +12,7 @@ import { resetPassword } from '../../api/authApi';
 
 // טופס סיסמה חדשה, לפי האסימון שבכתובת.
 // נקרא מ: App.jsx
+// קורא ל: resetPassword, AuthLayout
 export function ResetPasswordPage() {
   const [searchParams] = useSearchParams();
   const token = searchParams.get('token') ?? '';

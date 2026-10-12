@@ -33,9 +33,18 @@ const CATEGORIES = [
 ];
 
 // '' = בלי מגבלה; אחרת מספר שלם, 1 לפחות.
+// ממיר את טקסט מגבלת ה-WIP למספר או לריק.
+// נקרא מ: ColumnRow
+// קורא ל: —
 const parseWip = (text) => (text.trim() === '' ? null : Number(text));
+// האם טקסט מגבלת ה-WIP תקין.
+// נקרא מ: ColumnRow, BoardSettingsDialog
+// קורא ל: —
 const isValidWip = (text) => text.trim() === '' || (Number.isInteger(Number(text)) && Number(text) >= 1);
 
+// שורת עמודה אחת בהגדרות הלוח.
+// נקרא מ: BoardSettingsDialog
+// קורא ל: isValidWip, parseWip
 function ColumnRow({ column, index, count, taskCount, onRename, onWip, onMove, onDelete, busy }) {
   const [name, setName] = useState(column.name);
   const [wip, setWip] = useState(column.wipLimit ? String(column.wipLimit) : '');
@@ -90,6 +99,7 @@ function ColumnRow({ column, index, count, taskCount, onRename, onWip, onMove, o
 
 // ניהול עמודות: הוספה, שינוי שם, סדר, מגבלת WIP ומחיקה.
 // נקרא מ: KanbanBoardPage.jsx
+// קורא ל: useAddBoardColumn, useUpdateBoardColumn, useDeleteBoardColumn, ColumnRow, isValidWip
 export function BoardSettingsDialog({ open, onClose, projectId, columns, tasks }) {
   const addColumn = useAddBoardColumn();
   const updateColumn = useUpdateBoardColumn();

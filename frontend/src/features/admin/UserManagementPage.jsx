@@ -52,6 +52,7 @@ const ALL_ROLES = ['EMPLOYEE', 'PROJECT_MANAGER', 'ORG_ADMIN', 'SYSTEM_ADMIN'];
 
 // טבלת משתמשים: תפקידים, סטטוס, הסרה והרשאות אישיות.
 // נקרא מ: App.jsx
+// קורא ל: useOrganizationUsers, useSetUserStatus, useUpdateUserRoles, useRemoveUser, useAuth, LoadingState +7
 export function UserManagementPage() {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');

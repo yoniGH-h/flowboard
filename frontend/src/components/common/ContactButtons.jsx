@@ -29,6 +29,7 @@ const MODES = {
 // כמארח בלשונית חדשה, וחבר הצוות מקבל התראה בזמן אמת עם קישור הצטרפות.
 // כפתורי שיחה ו-Zoom מול משתמש מסוים.
 // נקרא מ: ProjectOverviewPage.jsx, ProjectTeamManagementPage.jsx, TaskDetailsPage.jsx
+// קורא ל: useAuth, hasPermission, fullName, startMeeting
 export function ContactButtons({ user, projectId, taskId, size = 'small' }) {
   const { user: me } = useAuth();
   const [mode, setMode] = useState(null);

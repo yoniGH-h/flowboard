@@ -91,12 +91,14 @@ export const EDITABLE_ROLES = ['EMPLOYEE', 'PROJECT_MANAGER', 'ORG_ADMIN'];
 // האם ארגון יכול בכלל לשנות את ההרשאה הזו?
 // האם ארגון רשאי לשנות את ההרשאה הזו.
 // נקרא מ: permissions.service.js
+// קורא ל: —
 export const isChangeable = (key) => PERMISSION_BY_KEY.get(key)?.scope !== 'system';
 
 // האם מי שמחזיק ב-permissions רשאי להעניק את key? רק אם יש לו אותה בעצמו, או
 // הרשאה חזקה יותר שכוללת אותה - אף אחד לא יכול להעניק יותר ממה שמותר לו.
 // האם למשתמש מותר להעניק את ההרשאה הזו לאחרים.
 // נקרא מ: permissions.service.js
+// קורא ל: —
 export const canGrant = (permissions, key) =>
   permissions.has(key) || (PERMISSION_BY_KEY.get(key)?.includedIn ?? []).some((k) => permissions.has(k));
 
@@ -104,4 +106,5 @@ export const canGrant = (permissions, key) =>
 // כל המנהלים מחוץ לניהול המשתמשים וההרשאות.)
 // האם ההרשאה נעולה לתפקיד הזה ואי אפשר לשלול אותה.
 // נקרא מ: permissions.service.js
+// קורא ל: —
 export const isLockedFor = (key, roleName) => PERMISSION_BY_KEY.get(key)?.lockedFor?.includes(roleName) ?? false;

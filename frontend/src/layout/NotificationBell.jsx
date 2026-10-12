@@ -18,6 +18,7 @@ import { EmptyState } from '../components/common/States';
 
 // אייקון עם מונה, ורשימת ההתראות האחרונות.
 // נקרא מ: Topbar.jsx
+// קורא ל: useAuth, useNotifications, useMarkNotificationRead, useMarkAllNotificationsRead, EmptyState, formatRelativeToNow
 export function NotificationBell() {
   const [anchorEl, setAnchorEl] = useState(null);
   const { user } = useAuth();

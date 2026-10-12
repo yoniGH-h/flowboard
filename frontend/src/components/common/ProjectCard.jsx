@@ -16,6 +16,7 @@ import { formatDate } from '../../lib/format';
 
 // כרטיס עם שם, סטטוס, התקדמות, סיכון וצוות.
 // נקרא מ: PersonalDashboardPage.jsx, MyProjectsPage.jsx
+// קורא ל: ProjectStatusChip, UserAvatarStack, RiskBadge, formatDate
 export function ProjectCard({ project, manager, members }) {
   const navigate = useNavigate();
   return (
