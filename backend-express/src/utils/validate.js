@@ -1,5 +1,4 @@
-// תפקיד הקובץ: בדיקת קלט עם zod: הפונקציה parse וסוגי שדות משותפים.
-// משתמשים בו: audit-log.routes.js, auth.routes.js, automation-rules.routes.js, comments.routes.js +8
+// בדיקת קלט עם zod.
 
 // בדיקת קלט עם zod. כל נתיב בודק את הקלט שלו במפורש:
 //

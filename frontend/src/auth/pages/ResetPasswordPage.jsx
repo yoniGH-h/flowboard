@@ -1,5 +1,4 @@
-// תפקיד הקובץ: מסך קביעת סיסמה חדשה.
-// משתמשים בו: App.jsx
+// מסך קביעת סיסמה חדשה.
 
 import { useState } from 'react';
 import Stack from '@mui/material/Stack';

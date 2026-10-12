@@ -1,5 +1,4 @@
-// תפקיד הקובץ: תצוגת משתמש: עיגול עם ראשי תיבות.
-// משתמשים בו: ProjectCard.jsx, TaskRow.jsx, UserManagementPage.jsx, ManagementDashboardPage.jsx +9
+// אווטאר של משתמש.
 
 import Avatar from '@mui/material/Avatar';
 import AvatarGroup from '@mui/material/AvatarGroup';

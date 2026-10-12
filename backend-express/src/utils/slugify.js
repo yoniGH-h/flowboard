@@ -1,5 +1,4 @@
-// תפקיד הקובץ: הופך שם למזהה לכתובת (אותיות קטנות ומקפים).
-// משתמשים בו: auth.service.js
+// הפיכת שם למזהה לכתובת.
 
 // "Nimbus Digital!" -> "nimbus-digital"
 // הופך טקסט למזהה: "Nimbus Digital" נהיה "nimbus-digital".

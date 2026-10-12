@@ -1,5 +1,5 @@
-// תפקיד הקובץ: מסך לוח ה-Kanban.
-// משתמשים בו: App.jsx
+// מסך לוח ה-Kanban.
+// חלקים עיקריים: טעינת הנתונים, סינון וחיפוש, סיכום, גרירה והזזה, העמודות.
 
 import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';

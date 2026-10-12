@@ -1,5 +1,4 @@
-// תפקיד הקובץ: המסגרת של כל המסכים הפנימיים.
-// משתמשים בו: App.jsx
+// המסגרת של המסכים הפנימיים.
 
 import { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';

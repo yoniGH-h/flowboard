@@ -1,5 +1,4 @@
-// תפקיד הקובץ: כפתורי יצירת קשר עם חבר צוות: שיחה קולית ופגישת Zoom.
-// משתמשים בו: ProjectOverviewPage.jsx, ProjectTeamManagementPage.jsx, TaskDetailsPage.jsx
+// כפתורי שיחה ו-Zoom.
 
 import { useState } from 'react';
 import Stack from '@mui/material/Stack';

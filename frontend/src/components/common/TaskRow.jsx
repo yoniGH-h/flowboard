@@ -1,5 +1,4 @@
-// תפקיד הקובץ: שורת משימה ברשימה.
-// משתמשים בו: PersonalDashboardPage.jsx, MyTasksPage.jsx
+// שורת משימה ברשימה.
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';

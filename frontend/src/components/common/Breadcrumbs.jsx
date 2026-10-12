@@ -1,5 +1,4 @@
-// תפקיד הקובץ: שביל ניווט ("פירורי לחם").
-// משתמשים בו: KanbanBoardPage.jsx, ProjectOverviewPage.jsx, ProjectTeamManagementPage.jsx, TaskDetailsPage.jsx
+// שביל ניווט.
 
 import MuiBreadcrumbs from '@mui/material/Breadcrumbs';
 import Link from '@mui/material/Link';

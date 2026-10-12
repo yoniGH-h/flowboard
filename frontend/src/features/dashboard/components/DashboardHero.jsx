@@ -1,5 +1,4 @@
-// תפקיד הקובץ: החלק העליון של הדשבורד.
-// משתמשים בו: ManagementDashboardPage.jsx, PersonalDashboardPage.jsx
+// החלק העליון של הדשבורד.
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';

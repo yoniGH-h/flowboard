@@ -1,5 +1,4 @@
-// תפקיד הקובץ: כפתורי כניסה מהירה לחשבונות הדמו (רק במצב דמו).
-// משתמשים בו: SignInPage.jsx, SignInPage.test.jsx
+// כפתורי חשבונות הדמו.
 
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';

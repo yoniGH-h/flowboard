@@ -1,5 +1,5 @@
-// תפקיד הקובץ: מסך סקירת פרויקט.
-// משתמשים בו: App.jsx
+// מסך סקירת פרויקט.
+// חלקים עיקריים: פרטים והתקדמות, הסיכון והגורמים שלו, הצוות, קבצים, פעילות.
 
 import { useMemo, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';

@@ -1,5 +1,5 @@
-// תפקיד הקובץ: תפריט הצד.
-// משתמשים בו: AppShell.jsx
+// תפריט הצד.
+// חלקים עיקריים: תוכן התפריט, תפריט למסך רחב, תפריט למסך צר.
 
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';

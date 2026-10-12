@@ -1,5 +1,4 @@
-// תפקיד הקובץ: סיכום השפעה: לפני ואחרי.
-// משתמשים בו: RecommendationsPanel.jsx, SimulatorPanel.jsx
+// השוואת "לפני ואחרי".
 
 import Stack from '@mui/material/Stack';
 import Chip from '@mui/material/Chip';

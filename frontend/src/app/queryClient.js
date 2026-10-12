@@ -1,5 +1,4 @@
-// תפקיד הקובץ: הגדרות המטמון של TanStack Query לכל האתר.
-// משתמשים בו: main.jsx
+// הגדרות המטמון.
 
 import { QueryClient } from '@tanstack/react-query';
 

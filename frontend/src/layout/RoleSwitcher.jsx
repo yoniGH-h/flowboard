@@ -1,5 +1,4 @@
-// תפקיד הקובץ: החלפת התפקיד הפעיל.
-// משתמשים בו: Topbar.jsx
+// החלפת התפקיד הפעיל.
 
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';

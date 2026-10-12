@@ -1,5 +1,4 @@
-// תפקיד הקובץ: תופס שגיאה שקרתה בזמן ציור המסך ומציג הודעה במקום מסך לבן.
-// משתמשים בו: main.jsx
+// תפיסת קריסות בממשק.
 
 import { Component } from 'react';
 import Box from '@mui/material/Box';

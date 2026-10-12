@@ -1,5 +1,4 @@
-// תפקיד הקובץ: הסרגל העליון.
-// משתמשים בו: AppShell.jsx
+// הסרגל העליון.
 
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';

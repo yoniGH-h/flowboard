@@ -1,5 +1,4 @@
-// תפקיד הקובץ: מסך ההרשמה.
-// משתמשים בו: App.jsx
+// מסך ההרשמה.
 
 import { useState } from 'react';
 import Stack from '@mui/material/Stack';

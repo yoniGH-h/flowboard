@@ -1,5 +1,4 @@
-// תפקיד הקובץ: רשימת ההמלצות.
-// משתמשים בו: DecisionCenterPage.jsx
+// רשימת ההמלצות.
 
 import { useState } from 'react';
 import Card from '@mui/material/Card';

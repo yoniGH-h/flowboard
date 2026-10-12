@@ -1,5 +1,4 @@
-// תפקיד הקובץ: תגית ציון הסיכון.
-// משתמשים בו: ProjectCard.jsx, DecisionCenterPage.jsx, ProjectManagementPage.jsx, ProjectOverviewPage.jsx +1
+// תגית ציון הסיכון.
 
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';

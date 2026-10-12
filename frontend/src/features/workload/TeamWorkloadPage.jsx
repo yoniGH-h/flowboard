@@ -1,5 +1,4 @@
-// תפקיד הקובץ: מסך עומס הצוות.
-// משתמשים בו: App.jsx
+// מסך עומס הצוות.
 
 import { useMemo, useState } from 'react';
 import Box from '@mui/material/Box';

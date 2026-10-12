@@ -1,5 +1,4 @@
-// תפקיד הקובץ: מסך ניהול הארגונים (מנהל מערכת).
-// משתמשים בו: App.jsx
+// ניהול הארגונים (מנהל מערכת).
 
 import { useMemo, useState } from 'react';
 import Box from '@mui/material/Box';

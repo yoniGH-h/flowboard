@@ -1,5 +1,4 @@
-// תפקיד הקובץ: מצבי מסך משותפים: ריק, טעינה, שגיאה ואין הרשאה.
-// משתמשים בו: AuditLogPage.jsx, AutomationRulesPanel.jsx, RolesPermissionsPage.jsx, UserManagementPage.jsx +18
+// מצבי מסך: ריק, טעינה, שגיאה.
 
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';

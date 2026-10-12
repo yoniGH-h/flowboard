@@ -1,5 +1,4 @@
-// תפקיד הקובץ: לוגיקת המשתמשים: פרופיל, רשימה, סטטוס, תפקידים והסרה.
-// משתמשים בו: users.routes.js
+// לוגיקת המשתמשים.
 
 import { prisma } from '../../db.js';
 import { forbidden, notFound } from '../../utils/httpError.js';

@@ -1,5 +1,4 @@
-// תפקיד הקובץ: מחזיק את המשתמש המחובר, הארגון והתפקיד הפעיל, ומשתף אותם עם כל האתר.
-// משתמשים בו: SignInPage.jsx, SignInPage.test.jsx, SignUpPage.jsx, ProtectedRoute.jsx +26
+// המשתמש המחובר והתפקיד הפעיל.
 
 import { createContext, useContext, useEffect, useState } from 'react';
 import { fetchCurrentSession, highestRole, signOut as apiSignOut } from '../api/authApi';

@@ -1,5 +1,4 @@
-// תפקיד הקובץ: מסך "הפרויקטים שלי".
-// משתמשים בו: App.jsx
+// מסך "הפרויקטים שלי".
 
 import { useMemo, useState } from 'react';
 import Box from '@mui/material/Box';

@@ -1,5 +1,4 @@
-// תפקיד הקובץ: הופך כל שגיאה לתשובת JSON אחידה עם קוד הסטטוס המתאים.
-// משתמשים בו: app.js
+// טיפול אחיד בשגיאות.
 
 import multer from 'multer';
 import { config } from '../config.js';

@@ -1,5 +1,5 @@
-// תפקיד הקובץ: לוגיקת המשימות: הרשאות, כללים עסקיים, כתיבה, היסטוריה והתראות.
-// משתמשים בו: meetings.routes.js, planning.service.js, tasks.reports.js, tasks.routes.js
+// לוגיקת המשימות.
+// חלקים עיקריים: היקף וגישה, יצירה וקריאה ועדכון ומחיקה, הזזה בלוח, שיוך, תלויות.
 
 import { prisma } from '../../db.js';
 import { conflict, forbidden, notFound } from '../../utils/httpError.js';

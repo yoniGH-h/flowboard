@@ -1,5 +1,4 @@
-// תפקיד הקובץ: תפריט המשתמש.
-// משתמשים בו: Topbar.jsx
+// תפריט המשתמש.
 
 import { useState } from 'react';
 import ButtonBase from '@mui/material/ButtonBase';

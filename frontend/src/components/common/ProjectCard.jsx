@@ -1,5 +1,4 @@
-// תפקיד הקובץ: כרטיס פרויקט ברשימה.
-// משתמשים בו: PersonalDashboardPage.jsx, MyProjectsPage.jsx
+// כרטיס פרויקט.
 
 import Card from '@mui/material/Card';
 import CardActionArea from '@mui/material/CardActionArea';

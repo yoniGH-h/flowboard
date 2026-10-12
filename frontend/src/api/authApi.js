@@ -1,5 +1,4 @@
-// תפקיד הקובץ: הקריאות לשרת בנושא התחברות: כניסה, הרשמה, סיסמאות והמשתמש הנוכחי.
-// משתמשים בו: AuthContext.jsx, ForgotPasswordPage.jsx, ResetPasswordPage.jsx, SignInPage.jsx +3
+// קריאות ההתחברות לשרת.
 
 // התחברות מול השרת (Express): כניסה, הרשמה, המשתמש הנוכחי ואיפוס סיסמה.
 import { http, getErrorMessage } from './http';

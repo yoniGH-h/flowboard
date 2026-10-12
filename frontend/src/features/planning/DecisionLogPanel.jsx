@@ -1,5 +1,4 @@
-// תפקיד הקובץ: יומן ההחלטות.
-// משתמשים בו: DecisionCenterPage.jsx
+// יומן ההחלטות.
 
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';

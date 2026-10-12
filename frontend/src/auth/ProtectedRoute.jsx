@@ -1,5 +1,4 @@
-// תפקיד הקובץ: שמירה על מסכים: רק למחוברים, ורק מדרג מסוים.
-// משתמשים בו: App.jsx, ProtectedRoute.test.jsx
+// שמירה על מסכים.
 
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import Box from '@mui/material/Box';

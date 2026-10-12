@@ -1,5 +1,5 @@
-// תפקיד הקובץ: מסך "המשימות שלי".
-// משתמשים בו: App.jsx
+// מסך "המשימות שלי".
+// חלקים עיקריים: כרטיסי מדדים, סינון, טבלת המשימות.
 
 import { useMemo, useState } from 'react';
 import Box from '@mui/material/Box';

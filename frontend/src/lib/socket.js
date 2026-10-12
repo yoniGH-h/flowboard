@@ -1,5 +1,4 @@
-// תפקיד הקובץ: יצירת חיבור Socket.IO לשרת, עם האסימון.
-// משתמשים בו: useNotificationsSocket.js
+// חיבור Socket.IO לשרת.
 
 import { io } from 'socket.io-client';
 import { getAccessToken } from '../api/session';

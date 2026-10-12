@@ -1,5 +1,4 @@
-// תפקיד הקובץ: תגית עדיפות של משימה.
-// משתמשים בו: TaskRow.jsx, ManagementDashboardPage.jsx, KanbanTaskCard.jsx, MyTasksPage.jsx +1
+// תגית עדיפות.
 
 import Chip from '@mui/material/Chip';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';

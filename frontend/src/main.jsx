@@ -1,5 +1,4 @@
-// תפקיד הקובץ: נקודת הכניסה של האתר: עוטף את App בעיצוב, במטמון, בניווט ובמשתמש המחובר.
-// משתמשים בו: נטען מתוך index.html
+// נקודת הכניסה של האתר.
 
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';

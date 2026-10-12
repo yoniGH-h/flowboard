@@ -1,5 +1,4 @@
-// תפקיד הקובץ: החיפוש בסרגל העליון.
-// משתמשים בו: Topbar.jsx
+// החיפוש בסרגל העליון.
 
 import { useMemo, useState } from 'react';
 import Autocomplete from '@mui/material/Autocomplete';

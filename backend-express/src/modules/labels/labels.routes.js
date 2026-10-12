@@ -1,5 +1,4 @@
-// תפקיד הקובץ: נתיב רשימת התוויות של הארגון.
-// משתמשים בו: app.js
+// נתיב התוויות.
 
 import { Router } from 'express';
 import { prisma } from '../../db.js';

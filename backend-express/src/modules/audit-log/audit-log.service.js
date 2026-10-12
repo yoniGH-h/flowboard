@@ -1,5 +1,4 @@
-// תפקיד הקובץ: כתיבה וקריאה של יומן הביקורת.
-// משתמשים בו: attachments.routes.js, audit-log.routes.js, auth.service.js, comments.routes.js +7
+// כתיבה וקריאה של יומן הביקורת.
 
 import { prisma } from '../../db.js';
 

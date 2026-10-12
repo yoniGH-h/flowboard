@@ -1,5 +1,4 @@
-// תפקיד הקובץ: נתיבי הקבצים המצורפים: העלאה, רשימה, הורדה ומחיקה.
-// משתמשים בו: app.js
+// נתיבי הקבצים המצורפים.
 
 import { randomUUID } from 'node:crypto';
 import { mkdirSync } from 'node:fs';

@@ -1,5 +1,4 @@
-// תפקיד הקובץ: רישום המעברים של משימה בין עמודות.
-// משתמשים בו: automation-rules.service.js, tasks.service.js
+// רישום מעברים של משימה בין עמודות.
 
 import { prisma } from '../../db.js';
 

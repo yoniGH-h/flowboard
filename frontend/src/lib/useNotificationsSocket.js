@@ -1,5 +1,4 @@
-// תפקיד הקובץ: האזנה להתראות בזמן אמת ועדכון המטמון.
-// משתמשים בו: AppShell.jsx
+// קבלת התראות בזמן אמת.
 
 import { useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';

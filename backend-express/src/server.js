@@ -1,5 +1,4 @@
-// תפקיד הקובץ: נקודת הכניסה של השרת: מפעיל את Express ואת Socket.IO, ושני טיימרים למשימות רקע.
-// משתמשים בו: מופעל על ידי npm start / npm run dev
+// נקודת הכניסה של השרת.
 
 // נקודת הכניסה: npm start (או npm run dev, שמפעיל מחדש בכל שינוי בקובץ).
 import { createServer } from 'node:http';

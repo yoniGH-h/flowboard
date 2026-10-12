@@ -1,5 +1,4 @@
-// תפקיד הקובץ: ערכת העיצוב של MUI: צבעים, גופנים ועיצוב רכיבים.
-// משתמשים בו: main.jsx
+// ערכת העיצוב.
 
 import { createTheme } from '@mui/material/styles';
 

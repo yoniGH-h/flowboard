@@ -1,5 +1,4 @@
-// תפקיד הקובץ: בדיקות הרשאה בצד האתר, להצגה והסתרה של כפתורים.
-// משתמשים בו: App.jsx, ProtectedRoute.jsx, ProtectedRoute.test.jsx, ContactButtons.jsx +10
+// בדיקות הרשאה בצד האתר.
 
 // המספר של כל דרג: עובד 1 עד מנהל מערכת 4.
 // נקרא מ: App.jsx, ProtectedRoute.jsx, ProtectedRoute.test.jsx, RolesPermissionsPage.jsx +3

@@ -1,5 +1,5 @@
-// תפקיד הקובץ: כל ה-hooks של TanStack Query: קריאות עם מטמון, ושינויים עם רענון.
-// משתמשים בו: AuditLogPage.jsx, AutomationRulesPanel.jsx, OrganizationSettingsPage.jsx, RolesPermissionsPage.jsx +29
+// ה-hooks של TanStack Query.
+// חלקים עיקריים: קריאות (useQuery), תובנות ומרכז ההחלטות, הרשאות, שינויים (useMutation).
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 // ה-hooks של TanStack Query לכל המסכים: כל אחד עוטף פונקציה מ-api/api.js,

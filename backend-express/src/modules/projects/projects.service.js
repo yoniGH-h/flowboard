@@ -1,5 +1,5 @@
-// תפקיד הקובץ: לוגיקת הפרויקטים: גישה והרשאות בפרויקט, צוות, לוח, עמודות וסיכון.
-// משתמשים בו: attachments.routes.js, comments.routes.js, insights.service.js, meetings.routes.js +5
+// לוגיקת הפרויקטים.
+// חלקים עיקריים: מי מנהל איזה פרויקט, סיכון והיסטוריה שלו, בדיקות גישה והרשאה, יצירה ועדכון, חברי צוות, קבצים ופעילות, לוח ועמודות.
 
 import { prisma } from '../../db.js';
 import { badRequest, conflict, forbidden, notFound } from '../../utils/httpError.js';

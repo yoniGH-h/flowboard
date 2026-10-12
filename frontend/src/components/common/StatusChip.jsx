@@ -1,5 +1,4 @@
-// תפקיד הקובץ: תגיות סטטוס.
-// משתמשים בו: ProjectCard.jsx, ProjectManagementPage.jsx, ProjectOverviewPage.jsx, ReportsAnalyticsPage.jsx +1
+// תגיות סטטוס.
 
 import Chip from '@mui/material/Chip';
 

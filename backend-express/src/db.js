@@ -1,5 +1,4 @@
-// תפקיד הקובץ: החיבור היחיד למסד הנתונים (Prisma), ותמיכה בטרנזקציה שעוברת בין כמה services.
-// משתמשים בו: app.js, auth.js, attachments.routes.js, audit-log.service.js +19
+// החיבור למסד הנתונים, וטרנזקציות.
 
 // לקוח Prisma אחד משותף לכל האפליקציה. Prisma 7 מתחבר ל-Postgres דרך
 // מתאם (@prisma/adapter-pg) ולא דרך כתובת בתוך schema.prisma.

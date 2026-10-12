@@ -1,5 +1,4 @@
-// תפקיד הקובץ: נתיבי ההתחברות: הרשמה, כניסה, רענון, יציאה וסיסמאות; כולל העוגייה ומגבלת הקצב.
-// משתמשים בו: app.js
+// נתיבי ההתחברות.
 
 import { Router } from 'express';
 import rateLimit from 'express-rate-limit';

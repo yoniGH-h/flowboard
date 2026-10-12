@@ -1,5 +1,5 @@
-// תפקיד הקובץ: סימולטור "מה אם".
-// משתמשים בו: DecisionCenterPage.jsx
+// סימולטור "מה אם".
+// חלקים עיקריים: בחירת השינויים, ההשפעה החזויה.
 
 import { useEffect, useMemo, useState } from 'react';
 import Grid from '@mui/material/Grid';

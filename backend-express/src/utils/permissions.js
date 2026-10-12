@@ -1,5 +1,4 @@
-// תפקיד הקובץ: ארבעת דרגי התפקידים ובדיקות דרג.
-// משתמשים בו: auth.js, permissions.service.js, projects.service.js, users.service.js
+// דרגי התפקידים.
 
 // ארבעת דרגי התפקידים. זהה ל-frontend/src/lib/permissions.js - יש לשמור על שניהם מסונכרנים.
 // המספר של כל דרג: עובד 1 עד מנהל מערכת 4.

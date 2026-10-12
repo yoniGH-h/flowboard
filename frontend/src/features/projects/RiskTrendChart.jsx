@@ -1,5 +1,4 @@
-// תפקיד הקובץ: גרף מגמת הסיכון.
-// משתמשים בו: ProjectOverviewPage.jsx
+// גרף מגמת הסיכון.
 
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';

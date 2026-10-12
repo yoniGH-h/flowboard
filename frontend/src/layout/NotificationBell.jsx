@@ -1,5 +1,4 @@
-// תפקיד הקובץ: פעמון ההתראות.
-// משתמשים בו: Topbar.jsx
+// פעמון ההתראות.
 
 import { useState } from 'react';
 import IconButton from '@mui/material/IconButton';

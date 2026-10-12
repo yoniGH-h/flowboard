@@ -1,5 +1,5 @@
-// תפקיד הקובץ: אזור התובנות במסך הדוחות.
-// משתמשים בו: ReportsAnalyticsPage.jsx
+// אזור התובנות.
+// חלקים עיקריים: המסקנות העיקריות, צפי סיום, דיוק הערכות, איפה העבודה ממתינה.
 
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';

@@ -1,5 +1,4 @@
-// תפקיד הקובץ: חלון הגדרות הלוח.
-// משתמשים בו: KanbanBoardPage.jsx
+// חלון הגדרות הלוח.
 
 import { useState } from 'react';
 import Dialog from '@mui/material/Dialog';

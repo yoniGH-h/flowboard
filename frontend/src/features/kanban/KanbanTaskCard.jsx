@@ -1,5 +1,4 @@
-// תפקיד הקובץ: כרטיס משימה בלוח.
-// משתמשים בו: KanbanColumn.jsx
+// כרטיס משימה בלוח.
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';

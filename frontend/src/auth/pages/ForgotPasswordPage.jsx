@@ -1,5 +1,4 @@
-// תפקיד הקובץ: מסך "שכחתי סיסמה".
-// משתמשים בו: App.jsx
+// מסך "שכחתי סיסמה".
 
 import { useState } from 'react';
 import Stack from '@mui/material/Stack';

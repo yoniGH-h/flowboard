@@ -1,5 +1,4 @@
-// תפקיד הקובץ: מסך 404: העמוד לא נמצא.
-// משתמשים בו: App.jsx
+// מסך 404.
 
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';

@@ -1,5 +1,4 @@
-// תפקיד הקובץ: נתיב התובנות של פרויקט.
-// משתמשים בו: app.js
+// נתיב התובנות.
 
 import { Router } from 'express';
 import { z } from 'zod';

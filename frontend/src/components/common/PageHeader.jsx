@@ -1,5 +1,4 @@
-// תפקיד הקובץ: כותרת עמוד אחידה.
-// משתמשים בו: AuditLogPage.jsx, OrganizationSettingsPage.jsx, RolesPermissionsPage.jsx, UserManagementPage.jsx +14
+// כותרת עמוד.
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';

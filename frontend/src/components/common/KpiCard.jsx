@@ -1,5 +1,4 @@
-// תפקיד הקובץ: כרטיס מדד.
-// משתמשים בו: UserManagementPage.jsx, ManagementDashboardPage.jsx, PersonalDashboardPage.jsx, KanbanBoardPage.jsx +7
+// כרטיס מדד.
 
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';

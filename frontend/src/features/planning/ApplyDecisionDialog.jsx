@@ -1,5 +1,4 @@
-// תפקיד הקובץ: חלון אישור לביצוע החלטה.
-// משתמשים בו: RecommendationsPanel.jsx, SimulatorPanel.jsx
+// אישור ביצוע החלטה.
 
 import { useState } from 'react';
 import Dialog from '@mui/material/Dialog';

@@ -1,5 +1,4 @@
-// תפקיד הקובץ: מופע axios המשותף: מוסיף אסימון לכל בקשה, מחדש אסימון שפג ומנסה שוב.
-// משתמשים בו: api.js, authApi.js
+// מופע axios המשותף.
 
 import axios from 'axios';
 import { clearTokens, getAccessToken, notifySessionExpired, setTokens } from './session';

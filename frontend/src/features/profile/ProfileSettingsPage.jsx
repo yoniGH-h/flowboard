@@ -1,5 +1,5 @@
-// תפקיד הקובץ: מסך הפרופיל.
-// משתמשים בו: App.jsx
+// מסך הפרופיל.
+// חלקים עיקריים: פרטים אישיים, שינוי סיסמה.
 
 import { useState } from 'react';
 import Box from '@mui/material/Box';

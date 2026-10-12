@@ -1,5 +1,4 @@
-// תפקיד הקובץ: בדיקות יחידה להחלטת ההזזה.
-// משתמשים בו: מורץ על ידי Vitest (npm test)
+// בדיקות להחלטת ההזזה.
 
 import { describe, expect, it } from 'vitest';
 import { resolveTaskMove } from './resolveTaskMove';

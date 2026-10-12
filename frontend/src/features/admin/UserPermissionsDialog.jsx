@@ -1,5 +1,5 @@
-// תפקיד הקובץ: חלון ההרשאות של משתמש אחד.
-// משתמשים בו: UserManagementPage.jsx
+// ההרשאות של משתמש אחד.
+// חלקים עיקריים: רשימת ההרשאות לפי קבוצה, המקור של כל הרשאה, טופס חריג אישי.
 
 import { Fragment, useMemo, useState } from 'react';
 import Dialog from '@mui/material/Dialog';

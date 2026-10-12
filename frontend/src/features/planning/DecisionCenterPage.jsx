@@ -1,5 +1,4 @@
-// תפקיד הקובץ: מסך מרכז ההחלטות.
-// משתמשים בו: App.jsx
+// מסך מרכז ההחלטות.
 
 import { useState } from 'react';
 import Box from '@mui/material/Box';

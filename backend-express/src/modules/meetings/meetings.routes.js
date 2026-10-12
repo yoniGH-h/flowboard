@@ -1,5 +1,4 @@
-// תפקיד הקובץ: נתיב פתיחת שיחה קולית או פגישת Zoom עם חבר צוות.
-// משתמשים בו: app.js
+// נתיב פתיחת שיחה או פגישת Zoom.
 
 import { Router } from 'express';
 import { requirePermission } from '../../middleware/auth.js';

@@ -1,5 +1,4 @@
-// תפקיד הקובץ: יצירת התראות ושליחתן בזמן אמת, וקריאת ההתראות של משתמש.
-// משתמשים בו: automation-rules.service.js, comments.routes.js, meetings.routes.js, notifications.routes.js +2
+// יצירת התראות ושליחתן בזמן אמת.
 
 import { afterCommit, prisma } from '../../db.js';
 import { emitToUser } from '../../realtime/socket.js';

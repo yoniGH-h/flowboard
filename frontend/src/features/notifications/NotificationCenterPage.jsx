@@ -1,5 +1,4 @@
-// תפקיד הקובץ: מסך מרכז ההתראות.
-// משתמשים בו: App.jsx
+// מסך מרכז ההתראות.
 
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';

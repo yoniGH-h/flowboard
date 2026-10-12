@@ -1,5 +1,5 @@
-// תפקיד הקובץ: מסך פרטי משימה.
-// משתמשים בו: App.jsx
+// מסך פרטי משימה.
+// חלקים עיקריים: פרטים ועריכה, תת-משימות, תלויות חוסמות, קבצים מצורפים, תגובות, היסטוריה.
 
 import { useMemo, useRef, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';

@@ -1,5 +1,4 @@
-// תפקיד הקובץ: נתיב רשימת התפקידים.
-// משתמשים בו: app.js
+// נתיב רשימת התפקידים.
 
 import { Router } from 'express';
 import { prisma } from '../../db.js';

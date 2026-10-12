@@ -1,5 +1,4 @@
-// תפקיד הקובץ: מסך ניהול צוות הפרויקט.
-// משתמשים בו: App.jsx
+// ניהול צוות הפרויקט.
 
 import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';

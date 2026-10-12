@@ -1,5 +1,5 @@
-// תפקיד הקובץ: מסך הדוחות.
-// משתמשים בו: App.jsx
+// מסך הדוחות.
+// חלקים עיקריים: סינון, כרטיסי מדדים, דוח פעילות המשתמשים, התובנות.
 
 import { useMemo, useState } from 'react';
 import Box from '@mui/material/Box';

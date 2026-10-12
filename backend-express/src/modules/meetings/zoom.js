@@ -1,5 +1,4 @@
-// תפקיד הקובץ: לקוח מינימלי ל-Zoom API בשיטת Server-to-Server OAuth.
-// משתמשים בו: meetings.routes.js
+// לקוח ל-Zoom API.
 
 // לקוח מינימלי ל-Zoom API (אפליקציית Server-to-Server OAuth).
 //

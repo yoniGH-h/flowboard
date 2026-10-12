@@ -1,5 +1,4 @@
-// תפקיד הקובץ: טופס משימה חדשה.
-// משתמשים בו: KanbanBoardPage.jsx, TaskDetailsPage.jsx
+// טופס משימה חדשה.
 
 import { useState } from 'react';
 import Dialog from '@mui/material/Dialog';

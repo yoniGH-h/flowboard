@@ -1,5 +1,4 @@
-// תפקיד הקובץ: מסך הגדרות הארגון.
-// משתמשים בו: App.jsx
+// מסך הגדרות הארגון.
 
 import { useState } from 'react';
 import Box from '@mui/material/Box';

@@ -1,5 +1,4 @@
-// תפקיד הקובץ: עמודה אחת בלוח.
-// משתמשים בו: KanbanBoardPage.jsx
+// עמודה בלוח.
 
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';

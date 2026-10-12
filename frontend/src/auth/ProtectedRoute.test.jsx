@@ -1,5 +1,4 @@
-// תפקיד הקובץ: בדיקות יחידה לשמירה על מסכים לפי דרג.
-// משתמשים בו: מורץ על ידי Vitest (npm test)
+// בדיקות לשמירה על מסכים.
 
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';

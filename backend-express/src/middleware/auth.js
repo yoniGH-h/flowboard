@@ -1,5 +1,4 @@
-// תפקיד הקובץ: זיהוי המשתמש לפי האסימון, ובדיקות הרשאה ברמת הנתיב.
-// משתמשים בו: app.js, audit-log.routes.js, auth.routes.js, automation-rules.routes.js +10
+// זיהוי המשתמש ובדיקת הרשאה.
 
 import jwt from 'jsonwebtoken';
 import { config } from '../config.js';

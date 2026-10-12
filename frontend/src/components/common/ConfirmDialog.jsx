@@ -1,5 +1,4 @@
-// תפקיד הקובץ: חלון אישור כללי.
-// משתמשים בו: UserManagementPage.jsx, ProjectManagementPage.jsx, ProjectTeamManagementPage.jsx, OrganizationsSystemManagementPage.jsx +1
+// חלון אישור.
 
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';

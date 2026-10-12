@@ -1,5 +1,4 @@
-// תפקיד הקובץ: פונקציות עיצוב לתצוגה: שמות, תאריכים, גדלים ושעות.
-// משתמשים בו: ContactButtons.jsx, ProjectCard.jsx, TaskRow.jsx, UserAvatar.jsx +27
+// עיצוב ערכים לתצוגה.
 
 // מחזיר את ראשי התיבות של משתמש.
 // נקרא מ: UserAvatar.jsx

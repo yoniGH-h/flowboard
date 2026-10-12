@@ -1,5 +1,4 @@
-// תפקיד הקובץ: שגיאה שנושאת קוד HTTP, ופונקציות קיצור ליצירתה.
-// משתמשים בו: auth.js, errorHandler.js, attachments.routes.js, auth.routes.js +14
+// שגיאות שנושאות קוד HTTP.
 
 // שגיאה שנושאת קוד סטטוס של HTTP. ה-services זורקים אותה; מטפל השגיאות
 // (middleware/errorHandler.js) הופך אותה לתשובת שגיאה ב-JSON.

@@ -1,5 +1,4 @@
-// תפקיד הקובץ: רשימת הפעילות האחרונה.
-// משתמשים בו: ManagementDashboardPage.jsx
+// רשימת הפעילות האחרונה.
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';

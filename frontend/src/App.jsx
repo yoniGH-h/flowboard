@@ -1,5 +1,4 @@
-// תפקיד הקובץ: טבלת הנתיבים של האתר: איזה מסך מוצג בכל כתובת, ומי רשאי לראות אותו.
-// משתמשים בו: main.jsx
+// טבלת הנתיבים של האתר.
 
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { lazy, Suspense } from 'react';

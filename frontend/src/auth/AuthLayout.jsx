@@ -1,5 +1,4 @@
-// תפקיד הקובץ: המסגרת המשותפת של מסכי ההתחברות.
-// משתמשים בו: ForgotPasswordPage.jsx, ResetPasswordPage.jsx, SignInPage.jsx, SignUpPage.jsx
+// המסגרת של מסכי ההתחברות.
 
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';

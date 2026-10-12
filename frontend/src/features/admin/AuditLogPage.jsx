@@ -1,5 +1,4 @@
-// תפקיד הקובץ: מסך יומן הביקורת.
-// משתמשים בו: App.jsx
+// מסך יומן הביקורת.
 
 import { useMemo, useState } from 'react';
 import Box from '@mui/material/Box';

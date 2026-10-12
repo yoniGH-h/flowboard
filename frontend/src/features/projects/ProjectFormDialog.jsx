@@ -1,5 +1,4 @@
-// תפקיד הקובץ: טופס פרויקט.
-// משתמשים בו: ProjectManagementPage.jsx
+// טופס פרויקט.
 
 import { useState } from 'react';
 import Dialog from '@mui/material/Dialog';

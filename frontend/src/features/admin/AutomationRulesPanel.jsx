@@ -1,5 +1,5 @@
-// תפקיד הקובץ: ניהול חוקי האוטומציה.
-// משתמשים בו: OrganizationSettingsPage.jsx
+// ניהול חוקי האוטומציה.
+// חלקים עיקריים: רשימת החוקים, טופס חוק חדש, היסטוריית ההרצות.
 
 import { useState } from 'react';
 import Box from '@mui/material/Box';

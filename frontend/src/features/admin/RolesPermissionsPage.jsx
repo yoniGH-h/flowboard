@@ -1,5 +1,4 @@
-// תפקיד הקובץ: מסך התפקידים וההרשאות.
-// משתמשים בו: App.jsx
+// מסך התפקידים וההרשאות.
 
 import { Fragment, useMemo } from 'react';
 import Box from '@mui/material/Box';

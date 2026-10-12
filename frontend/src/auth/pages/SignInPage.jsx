@@ -1,5 +1,4 @@
-// תפקיד הקובץ: מסך ההתחברות.
-// משתמשים בו: App.jsx, SignInPage.test.jsx
+// מסך ההתחברות.
 
 import { lazy, Suspense, useState } from 'react';
 import Stack from '@mui/material/Stack';

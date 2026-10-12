@@ -1,5 +1,4 @@
-// תפקיד הקובץ: הגדרת תפריט הצד.
-// משתמשים בו: Sidebar.jsx
+// הגדרת תפריט הצד.
 
 import SpaceDashboardOutlinedIcon from '@mui/icons-material/SpaceDashboardOutlined';
 import FolderOutlinedIcon from '@mui/icons-material/FolderOutlined';
