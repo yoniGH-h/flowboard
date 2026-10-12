@@ -6,7 +6,6 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import Tooltip from '@mui/material/Tooltip';
 import ManageAccountsOutlinedIcon from '@mui/icons-material/ManageAccountsOutlined';
 import { useAuth, ROLE_LABELS } from '../auth/AuthContext';
 
@@ -19,7 +18,6 @@ export function RoleSwitcher() {
   const handleChange = (e) => setActiveRole(e.target.value);
 
   return (
-    <Tooltip title="Choose the role used for navigation. Your preference is saved to your profile.">
       <Box
         sx={{
           display: 'flex',
@@ -64,6 +62,5 @@ export function RoleSwitcher() {
           </Select>
         </FormControl>
       </Box>
-    </Tooltip>
   );
 }

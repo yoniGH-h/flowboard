@@ -134,8 +134,6 @@ npm run test:planning        # המלצות, סימולציה וביצוע הח�
 
 - [צד השרת – מבנה, זרימת בקשה, הרשאות, תובנות, מרכז ההחלטות](backend-express/README.md)
 - [צד הלקוח](frontend/README.md)
-- [מקרי שימוש עיקריים](docs/use-cases.md)
-- [נגישות](docs/accessibility.md)
 
 ## מגבלות ידועות
 
