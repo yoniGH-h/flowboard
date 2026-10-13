@@ -4,8 +4,6 @@ import { describe, expect, it } from 'vitest';
 import { resolveTaskMove } from './resolveTaskMove';
 
 // יוצר משימה לדוגמה, לבדיקה.
-// נקרא מ: הקובץ הזה
-// קורא ל: —
 function makeTask(overrides = {}) {
   return {
     id: 'task-1',

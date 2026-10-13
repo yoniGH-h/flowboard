@@ -15,22 +15,15 @@ const querySchema = z.strictObject({
 });
 
 // הראוטר של יומן הביקורת.
-// נקרא מ: app.js
 export const auditLogRouter = Router();
 
-// GET /api/audit-log - רק הארגון של המשתמש.
 // שולף את רשומות היומן של ארגון אחד, עם סינון.
-// נקרא מ: fetchAuditLog (api.js)
-// קורא ל: requirePermission, parse, auditLog.findForOrganization
 auditLogRouter.get('/', requirePermission('audit.view'), async (req, res) => {
   const filters = parse(querySchema, req.query);
   res.json(await auditLog.findForOrganization(req.user.organizationId, filters));
 });
 
-// GET /api/audit-log/system - כל הארגונים (הלשונית System Activity).
 // שולף רשומות יומן מכל הארגונים (למנהל מערכת).
-// נקרא מ: fetchSystemAuditLog (api.js)
-// קורא ל: requirePermission, parse, auditLog.findAcrossOrganizations
 auditLogRouter.get('/system', requirePermission('system.audit.view'), async (req, res) => {
   const filters = parse(querySchema, req.query);
   res.json(await auditLog.findAcrossOrganizations(filters));

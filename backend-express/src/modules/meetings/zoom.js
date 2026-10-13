@@ -14,16 +14,12 @@ const TOKEN_URL = 'https://zoom.us/oauth/token';
 const API_URL = 'https://api.zoom.us/v2';
 
 // בודק אם שלושת מפתחות Zoom הוגדרו.
-// נקרא מ: meetings.routes.js
-// קורא ל: —
 export const isZoomConfigured = () => Boolean(config.zoom.accountId && config.zoom.clientId && config.zoom.clientSecret);
 
 // אסימון גישה של Zoom תקף לשעה; משתמשים באותו אסימון עד קצת לפני שהוא פג.
 let cachedToken = null;
 
 // מקבל אסימון גישה מ-Zoom (ושומר אותו לשימוש חוזר).
-// נקרא מ: createInstantMeeting
-// קורא ל: HttpError
 async function getAccessToken() {
   if (cachedToken && cachedToken.expiresAt > Date.now() + 60_000) return cachedToken.value;
 
@@ -40,12 +36,7 @@ async function getAccessToken() {
   return cachedToken.value;
 }
 
-// יוצר פגישה מיידית. במצב 'voice' כל המצלמות כבויות בהתחלה.
-// מחזיר { id, joinUrl, startUrl } - startUrl מכניס את המארח בלי התחברות
-// ל-Zoom, ולכן מותר לתת אותו רק למי שפתח את השיחה.
 // יוצר פגישה מיידית ב-Zoom ומחזיר את הקישורים.
-// נקרא מ: meetings.routes.js
-// קורא ל: getAccessToken, HttpError
 export async function createInstantMeeting({ topic, mode }) {
   const video = mode === 'video';
   const token = await getAccessToken();

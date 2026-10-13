@@ -30,16 +30,10 @@ const DAY_MS = 86_400_000;
 const STUCK_AFTER_DAYS = 7;
 const MAX_RECOMMENDATIONS = 5;
 
-// תכנון פרויקט = ניהול המשימות שלו. (מנהל פרויקט: רק הפרויקטים שלו.)
 // מוודא הרשאת ניהול משימות בפרויקט.
-// נקרא מ: getPlanningView, simulate, recommend, applyDecision +2
-// קורא ל: projectsService.assertProjectPermission
 const requirePlanning = (actor, projectId) => projectsService.assertProjectPermission(actor, projectId, 'tasks.manage');
 
-// החלק של ההערכה שכדאי להציג בהשוואת "לפני ואחרי".
 // מצמצם הערכה לשדות שמוצגים בהשוואה.
-// נקרא מ: recommend
-// קורא ל: —
 const brief = (e) => ({
   riskScore: e.riskScore,
   riskLevel: e.riskLevel,
@@ -51,8 +45,6 @@ const brief = (e) => ({
 // ---------- תמונת מצב וסימולציה ----------
 
 // מחזיר את תמונת המצב של הפרויקט למסך התכנון.
-// נקרא מ: planning.routes.js
-// קורא ל: requirePlanning, loadProjectState, isOpen, evaluate
 export async function getPlanningView(actor, projectId) {
   await requirePlanning(actor, projectId);
   const state = await loadProjectState(actor, projectId);
@@ -87,8 +79,6 @@ export async function getPlanningView(actor, projectId) {
 }
 
 // מחשב "לפני ואחרי" לשינויים מוצעים, בלי לשמור.
-// נקרא מ: planning.routes.js
-// קורא ל: requirePlanning, loadProjectState, applyChanges, evaluate, assumptionsFor, loadChanges
 export async function simulate(actor, projectId, changes) {
   await requirePlanning(actor, projectId);
   const state = await loadProjectState(actor, projectId);
@@ -104,10 +94,7 @@ export async function simulate(actor, projectId, changes) {
   };
 }
 
-// אנשים שמספר המשימות הפתוחות שלהם משתנה, למשל [{ name: 'Ravi Patel', before: 8, after: 6 }]
 // מחשב למי השתנה מספר המשימות הפתוחות.
-// נקרא מ: simulate, recommend
-// קורא ל: —
 function loadChanges(before, after) {
   const beforeBy = new Map(before.load.map((l) => [l.userId, l.openTotal]));
   return after.load
@@ -116,18 +103,7 @@ function loadChanges(before, after) {
 }
 
 // ---------- המלצות ----------
-//
-// כללים פשוטים שאפשר להסביר - כל המלצה אומרת בדיוק למה היא ניתנה:
-//   REBALANCE   משימה תקועה (יותר מ-7 ימים בשלב פעיל) או שהאחראי עליה מעל הקיבולת,
-//               ולחבר צוות אחר יש הרבה יותר מקום -> מציעים להעביר אותה אליו
-//   DEFER       הפרויקט צפוי לאחר ויש משימות בעדיפות LOW שעוד לא התחילו ->
-//               מציעים להוציא אותן מהגרסה הזו
-//   ADD_MEMBER  הפרויקט צפוי לאחר ולמישהו בארגון יש מקום ->
-//               מציעים להוסיף אותו
-// כל המלצה עוברת בסימולטור, ולכן מגיעה עם ההשפעה החזויה שלה.
 // מציע פעולות לשיפור, כל אחת עם ההשפעה החזויה שלה.
-// נקרא מ: planning.routes.js
-// קורא ל: requirePlanning, loadProjectState, evaluate, isOpen, userName, applyChanges +3
 export async function recommend(actor, projectId) {
   await requirePlanning(actor, projectId);
   const state = await loadProjectState(actor, projectId);
@@ -234,8 +210,6 @@ export async function recommend(actor, projectId) {
 // ---------- ביצוע החלטה ----------
 
 // מבצע החלטה בפועל בתוך טרנזקציה אחת, ורושם אותה.
-// נקרא מ: planning.routes.js
-// קורא ל: requirePlanning, loadProjectState, applyChanges, evaluate, inTransaction, projectsService.assertProjectPermission +8
 export async function applyDecision(actor, projectId, { changes, note, source }) {
   await requirePlanning(actor, projectId);
   const state = await loadProjectState(actor, projectId);
@@ -293,8 +267,6 @@ export async function applyDecision(actor, projectId, { changes, note, source })
 }
 
 // ממיר את השינויים למבנה שנשמר במסד.
-// נקרא מ: applyDecision
-// קורא ל: —
 const serializeChanges = (changes) => ({
   ...changes,
   ...(changes.newTargetDate ? { newTargetDate: changes.newTargetDate.toISOString() } : {}),
@@ -302,11 +274,7 @@ const serializeChanges = (changes) => ({
 
 // ---------- יומן ההחלטות ----------
 
-// ההחלטות בפרויקטים שהמשתמש מנהל, כל אחת עם ההשפעה שלה עד כה: הסיכון
-// והצפי ברגע שהתקבלה, מה המודל חזה, ואיפה הם עכשיו.
 // שולף את ההחלטות שבוצעו ומה קרה מאז.
-// נקרא מ: planning.routes.js
-// קורא ל: requirePlanning, projectsService.managedProjectsWhere, evaluate, loadProjectState, מסד הנתונים (decision)
 export async function listDecisions(actor, projectId) {
   if (projectId) await requirePlanning(actor, projectId);
   const decisions = await prisma.decision.findMany({
@@ -356,10 +324,7 @@ export async function listDecisions(actor, projectId) {
   });
 }
 
-// אפשר לרשום החלטה רק על ידי ביצוע שלה, אבל מנהל רשאי להוסיף הערה אחר כך.
 // מעדכן את ההערה של החלטה.
-// נקרא מ: planning.routes.js
-// קורא ל: notFound, requirePlanning, מסד הנתונים (decision)
 export async function updateDecisionNote(actor, decisionId, note) {
   const decision = await prisma.decision.findFirst({ where: { id: decisionId, organizationId: actor.organizationId } });
   if (!decision) throw notFound('Decision not found');

@@ -21,8 +21,6 @@ import { useAuditLog, useOrganizationUsers } from '../../lib/queries';
 import { formatDateTime, fullName } from '../../lib/format';
 
 // טבלת הפעולות שנרשמו, עם סינון.
-// נקרא מ: App.jsx
-// קורא ל: useAuditLog, useOrganizationUsers, LoadingState, PageHeader, fullName, NoSearchResultsState +1
 export function AuditLogPage() {
   const [search, setSearch] = useState('');
   const [actionFilter, setActionFilter] = useState('ALL');

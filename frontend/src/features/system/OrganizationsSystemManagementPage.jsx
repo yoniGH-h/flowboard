@@ -27,8 +27,6 @@ import { useAllAuditLog, useOrganizations, useSetOrganizationStatus } from '../.
 import { formatDate, formatDateTime } from '../../lib/format';
 
 // כל הארגונים במערכת: השעיה והפעלה.
-// נקרא מ: App.jsx
-// קורא ל: useOrganizations, useAllAuditLog, useSetOrganizationStatus, LoadingState, PageHeader, KpiCard +3
 export function OrganizationsSystemManagementPage() {
   const [tab, setTab] = useState('organizations');
   const { data: organizations, isLoading } = useOrganizations();

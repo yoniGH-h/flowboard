@@ -16,8 +16,6 @@ import { formatDateShort } from '../../lib/format';
 import { isOverdue } from '../../lib/taskStatus';
 
 // כרטיס שאפשר לגרור; לחיצה פותחת את המשימה.
-// נקרא מ: KanbanColumn.jsx
-// קורא ל: isOverdue, formatDateShort, UserAvatar, PriorityChip
 export function KanbanTaskCard({ task, assignee, labels, canDrag }) {
   const navigate = useNavigate();
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({

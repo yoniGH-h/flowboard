@@ -20,8 +20,6 @@ const client = new PrismaClient({ adapter });
 const context = new AsyncLocalStorage();
 
 // מריץ פונקציה בתוך טרנזקציה אחת: הכל נשמר או הכל מתבטל.
-// נקרא מ: planning.service.js
-// קורא ל: —
 export async function inTransaction(fn) {
   const afterCommitQueue = [];
   const result = await client.$transaction((tx) => context.run({ tx, afterCommitQueue }, fn), {
@@ -31,10 +29,7 @@ export async function inTransaction(fn) {
   return result;
 }
 
-// מריץ את task עכשיו, או - בתוך inTransaction - מיד אחרי שהטרנזקציה נשמרה.
 // מריץ פעולה רק אחרי שהטרנזקציה נשמרה (או מיד, אם אין טרנזקציה).
-// נקרא מ: notifications.service.js
-// קורא ל: —
 export function afterCommit(task) {
   const store = context.getStore();
   if (store) store.afterCommitQueue.push(task);
@@ -42,7 +37,6 @@ export function afterCommit(task) {
 }
 
 // הלקוח של מסד הנתונים שכל השרת משתמש בו; בתוך טרנזקציה מפנה אליה אוטומטית.
-// נקרא מ: app.js, auth.js, attachments.routes.js, audit-log.service.js +19
 export const prisma = new Proxy(client, {
   get(target, prop) {
     const tx = context.getStore()?.tx;

@@ -18,8 +18,6 @@ const DEMO_ACCOUNTS = [
 ];
 
 // רשימת חשבונות הדמו לכניסה בלחיצה.
-// נקרא מ: SignInPage.jsx, SignInPage.test.jsx
-// קורא ל: —
 export default function DemoAccounts({ onSignIn, disabled }) {
   return (
     <>

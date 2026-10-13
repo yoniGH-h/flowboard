@@ -1,24 +1,16 @@
 // עיצוב ערכים לתצוגה.
 
 // מחזיר את ראשי התיבות של משתמש.
-// נקרא מ: UserAvatar.jsx
-// קורא ל: —
 export function initials(user) {
   return `${user.firstName[0] ?? ''}${user.lastName[0] ?? ''}`.toUpperCase();
 }
 
 // מחזיר שם פרטי ושם משפחה.
-// נקרא מ: ContactButtons.jsx, UserAvatar.jsx, AuditLogPage.jsx, UserManagementPage.jsx +13
-// קורא ל: —
 export function fullName(user) {
   return `${user.firstName} ${user.lastName}`;
 }
 
-// בוחר טקסט שחור או לבן כך שיעמוד תמיד ב-WCAG AA (4.5:1) מול צבע רקע
-// כלשהו של אווטאר, לפי נוסחת הבהירות היחסית ב-WCAG 2.1 SC 1.4.3.
 // בוחר צבע טקסט קריא על רקע נתון.
-// נקרא מ: UserAvatar.jsx
-// קורא ל: —
 export function contrastTextColor(hexColor) {
   const hex = hexColor.replace('#', '');
   const [r, g, b] = [0, 2, 4].map((i) => parseInt(hex.substring(i, i + 2), 16) / 255);
@@ -38,32 +30,24 @@ const DATETIME_FMT = new Intl.DateTimeFormat('en-US', {
 });
 
 // מעצב תאריך מלא.
-// נקרא מ: ProjectCard.jsx, UserPermissionsDialog.jsx, DecisionCenterPage.jsx, DecisionLogPanel.jsx +6
-// קורא ל: —
 export function formatDate(iso) {
   if (!iso) return '—';
   return DATE_FMT.format(new Date(iso));
 }
 
 // מעצב תאריך קצר.
-// נקרא מ: TaskRow.jsx, ManagementDashboardPage.jsx, KanbanTaskCard.jsx, MyTasksPage.jsx
-// קורא ל: —
 export function formatDateShort(iso) {
   if (!iso) return '—';
   return DATE_SHORT_FMT.format(new Date(iso));
 }
 
 // מעצב תאריך ושעה.
-// נקרא מ: AuditLogPage.jsx, AutomationRulesPanel.jsx, NotificationCenterPage.jsx, ProjectOverviewPage.jsx +2
-// קורא ל: —
 export function formatDateTime(iso) {
   if (!iso) return '—';
   return DATETIME_FMT.format(new Date(iso));
 }
 
 // מעצב זמן יחסי, כמו "לפני 3 ימים".
-// נקרא מ: ActivityFeed.jsx, PersonalDashboardPage.jsx, NotificationBell.jsx
-// קורא ל: —
 export function formatRelativeToNow(iso, referenceNow) {
   const diffMs = new Date(iso).getTime() - referenceNow.getTime();
   const diffMinutes = Math.round(diffMs / 60000);
@@ -81,24 +65,18 @@ export function formatRelativeToNow(iso, referenceNow) {
 }
 
 // מעצב גודל קובץ.
-// נקרא מ: ProjectOverviewPage.jsx, TaskDetailsPage.jsx
-// קורא ל: —
 export function formatFileSize(sizeKb) {
   if (sizeKb < 1024) return `${sizeKb} KB`;
   return `${(sizeKb / 1024).toFixed(1)} MB`;
 }
 
 // מעצב מספר שעות.
-// נקרא מ: TaskDetailsPage.jsx
-// קורא ל: —
 export function formatHours(hours) {
   if (hours === null || hours === undefined) return '—';
   return `${hours}h`;
 }
 
 // מחזיר את מספר הימים בין שני תאריכים.
-// נקרא מ: אין שימוש כרגע
-// קורא ל: —
 export function daysBetween(from, to) {
   return Math.round((new Date(to).getTime() - new Date(from).getTime()) / (1000 * 60 * 60 * 24));
 }

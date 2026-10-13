@@ -29,8 +29,6 @@ import { useAddProjectMember, useOrganizationUsers, useProject, useRemoveProject
 import { fullName } from '../../lib/format';
 
 // הוספה והסרה של חברי צוות.
-// נקרא מ: App.jsx
-// קורא ל: useProject, useOrganizationUsers, useAddProjectMember, useRemoveProjectMember, LoadingState, Breadcrumbs +5
 export function ProjectTeamManagementPage() {
   const { projectId } = useParams();
   const { data: project, isLoading } = useProject(projectId);

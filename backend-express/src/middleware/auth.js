@@ -8,15 +8,7 @@ import { effectivePermissions } from '../permissions/effective.js';
 import { forbidden, unauthorized } from '../utils/httpError.js';
 import { highestRoleLevel, ROLE_LEVEL } from '../utils/permissions.js';
 
-// טוען את המשתמש המחובר לפי אסימון הגישה. מחזיר את האובייקט שכל
-// service מקבל כ-actor:
-//   { userId, organizationId, email, roles, permissions }
-// permissions הוא Set של מפתחות הרשאה - ברירות המחדל של התפקיד + שינויי הארגון +
-// החריגים האישיים של המשתמש (ראו permissions/effective.js).
-// משמש גם את ה-middleware של HTTP שלמטה וגם את החיבור של Socket.IO.
 // מאמת אסימון גישה, טוען את המשתמש ומחשב את ההרשאות שלו.
-// נקרא מ: socket.js, וגם בקובץ הזה
-// קורא ל: unauthorized, effectivePermissions, מסד הנתונים (user, organizationRolePermission)
 export async function authenticateAccessToken(token) {
   let payload;
   try {
@@ -48,11 +40,7 @@ export async function authenticateAccessToken(token) {
   };
 }
 
-// כל נתיב תחת /api עובר כאן, חוץ מהציבוריים (ראו app.js).
-// בהצלחה, המשתמש זמין ב-req.user.
 // חוסם בקשה בלי אסימון תקף, ושם את המשתמש ב-req.user.
-// נקרא מ: app.js, auth.routes.js
-// קורא ל: unauthorized, authenticateAccessToken
 export async function requireAuth(req, _res, next) {
   const header = req.headers.authorization;
   if (!header?.startsWith('Bearer ')) {
@@ -62,13 +50,7 @@ export async function requireAuth(req, _res, next) {
   next();
 }
 
-// שימוש:  router.get('/', requirePermission('audit.view'), handler)
-// להרשאות ברמת הארגון. הרשאות ברמת פרויקט (tasks.manage, ...)
-// נבדקות בתוך ה-services, כי הן תלויות גם באיזה פרויקט מדובר
-// (ראו assertProjectPermission בקובץ modules/projects/projects.service.js).
 // יוצר middleware שמחזיר 403 למי שאין לו את ההרשאה.
-// נקרא מ: audit-log.routes.js, automation-rules.routes.js, insights.routes.js, meetings.routes.js +7
-// קורא ל: forbidden
 export function requirePermission(key) {
   if (!PERMISSION_KEYS.has(key)) throw new Error(`Unknown permission "${key}"`); // תופס שגיאות הקלדה כבר בהפעלת השרת
   return (req, _res, next) => {
@@ -79,12 +61,7 @@ export function requirePermission(key) {
   };
 }
 
-// שימוש:  router.get('/', requireRole('SYSTEM_ADMIN'), handler)
-// מתיר לתפקיד הזה ולכל תפקיד שמעליו (עובד < מנהל פרויקט < מנהל ארגון < מנהל מערכת).
-// עדיין בשימוש לדברים שקשורים לתפקיד עצמו ולא להרשאה שאפשר לשנות.
 // יוצר middleware שמתיר רק מדרג מסוים ומעלה.
-// נקרא מ: הקובץ הזה
-// קורא ל: highestRoleLevel, forbidden
 export function requireRole(role) {
   const minLevel = ROLE_LEVEL[role];
   return (req, _res, next) => {

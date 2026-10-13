@@ -6,13 +6,7 @@ import { useAuth } from '../auth/AuthContext';
 import { createNotificationsConnection } from './socket';
 import { mapNotification } from '../api/api';
 
-// קבלת התראות בזמן אמת למרכז ההתראות ולפעמון: מתחבר פעם אחת לכל
-// משתמש מחובר (מופעל ב-AppShell, שמוצג רק מאחורי ProtectedRoute) ושומר על
-// המטמון ['notifications', userId] של TanStack Query מעודכן לפי מה שהשרת שולח,
-// במקום לשאול את השרת שוב ושוב.
 // פותח חיבור ומוסיף כל התראה חדשה לרשימה.
-// נקרא מ: AppShell.jsx
-// קורא ל: useAuth, createNotificationsConnection, mapNotification
 export function useNotificationsSocket() {
   const { user } = useAuth();
   const queryClient = useQueryClient();

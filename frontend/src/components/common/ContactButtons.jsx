@@ -24,12 +24,7 @@ const MODES = {
   video: { title: 'Zoom meeting', verb: 'Start Zoom meeting', description: 'a Zoom video meeting' },
 };
 
-// כפתורי שיחה קולית ופגישת Zoom ליצירת קשר עם חבר צוות (מוסתרים מול עצמך).
-// שניהם יוצרים פגישת Zoom אמיתית דרך השרת (POST /api/meetings): הפותח נכנס
-// כמארח בלשונית חדשה, וחבר הצוות מקבל התראה בזמן אמת עם קישור הצטרפות.
 // כפתורי שיחה ו-Zoom מול משתמש מסוים.
-// נקרא מ: ProjectOverviewPage.jsx, ProjectTeamManagementPage.jsx, TaskDetailsPage.jsx
-// קורא ל: useAuth, hasPermission, fullName, startMeeting
 export function ContactButtons({ user, projectId, taskId, size = 'small' }) {
   const { user: me } = useAuth();
   const [mode, setMode] = useState(null);

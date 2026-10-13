@@ -40,8 +40,6 @@ import { ContactButtons } from '../../components/common/ContactButtons';
 import { RiskTrendChart } from './RiskTrendChart';
 
 // פרטי הפרויקט, סיכון, צוות, קבצים ופעילות.
-// נקרא מ: App.jsx
-// קורא ל: useAuth, useProject, useOrganizationUsers, useTasks, useProjectAttachments, useProjectActivity +18
 export function ProjectOverviewPage() {
   const { projectId } = useParams();
   const navigate = useNavigate();
@@ -285,8 +283,6 @@ export function ProjectOverviewPage() {
 }
 
 // תיבת נתון קטנה.
-// נקרא מ: ProjectOverviewPage
-// קורא ל: —
 function StatBlock({ label, content }) {
   return (
     <Card>
@@ -301,8 +297,6 @@ function StatBlock({ label, content }) {
 }
 
 // הודעה כשהפרויקט לא נמצא.
-// נקרא מ: ProjectOverviewPage
-// קורא ל: EmptyState
 function NotFoundEntity({ label }) {
   return <EmptyState title={`${label} not found`} description="It may have been removed or you may not have access." />;
 }

@@ -11,10 +11,7 @@
 import { prisma } from '../db.js';
 import { EDITABLE_ROLES, PERMISSIONS, ROLE_DEFAULTS } from './catalog.js';
 
-// טוען את כל מה שצריך כדי לחשב את ההרשאות של משתמש אחד (2 שאילתות קטנות).
 // טוען מהמסד את שינויי הארגון ואת החריגים של משתמש.
-// נקרא מ: permissions.service.js
-// קורא ל: מסד הנתונים (organizationRolePermission, userPermissionOverride)
 export async function loadPermissionInputs(organizationId, userId) {
   const [orgChanges, userOverrides] = await Promise.all([
     prisma.organizationRolePermission.findMany({ where: { organizationId } }),
@@ -24,15 +21,9 @@ export async function loadPermissionInputs(organizationId, userId) {
 }
 
 // האם חריג ההרשאה עדיין בתוקף.
-// נקרא מ: explainPermissions
-// קורא ל: —
 const isActive = (override, now) => !override.expiresAt || override.expiresAt > now;
 
-// האם לתפקיד הזה יש את ההרשאה הזו בארגון הזה (שכבות 1 + 2)?
-// מחזיר { granted, source: 'role' | 'organization' }.
 // האם לתפקיד יש את ההרשאה בארגון הזה, ומאיזה מקור.
-// נקרא מ: permissions.service.js, וגם בקובץ הזה
-// קורא ל: —
 export function roleHasPermission(roleName, key, orgChanges) {
   const change = EDITABLE_ROLES.includes(roleName)
     ? orgChanges.find((c) => c.roleName === roleName && c.permissionKey === key)
@@ -41,12 +32,7 @@ export function roleHasPermission(roleName, key, orgChanges) {
   return { granted: ROLE_DEFAULTS[roleName]?.includes(key) ?? false, source: 'role' };
 }
 
-// ההסבר המלא לכל הרשאה בקטלוג - משמש את מסך ההרשאות
-// ("למה דנה רשאית לעשות את זה?"). כל רשומה: { key, granted, source, expiresAt?, reason? }
-//   source: 'role' | 'organization' | 'user'
 // מחזיר לכל הרשאה אם ניתנה ומאיזו שכבה.
-// נקרא מ: permissions.service.js, וגם בקובץ הזה
-// קורא ל: roleHasPermission, isActive
 export function explainPermissions(roles, { orgChanges, userOverrides }, now = new Date()) {
   return PERMISSIONS.map(({ key, scope }) => {
     // שכבות 1 + 2: ניתנת אם לאחד מתפקידי המשתמש יש אותה.
@@ -72,10 +58,7 @@ export function explainPermissions(roles, { orgChanges, userOverrides }, now = n
   });
 }
 
-// רק קבוצת מפתחות ההרשאה שיש למשתמש - מה שכל בקשה נבדקת מולו.
 // מחזיר את קבוצת מפתחות ההרשאה שיש למשתמש.
-// נקרא מ: auth.js
-// קורא ל: explainPermissions
 export function effectivePermissions(roles, inputs, now = new Date()) {
   return new Set(
     explainPermissions(roles, inputs, now)

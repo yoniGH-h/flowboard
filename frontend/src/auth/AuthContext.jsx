@@ -11,8 +11,6 @@ const ROLE_KEY = 'flowboard.session.activeRole';
 const AuthContext = createContext(undefined);
 
 // הרכיב שעוטף את האתר ומספק את נתוני המשתמש.
-// נקרא מ: main.jsx
-// קורא ל: getAccessToken, fetchCurrentSession, highestRole, onSessionExpired, apiSignOut, updateUserProfile
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [organization, setOrganization] = useState(null);
@@ -98,8 +96,6 @@ export function AuthProvider({ children }) {
 }
 
 // מחזיר את המשתמש המחובר, התפקיד הפעיל ופעולות כניסה ויציאה.
-// נקרא מ: SignInPage.jsx, SignInPage.test.jsx, SignUpPage.jsx, ProtectedRoute.jsx +24
-// קורא ל: —
 export function useAuth() {
   const ctx = useContext(AuthContext);
   if (!ctx) throw new Error('useAuth must be used within AuthProvider');
@@ -107,7 +103,6 @@ export function useAuth() {
 }
 
 // השם המוצג של כל תפקיד.
-// נקרא מ: UserManagementPage.jsx, UserPermissionsDialog.jsx, ProfileSettingsPage.jsx, RoleSwitcher.jsx +2
 export const ROLE_LABELS = {
   EMPLOYEE: 'Employee',
   PROJECT_MANAGER: 'Project Manager',

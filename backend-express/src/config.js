@@ -8,8 +8,7 @@ import path from 'node:path';
 const ROOT = path.resolve(import.meta.dirname, '..');
 
 // קורא משתנה סביבה שחובה להגדיר; עוצר את השרת אם חסר.
-// נקרא מ: הקובץ הזה
-// קורא ל: —
+
 function required(name) {
   const value = process.env[name];
   if (!value) {
@@ -19,7 +18,6 @@ function required(name) {
 }
 
 // אובייקט ההגדרות: פורט, מסד נתונים, סודות JWT, קבצים ו-Zoom.
-// נקרא מ: app.js, db.js, auth.js, errorHandler.js +6
 export const config = {
   port: Number(process.env.PORT ?? 3000),
   databaseUrl: required('DATABASE_URL'),

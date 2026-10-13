@@ -1,9 +1,6 @@
 // הפיכת שם למזהה לכתובת.
 
-// "Nimbus Digital!" -> "nimbus-digital"
 // הופך טקסט למזהה: "Nimbus Digital" נהיה "nimbus-digital".
-// נקרא מ: auth.service.js
-// קורא ל: —
 export function slugify(value) {
   return value
     .toLowerCase()

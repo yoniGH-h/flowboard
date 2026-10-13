@@ -8,23 +8,14 @@
 //   זמן שנותר (0-20), התקדמות מול תכנון (0-15).
 // הרמות תואמות ל-RiskBadge באתר: LOW עד 30, MEDIUM עד 60, HIGH מעל 60.
 
-// חבר צוות עם יותר משימות פתוחות מזה נחשב מעל הקיבולת - אותו מספר כמו
-// CAPACITY_TASKS במסך עומס הצוות.
 // מעל כמה משימות פתוחות עובד נחשב עמוס (6).
-// נקרא מ: model.js
 export const WORKLOAD_CAPACITY_TASKS = 6;
 
 const DAY_MS = 86_400_000;
 // מוסיף s לרבים באנגלית.
-// נקרא מ: calculateRisk
-// קורא ל: —
 const plural = (n, word) => `${n} ${word}${n === 1 ? '' : 's'}`;
 
-// project:   { startDate, targetDate, progress }
-// openTasks: [{ assigneeId, dueDate, blocked }]  (לא בארכיון ולא הושלמו)
 // מחשב את ציון הסיכון, הרמה ופירוט הגורמים.
-// נקרא מ: model.js, projects.service.js
-// קורא ל: plural
 export function calculateRisk(project, openTasks, memberCount, now = new Date()) {
   const openCount = openTasks.length;
   const overdueCount = openTasks.filter((t) => t.dueDate && t.dueDate < now).length;

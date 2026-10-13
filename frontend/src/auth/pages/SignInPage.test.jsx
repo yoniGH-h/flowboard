@@ -44,8 +44,6 @@ const authResult = {
 };
 
 // מצייר את מסך ההתחברות, לבדיקה.
-// נקרא מ: הקובץ הזה
-// קורא ל: SignInPage
 function renderPage() {
   return render(
     <MemoryRouter>

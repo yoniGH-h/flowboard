@@ -23,8 +23,6 @@ import { signIn } from '../../api/authApi';
 const DemoAccounts = import.meta.env.VITE_DEMO_MODE === 'true' ? lazy(() => import('../DemoAccounts')) : null;
 
 // טופס אימייל וסיסמה, עם בדיקת שדות והודעות שגיאה.
-// נקרא מ: App.jsx, SignInPage.test.jsx
-// קורא ל: useAuth, signIn, AuthLayout
 export function SignInPage() {
   const { signInWithResult } = useAuth();
   const navigate = useNavigate();

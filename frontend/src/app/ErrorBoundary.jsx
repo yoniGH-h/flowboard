@@ -7,8 +7,6 @@ import Button from '@mui/material/Button';
 import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 
 // רכיב שתופס שגיאות ציור של כל מה שבתוכו.
-// נקרא מ: main.jsx
-// קורא ל: —
 export class ErrorBoundary extends Component {
   state = { hasError: false };
 

@@ -14,8 +14,6 @@ import { ForgotPasswordPage } from './auth/pages/ForgotPasswordPage';
 import { ResetPasswordPage } from './auth/pages/ResetPasswordPage';
 
 // טוען מסך רק כשנכנסים אליו.
-// נקרא מ: הקובץ הזה
-// קורא ל: —
 const lazyNamed = (loader, name) => lazy(() => loader().then((module) => ({ default: module[name] })));
 const PersonalDashboardPage = lazyNamed(() => import('./features/dashboard/PersonalDashboardPage'), 'PersonalDashboardPage');
 const ManagementDashboardPage = lazyNamed(() => import('./features/dashboard/ManagementDashboardPage'), 'ManagementDashboardPage');
@@ -41,8 +39,6 @@ import { NotFoundPage } from './pages/NotFoundPage';
 import { ForbiddenPage } from './pages/ForbiddenPage';
 
 // הרכיב הראשי: כל הנתיבים, עם שמירה לפי התחברות ודרג.
-// נקרא מ: main.jsx
-// קורא ל: SignInPage, SignUpPage, ForgotPasswordPage, ResetPasswordPage, ProtectedRoute, AppShell +3
 export default function App() {
   return (
     <Suspense fallback={<Box sx={{ display: 'grid', placeItems: 'center', minHeight: '40vh' }}><CircularProgress aria-label="Loading page" /></Box>}>

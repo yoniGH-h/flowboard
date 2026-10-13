@@ -28,11 +28,7 @@ import { formatDate, fullName } from '../../lib/format';
 
 const SOURCE_LABELS = { role: 'Role', organization: 'Organization setting', user: 'Exception' };
 
-// ההרשאות של עובד אחד: מה מותר לו, למה (התפקיד שלו, שינוי של הארגון
-// בתפקיד, או חריג אישי), ואמצעים להוסיף ולהסיר חריגים.
 // מציג מאיפה כל הרשאה מגיעה, ומאפשר חריגים אישיים.
-// נקרא מ: UserManagementPage.jsx
-// קורא ל: UserPermissionsContent
 export function UserPermissionsDialog({ user, onClose }) {
   return (
     <Dialog open={!!user} onClose={onClose} maxWidth="md" fullWidth>
@@ -42,8 +38,6 @@ export function UserPermissionsDialog({ user, onClose }) {
 }
 
 // תוכן החלון: רשימת ההרשאות וטופס החריג.
-// נקרא מ: UserPermissionsDialog
-// קורא ל: useUserPermissions, usePermissionMatrix, useSetUserPermission, fullName, formatDate
 function UserPermissionsContent({ user, onClose }) {
   const { data, isLoading, error } = useUserPermissions(user.id);
   const { data: matrix } = usePermissionMatrix();

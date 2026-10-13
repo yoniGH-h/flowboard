@@ -39,8 +39,6 @@ const ACTIONS = [
 ];
 
 // רשימת החוקים: יצירה, הפעלה, מחיקה והיסטוריה.
-// נקרא מ: OrganizationSettingsPage.jsx
-// קורא ל: useAuth, useAutomationRules, useProjects, useOrganizationUsers, useToggleAutomationRule, useCreateAutomationRule +5
 export function AutomationRulesPanel() {
   const { organization } = useAuth();
   const { data: rules = [] } = useAutomationRules();

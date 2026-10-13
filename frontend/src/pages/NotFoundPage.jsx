@@ -7,8 +7,6 @@ import SearchOffOutlinedIcon from '@mui/icons-material/SearchOffOutlined';
 import { useNavigate } from 'react-router-dom';
 
 // המסך שמוצג לכתובת שלא קיימת.
-// נקרא מ: App.jsx
-// קורא ל: —
 export function NotFoundPage() {
   const navigate = useNavigate();
   return (

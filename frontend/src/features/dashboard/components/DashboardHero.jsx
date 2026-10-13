@@ -7,8 +7,6 @@ import LinearProgress from '@mui/material/LinearProgress';
 import Divider from '@mui/material/Divider';
 
 // בוחר ברכה לפי השעה.
-// נקרא מ: DashboardHero
-// קורא ל: —
 function greeting() {
   const hour = new Date().getHours();
   if (hour < 12) return 'Good morning';
@@ -17,8 +15,6 @@ function greeting() {
 }
 
 // ברכה למשתמש וסיכום קצר.
-// נקרא מ: ManagementDashboardPage.jsx, PersonalDashboardPage.jsx
-// קורא ל: greeting
 export function DashboardHero({
   firstName,
   subtitle = "Here's what's happening today.",

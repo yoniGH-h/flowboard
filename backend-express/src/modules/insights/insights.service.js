@@ -25,25 +25,15 @@ const ACTIVE_CATEGORIES = new Set(['IN_PROGRESS', 'REVIEW']); // שלבים שב
 const CATEGORY_ORDER = { TODO: 0, IN_PROGRESS: 1, REVIEW: 2, DONE: 3 };
 
 // ממיר מילי-שניות לימים.
-// נקרא מ: deliveryForecast, whereWorkWaits
-// קורא ל: —
 const days = (ms) => ms / DAY_MS;
 // מעגל לספרה אחת אחרי הנקודה.
-// נקרא מ: deliveryForecast, estimateAccuracy, whereWorkWaits
-// קורא ל: —
 const round1 = (n) => Math.round(n * 10) / 10;
 // מעצב תאריך קצר.
-// נקרא מ: buildConclusions
-// קורא ל: —
 const shortDate = (d) => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 // מוסיף s לרבים באנגלית.
-// נקרא מ: buildConclusions
-// קורא ל: —
 const plural = (n, word) => `${n} ${word}${n === 1 ? '' : 's'}`;
 
 // מחזיר את כל התובנות של פרויקט אחד.
-// נקרא מ: insights.routes.js
-// קורא ל: assertProjectPermission, deliveryForecast, estimateAccuracy, whereWorkWaits, riskTrend, buildConclusions +1
 export async function getInsights(actor, projectId) {
   if (projectId) await assertProjectPermission(actor, projectId, 'tasks.manage');
 
@@ -75,8 +65,6 @@ export async function getInsights(actor, projectId) {
 // ---------- 1. צפי סיום ----------
 
 // מחשב צפי סיום לכל פרויקט מול תאריך היעד.
-// נקרא מ: getInsights
-// קורא ל: days, round1, מסד הנתונים (task)
 async function deliveryForecast(projects, now) {
   const ids = projects.map((p) => p.id);
   const since = new Date(now.getTime() - THROUGHPUT_WINDOW_DAYS * DAY_MS);
@@ -124,8 +112,6 @@ async function deliveryForecast(projects, now) {
 // ---------- 2. דיוק הערכות ----------
 
 // משווה שעות בפועל לשעות מוערכות.
-// נקרא מ: getInsights
-// קורא ל: round1, מסד הנתונים (task)
 async function estimateAccuracy(projectIds) {
   const where = {
     projectId: { in: projectIds },
@@ -166,8 +152,6 @@ async function estimateAccuracy(projectIds) {
 // ---------- 3. איפה העבודה ממתינה ----------
 
 // מחשב כמה זמן משימות שוהות בכל עמודה.
-// נקרא מ: getInsights
-// קורא ל: days, round1, מסד הנתונים (taskStatusChange)
 async function whereWorkWaits(projectIds, now) {
   const changes = await prisma.taskStatusChange.findMany({
     where: { projectId: { in: projectIds }, task: { archived: false } },
@@ -236,8 +220,6 @@ async function whereWorkWaits(projectIds, now) {
 // ---------- 4. מגמת סיכון ----------
 
 // מוצא פרויקטים שהסיכון שלהם עלה.
-// נקרא מ: getInsights
-// קורא ל: מסד הנתונים (projectRiskSnapshot)
 async function riskTrend(projects, now) {
   const since = new Date(now.getTime() - 14 * DAY_MS);
   const snapshots = await prisma.projectRiskSnapshot.findMany({
@@ -258,8 +240,6 @@ async function riskTrend(projects, now) {
 // ---------- מסקנות בשפה פשוטה ----------
 
 // מנסח את המסקנות בשפה פשוטה.
-// נקרא מ: getInsights
-// קורא ל: shortDate, plural
 function buildConclusions({ forecast, estimates, bottlenecks, riskTrends }) {
   const out = [];
 

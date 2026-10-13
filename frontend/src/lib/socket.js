@@ -11,12 +11,7 @@ import { getAccessToken } from '../api/session';
 // משתנה סביבה שני. עם VITE_API_URL=/api התוצאה היא '' - כלומר אותה כתובת מקור.
 const SERVER_BASE = (import.meta.env.VITE_API_URL ?? 'http://localhost:3000/api').replace(/\/api\/?$/, '');
 
-// חיבור חדש בכל קריאה, כדי שהמחזור של React StrictMode (עלייה -> ירידה -> עלייה) לא
-// ישתמש שוב בחיבור שעדיין נסגר. האסימון נקרא בכל התחברות (גם חוזרת), כך
-// שאסימון גישה שחודש נקלט אוטומטית אחרי ניתוק.
 // יוצר חיבור ומחזיר ארבע פעולות: on, off, start, stop.
-// נקרא מ: useNotificationsSocket.js
-// קורא ל: getAccessToken
 export function createNotificationsConnection() {
   const socket = io(SERVER_BASE || undefined, {
     autoConnect: false,

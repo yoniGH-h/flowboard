@@ -11,8 +11,6 @@ import { useNotificationsSocket } from '../lib/useNotificationsSocket';
 const COLLAPSE_KEY = 'flowboard.sidebarCollapsed';
 
 // תפריט צד, סרגל עליון, והמסך הנוכחי באמצע.
-// נקרא מ: App.jsx
-// קורא ל: useNotificationsSocket, DesktopSidebar, MobileSidebar, Topbar
 export function AppShell() {
   useNotificationsSocket();
   const [collapsed, setCollapsed] = useState(() => localStorage.getItem(COLLAPSE_KEY) === '1');

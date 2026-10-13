@@ -34,16 +34,12 @@ const ICON_BY_KEYWORD = [
 ];
 
 // בוחר אייקון לפי סוג הפעולה.
-// נקרא מ: ActivityFeed
-// קורא ל: —
 function iconFor(action) {
   const match = ICON_BY_KEYWORD.find(([keyword]) => action.includes(keyword));
   return match ? match[1] : HistoryOutlinedIcon;
 }
 
 // מנסח כותרת לאירוע.
-// נקרא מ: ActivityFeed
-// קורא ל: —
 function titleFor(entry) {
   return entry.action
     .split('_')
@@ -52,8 +48,6 @@ function titleFor(entry) {
 }
 
 // רשימת אירועים עם מבצע, פעולה וזמן.
-// נקרא מ: ManagementDashboardPage.jsx
-// קורא ל: EmptyState, iconFor, titleFor, formatRelativeToNow
 export function ActivityFeed({ entries, userMap }) {
   return (
     <Card sx={{ height: '100%' }}>

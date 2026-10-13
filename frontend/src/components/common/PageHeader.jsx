@@ -5,8 +5,6 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 // כותרת, תיאור, שביל ניווט וכפתורי פעולה.
-// נקרא מ: AuditLogPage.jsx, OrganizationSettingsPage.jsx, RolesPermissionsPage.jsx, UserManagementPage.jsx +14
-// קורא ל: —
 export function PageHeader({ title, description, actions, breadcrumb }) {
   return (
     <Box sx={{ mb: 3 }}>

@@ -13,8 +13,6 @@ import { useNavigate } from 'react-router-dom';
 import { useProjects, useTasks } from '../lib/queries';
 
 // שדה חיפוש של פרויקטים ומשימות.
-// נקרא מ: Topbar.jsx
-// קורא ל: useProjects, useTasks
 export function GlobalSearch() {
   const [term, setTerm] = useState('');
   const navigate = useNavigate();

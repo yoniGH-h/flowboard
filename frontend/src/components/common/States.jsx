@@ -13,8 +13,6 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import SearchOffOutlinedIcon from '@mui/icons-material/SearchOffOutlined';
 
 // מוצג כשאין נתונים להציג.
-// נקרא מ: AutomationRulesPanel.jsx, ActivityFeed.jsx, PersonalDashboardPage.jsx, KanbanBoardPage.jsx +9, וגם בקובץ הזה
-// קורא ל: —
 export function EmptyState({ icon, title, description, action }) {
   return (
     <Box
@@ -45,8 +43,6 @@ export function EmptyState({ icon, title, description, action }) {
 }
 
 // מחוון טעינה עם טקסט.
-// נקרא מ: AuditLogPage.jsx, RolesPermissionsPage.jsx, UserManagementPage.jsx, ManagementDashboardPage.jsx +13
-// קורא ל: —
 export function LoadingState({ label = 'Loading…' }) {
   return (
     <Stack alignItems="center" justifyContent="center" spacing={1.5} sx={{ py: 6 }} role="status" aria-live="polite">
@@ -59,8 +55,6 @@ export function LoadingState({ label = 'Loading…' }) {
 }
 
 // שלדי כרטיסים בזמן טעינה.
-// נקרא מ: אין שימוש כרגע
-// קורא ל: —
 export function CardSkeletonGrid({ count = 4 }) {
   return (
     <Stack direction="row" spacing={2} flexWrap="wrap" useFlexGap>
@@ -72,8 +66,6 @@ export function CardSkeletonGrid({ count = 4 }) {
 }
 
 // הודעת שגיאה עם כפתור "נסה שוב".
-// נקרא מ: RolesPermissionsPage.jsx
-// קורא ל: EmptyState
 export function ErrorState({ title = 'Something went wrong', description, onRetry }) {
   return (
     <EmptyState
@@ -92,8 +84,6 @@ export function ErrorState({ title = 'Something went wrong', description, onRetr
 }
 
 // הודעה על בעיית תקשורת עם השרת.
-// נקרא מ: אין שימוש כרגע
-// קורא ל: EmptyState
 export function NetworkErrorState({ onRetry }) {
   return (
     <EmptyState
@@ -112,8 +102,6 @@ export function NetworkErrorState({ onRetry }) {
 }
 
 // מוצג כשהחיפוש לא החזיר תוצאות.
-// נקרא מ: AuditLogPage.jsx, UserManagementPage.jsx, MyProjectsPage.jsx, ProjectManagementPage.jsx +1
-// קורא ל: EmptyState
 export function NoSearchResultsState({ onClear }) {
   return (
     <EmptyState
@@ -132,8 +120,6 @@ export function NoSearchResultsState({ onClear }) {
 }
 
 // מוצג כשאין הרשאה לתוכן.
-// נקרא מ: ForbiddenPage.jsx
-// קורא ל: EmptyState
 export function ForbiddenState() {
   return (
     <EmptyState

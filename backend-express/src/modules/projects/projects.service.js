@@ -35,10 +35,7 @@ const DETAIL_INCLUDE = {
 //                                הפרויקט, או חבר צוות עם roleOnProject = MANAGER
 //   כל השאר                   -> אף פרויקט (חברי צוות עדיין רואים ועובדים על המשימות שלהם)
 
-// project חייב לכלול את members (שורות עם userId ו-roleOnProject).
 // האם המשתמש מנהל את הפרויקט הזה.
-// נקרא מ: projectCan, assertAccessible
-// קורא ל: isOrgAdmin, isManager
 export function managesProject(actor, project) {
   if (isOrgAdmin(actor)) return true;
   if (!isManager(actor)) return false;
@@ -48,10 +45,7 @@ export function managesProject(actor, project) {
   );
 }
 
-// אותו כלל כתנאי where של Prisma על Project - "הפרויקטים שהמשתמש מנהל".
 // תנאי שאילתה: הפרויקטים שהמשתמש מנהל.
-// נקרא מ: insights.service.js, planning.service.js, tasks.service.js, וגם בקובץ הזה
-// קורא ל: isOrgAdmin
 export function managedProjectsWhere(actor) {
   if (isOrgAdmin(actor)) return { organizationId: actor.organizationId };
   return {
@@ -60,11 +54,7 @@ export function managedProjectsWhere(actor) {
   };
 }
 
-// הפרויקטים שהמשתמש רואה: כל פרויקטי הארגון למנהלי ארגון, ואחרת אלה שהוא
-// חבר בהם (מנהל הפרויקט הוא תמיד אחד מחברי הצוות שלו).
 // תנאי שאילתה: הפרויקטים שהמשתמש רשאי לראות.
-// נקרא מ: tasks.service.js
-// קורא ל: isOrgAdmin
 export function visibleProjectsWhere(actor) {
   if (isOrgAdmin(actor)) return { organizationId: actor.organizationId };
   return {
@@ -74,17 +64,9 @@ export function visibleProjectsWhere(actor) {
 }
 
 // האם המשתמש חבר בפרויקט.
-// נקרא מ: projectCan, assertAccessible
-// קורא ל: —
 const isMember = (actor, project) => project.members.some((m) => m.userId === actor.userId);
 
-// האם למשתמש מותר להשתמש בהרשאה הזו בפרויקט הזה? שני תנאים:
-//   1. יש לו את ההרשאה (ברירות המחדל של התפקיד + שינויי הארגון + חריגים אישיים), וגם
-//   2. ההיקף שלה מתאים לפרויקט: הרשאות 'managed-project' פועלות רק בפרויקטים שהוא
-//      מנהל, והרשאות 'member-project' בכל פרויקט שהוא חבר בו.
 // האם למשתמש יש הרשאה מסוימת בפרויקט הזה.
-// נקרא מ: projectAbilities, assertAccessible
-// קורא ל: managesProject, isMember
 export function projectCan(actor, project, key) {
   if (!actor.permissions.has(key)) return false;
   const scope = PERMISSION_BY_KEY.get(key)?.scope;
@@ -93,11 +75,7 @@ export function projectCan(actor, project, key) {
   return true;
 }
 
-// כל מה שהאתר צריך כדי להציג או להסתיר כפתורים בפרויקט אחד.
-// (השרת בודק את אותם כללים שוב בכל בקשה.)
 // מה מותר למשתמש בפרויקט (לאתר).
-// נקרא מ: toDetail
-// קורא ל: projectCan
 function projectAbilities(actor, project) {
   const can = (key) => projectCan(actor, project, key);
   return {
@@ -113,11 +91,7 @@ function projectAbilities(actor, project) {
   };
 }
 
-// משטח את התוצאה של Prisma למבנה שהאתר מצפה לו, ומוסיף את can (מה מותר
-// למשתמש המחובר כאן) ואת canManage (נשמר לקוד ישן באתר = can.manageTasks).
 // ממיר פרויקט מהמסד למבנה של האתר.
-// נקרא מ: loadDetail, findAll
-// קורא ל: projectAbilities
 function toDetail(project, actor) {
   const { _count, board, members, ...rest } = project;
   const can = projectAbilities(actor, project);
@@ -131,11 +105,7 @@ function toDetail(project, actor) {
   };
 }
 
-// דורס את שדות הסיכון השמורים של כל פרויקט בציון שחושב עכשיו. שאילתה אחת
-// שולפת את המשימות הפתוחות של כל הפרויקטים יחד (ולא שאילתה לכל פרויקט).
 // מחשב ציון סיכון עדכני לכל פרויקט.
-// נקרא מ: recordRiskSnapshots, loadDetail, findAll
-// קורא ל: מסד הנתונים (task)
 async function attachLiveRisk(details) {
   if (details.length === 0) return details;
 
@@ -161,16 +131,9 @@ async function attachLiveRisk(details) {
 
 const DAY_MS = 86_400_000;
 // מחזיר את תחילת היום (UTC).
-// נקרא מ: recordRiskSnapshots, getRiskHistory
-// קורא ל: —
 const startOfUtcDay = (date) => new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
 
-// שומר את ציון הסיכון של היום לכל פרויקט פעיל (שורה אחת לפרויקט ליום - הרצה
-// נוספת באותו יום רק מעדכנת את השורה). נקרא כשהשרת עולה וכל שעה
-// (server.js), כדי שהתובנות יוכלו להציג איך הסיכון משתנה לאורך זמן.
 // שומר את ציון הסיכון של היום לכל פרויקט.
-// נקרא מ: server.js
-// קורא ל: attachLiveRisk, startOfUtcDay, מסד הנתונים (project, projectRiskSnapshot)
 export async function recordRiskSnapshots(now = new Date()) {
   const projects = await prisma.project.findMany({ where: { archived: false }, include: { members: true } });
   const withRisk = await attachLiveRisk(projects);
@@ -185,10 +148,7 @@ export async function recordRiskSnapshots(now = new Date()) {
   return withRisk.length;
 }
 
-// GET /api/projects/:id/risk-history - ציוני הסיכון היומיים של הפרויקט ב-days הימים האחרונים.
 // מחזיר את ציוני הסיכון היומיים של פרויקט.
-// נקרא מ: projects.routes.js
-// קורא ל: assertAccessible, startOfUtcDay, מסד הנתונים (projectRiskSnapshot)
 export async function getRiskHistory(actor, projectId, days = 30) {
   await assertAccessible(actor, projectId);
   const since = startOfUtcDay(new Date(Date.now() - days * DAY_MS));
@@ -200,20 +160,13 @@ export async function getRiskHistory(actor, projectId, days = 30) {
 }
 
 // שולף פרויקט מלא אחרי בדיקת גישה.
-// נקרא מ: create, findOne, update, setArchived
-// קורא ל: attachLiveRisk, toDetail, מסד הנתונים (project)
 async function loadDetail(actor, id) {
   const project = await prisma.project.findUniqueOrThrow({ where: { id }, include: DETAIL_INCLUDE });
   const [detail] = await attachLiveRisk([toDetail(project, actor)]);
   return detail;
 }
 
-// משמש גם את המודולים של משימות, תגובות, קבצים ופגישות. הפרויקט חייב להיות
-// בארגון של המשתמש, והמשתמש חייב להיות חבר בו או לנהל אותו.
-// מחזיר את הפרויקט (עם חברי הצוות) ואת can(key) - projectCan שקשור לפרויקט הזה.
 // מוודא גישה לפרויקט: 404 אם לא בארגון, 403 אם לא חבר.
-// נקרא מ: attachments.routes.js, comments.routes.js, meetings.routes.js, tasks.service.js, וגם בקובץ הזה
-// קורא ל: notFound, managesProject, isMember, forbidden, projectCan, מסד הנתונים (project)
 export async function assertAccessible(actor, projectId) {
   const project = await prisma.project.findFirst({
     where: { id: projectId, organizationId: actor.organizationId },
@@ -227,11 +180,7 @@ export async function assertAccessible(actor, projectId) {
   return { ...project, can: (key) => projectCan(actor, project, key) };
 }
 
-// assertAccessible ועוד "ומותר לו להשתמש בהרשאה הזו כאן" - הבדיקה שמאחורי כל פעולה בפרויקט.
-//   await assertProjectPermission(actor, projectId, 'tasks.manage')
 // מוודא גישה וגם הרשאה מסוימת בפרויקט.
-// נקרא מ: attachments.routes.js, comments.routes.js, insights.service.js, planning.service.js +2, וגם בקובץ הזה
-// קורא ל: assertAccessible, forbidden
 export async function assertProjectPermission(actor, projectId, key) {
   const project = await assertAccessible(actor, projectId);
   if (!project.can(key)) {
@@ -245,10 +194,7 @@ export async function assertProjectPermission(actor, projectId, key) {
   return project;
 }
 
-// מנהל של פרויקט חייב להחזיק בתפקיד מנהל פרויקט (או גבוה ממנו) בארגון.
 // מוודא שהמנהל המיועד מחזיק בתפקיד מנהל פרויקט.
-// נקרא מ: create, update
-// קורא ל: notFound, isManager, badRequest, מסד הנתונים (user)
 async function requireEligibleManager(actor, userId) {
   const user = await prisma.user.findFirst({
     where: { id: userId, organizationId: actor.organizationId },
@@ -261,8 +207,6 @@ async function requireEligibleManager(actor, userId) {
 }
 
 // יוצר פרויקט, עם לוח ועמודות ברירת מחדל.
-// נקרא מ: projects.routes.js
-// קורא ל: isOrgAdmin, forbidden, requireEligibleManager, notFound, recordAudit, loadDetail +1
 export async function create(actor, dto) {
   // מנהל פרויקט יוצר פרויקטים לעצמו; רק מנהל ארגון בוחר מנהל אחר.
   if (!isOrgAdmin(actor) && dto.managerId !== actor.userId) {
@@ -320,8 +264,6 @@ export async function create(actor, dto) {
 }
 
 // שולף את הפרויקטים שהמשתמש רשאי לראות.
-// נקרא מ: projects.routes.js
-// קורא ל: isManager, forbidden, managedProjectsWhere, attachLiveRisk, toDetail, מסד הנתונים (project)
 export async function findAll(actor, query) {
   const wantsAll = query.scope === 'all';
   if (wantsAll && !isManager(actor)) {
@@ -347,16 +289,12 @@ export async function findAll(actor, query) {
 }
 
 // שולף פרויקט אחד עם הפרטים והיכולות של המשתמש בו.
-// נקרא מ: projects.routes.js, וגם בקובץ הזה
-// קורא ל: assertAccessible, loadDetail
 export async function findOne(actor, id) {
   await assertAccessible(actor, id);
   return loadDetail(actor, id);
 }
 
 // מעדכן את פרטי הפרויקט.
-// נקרא מ: planning.service.js, projects.routes.js
-// קורא ל: assertProjectPermission, isOrgAdmin, forbidden, requireEligibleManager, recordAudit, loadDetail +1
 export async function update(actor, id, dto) {
   const project = await assertProjectPermission(actor, id, 'projects.update');
   const managerChanges = dto.managerId && dto.managerId !== project.managerId;
@@ -402,8 +340,6 @@ export async function update(actor, id, dto) {
 }
 
 // מעביר פרויקט לארכיון או מחזיר ממנו.
-// נקרא מ: projects.routes.js
-// קורא ל: assertProjectPermission, recordAudit, loadDetail, מסד הנתונים (project)
 export async function setArchived(actor, id, archived) {
   await assertProjectPermission(actor, id, 'projects.update');
   await prisma.project.update({ where: { id }, data: { archived } });
@@ -422,11 +358,7 @@ export async function setArchived(actor, id, archived) {
 
 // ---------- חברי צוות ----------
 
-// roleOnProject = MANAGER הופך מישהו למנהל-שותף עם שליטה מלאה בפרויקט, ולכן
-// רק מנהל ארגון רשאי לתת אותו (כמו בהחלפת מנהל הפרויקט).
 // מוודא שמותר לתת את התפקיד בפרויקט.
-// נקרא מ: addMember, updateMember, removeMember
-// קורא ל: isOrgAdmin, forbidden
 function assertCanGrantRole(actor, roleOnProject) {
   if (roleOnProject === 'MANAGER' && !isOrgAdmin(actor)) {
     throw forbidden('Only an organization admin can make someone a manager of this project');
@@ -434,8 +366,6 @@ function assertCanGrantRole(actor, roleOnProject) {
 }
 
 // מוסיף חבר צוות לפרויקט.
-// נקרא מ: planning.service.js, projects.routes.js
-// קורא ל: assertProjectPermission, assertCanGrantRole, notFound, conflict, createNotification, recordAudit +2
 export async function addMember(actor, projectId, dto) {
   await assertProjectPermission(actor, projectId, 'members.manage');
   assertCanGrantRole(actor, dto.roleOnProject);
@@ -477,8 +407,6 @@ export async function addMember(actor, projectId, dto) {
 }
 
 // משנה את התפקיד של חבר צוות בפרויקט.
-// נקרא מ: projects.routes.js
-// קורא ל: assertProjectPermission, requireMember, assertCanGrantRole, conflict, findOne, מסד הנתונים (projectMember)
 export async function updateMember(actor, projectId, userId, dto) {
   const project = await assertProjectPermission(actor, projectId, 'members.manage');
   const member = await requireMember(projectId, userId);
@@ -496,8 +424,6 @@ export async function updateMember(actor, projectId, userId, dto) {
 }
 
 // מסיר חבר צוות מהפרויקט.
-// נקרא מ: projects.routes.js
-// קורא ל: assertProjectPermission, conflict, requireMember, assertCanGrantRole, recordAudit, findOne +1
 export async function removeMember(actor, projectId, userId) {
   const project = await assertProjectPermission(actor, projectId, 'members.manage');
   if (project.managerId === userId) {
@@ -522,8 +448,6 @@ export async function removeMember(actor, projectId, userId) {
 }
 
 // מוודא שהמשתמש חבר בפרויקט.
-// נקרא מ: updateMember, removeMember
-// קורא ל: notFound, מסד הנתונים (projectMember)
 async function requireMember(projectId, userId) {
   const member = await prisma.projectMember.findUnique({
     where: { projectId_userId: { projectId, userId } },
@@ -535,8 +459,6 @@ async function requireMember(projectId, userId) {
 // ---------- קבצים ופעילות ברמת הפרויקט ----------
 
 // שולף את כל הקבצים של הפרויקט.
-// נקרא מ: projects.routes.js
-// קורא ל: assertAccessible, מסד הנתונים (attachment)
 export async function getAttachments(actor, projectId) {
   await assertAccessible(actor, projectId);
   return prisma.attachment.findMany({
@@ -547,8 +469,6 @@ export async function getAttachments(actor, projectId) {
 }
 
 // שולף את הפעילות האחרונה בפרויקט.
-// נקרא מ: projects.routes.js
-// קורא ל: assertAccessible, מסד הנתונים (activityEntry)
 export async function getActivity(actor, projectId) {
   await assertAccessible(actor, projectId);
   return prisma.activityEntry.findMany({
@@ -562,8 +482,6 @@ export async function getActivity(actor, projectId) {
 // ---------- לוח ה-Kanban ----------
 
 // שולף את הלוח: עמודות לפי הסדר והמשימות שבכל אחת.
-// נקרא מ: projects.routes.js, וגם בקובץ הזה
-// קורא ל: assertAccessible, notFound, מסד הנתונים (board)
 export async function getBoard(actor, projectId) {
   await assertAccessible(actor, projectId);
   const board = await prisma.board.findUnique({
@@ -590,8 +508,6 @@ export async function getBoard(actor, projectId) {
 }
 
 // מוסיף עמודה ללוח.
-// נקרא מ: projects.routes.js
-// קורא ל: assertProjectPermission, notFound, getBoard, מסד הנתונים (board, boardColumn)
 export async function addColumn(actor, projectId, dto) {
   await assertProjectPermission(actor, projectId, 'board.configure');
   const board = await prisma.board.findUnique({ where: { projectId }, include: { columns: true } });
@@ -604,8 +520,6 @@ export async function addColumn(actor, projectId, dto) {
 }
 
 // מעדכן עמודה: שם, סדר או מגבלת WIP.
-// נקרא מ: projects.routes.js
-// קורא ל: assertProjectPermission, requireColumnInProject, getBoard, מסד הנתונים (boardColumn)
 export async function updateColumn(actor, projectId, columnId, dto) {
   await assertProjectPermission(actor, projectId, 'board.configure');
   await requireColumnInProject(projectId, columnId);
@@ -614,8 +528,6 @@ export async function updateColumn(actor, projectId, columnId, dto) {
 }
 
 // מוחק עמודה ריקה מהלוח.
-// נקרא מ: projects.routes.js
-// קורא ל: assertProjectPermission, requireColumnInProject, conflict, getBoard, מסד הנתונים (task, boardColumn)
 export async function removeColumn(actor, projectId, columnId) {
   await assertProjectPermission(actor, projectId, 'board.configure');
   await requireColumnInProject(projectId, columnId);
@@ -630,8 +542,6 @@ export async function removeColumn(actor, projectId, columnId) {
 }
 
 // שולף עמודה ומוודא שהיא בלוח של הפרויקט.
-// נקרא מ: updateColumn, removeColumn
-// קורא ל: notFound, מסד הנתונים (boardColumn)
 async function requireColumnInProject(projectId, columnId) {
   const column = await prisma.boardColumn.findFirst({
     where: { id: columnId, board: { projectId } },

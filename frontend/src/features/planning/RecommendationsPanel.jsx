@@ -17,11 +17,7 @@ import { ApplyDecisionDialog } from './ApplyDecisionDialog';
 
 const TYPE_LABELS = { REBALANCE: 'Rebalance work', DEFER: 'Reduce scope', ADD_MEMBER: 'Add capacity' };
 
-// הצעות מבוססות כללים לפרויקט הזה, כל אחת כבר עברה בסימולטור.
-// המנהל מחליט: לפתוח בסימולטור ולהתאים, או לבצע כמו שהיא.
 // המלצות המערכת, עם פתיחה בסימולטור או ביצוע.
-// נקרא מ: DecisionCenterPage.jsx
-// קורא ל: useRecommendations, ImpactSummary, ApplyDecisionDialog
 export function RecommendationsPanel({ projectId, onOpenInSimulator }) {
   const { data: recs, isLoading } = useRecommendations(projectId);
   const [applying, setApplying] = useState(null);

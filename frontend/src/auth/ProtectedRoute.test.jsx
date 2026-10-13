@@ -10,8 +10,6 @@ import { useAuth } from './AuthContext';
 vi.mock('./AuthContext', () => ({ useAuth: vi.fn() }));
 
 // מצייר נתיב שמור עם תפקיד נתון, לבדיקה.
-// נקרא מ: הקובץ הזה
-// קורא ל: useAuth, RequireRoleLevel
 function renderGuardedRoute(activeRole) {
   vi.mocked(useAuth).mockReturnValue({ activeRole });
 

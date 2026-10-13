@@ -60,8 +60,6 @@ import { projectAbility } from '../../lib/permissions';
 import { ContactButtons } from '../../components/common/ContactButtons';
 
 // כל פרטי המשימה: עריכה, תגובות, קבצים, תלויות והיסטוריה.
-// נקרא מ: App.jsx
-// קורא ל: useAuth, useTask, useProject, useBoard, useOrganizationUsers, useLabels +26
 export function TaskDetailsPage() {
   const { taskId } = useParams();
   const navigate = useNavigate();
@@ -601,8 +599,6 @@ export function TaskDetailsPage() {
 }
 
 // תווית קטנה לשדה.
-// נקרא מ: TaskDetailsPage
-// קורא ל: —
 function FieldLabel({ children }) {
   return (
     <Typography

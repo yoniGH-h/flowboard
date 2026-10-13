@@ -35,15 +35,10 @@ const ROLE_LABELS = {
   SYSTEM_ADMIN: 'System Administrator',
 };
 
-// הרשאות שיש להן משמעות רק למי שמנהל פרויקטים.
 // האם ההרשאה רלוונטית רק למנהל פרויקט.
-// נקרא מ: setUserOverride
-// קורא ל: —
 const needsProjectManager = (key) => key === 'projects.create' || PERMISSION_BY_KEY.get(key)?.scope === 'managed-project';
 
 // מוודא שמפתח ההרשאה קיים בקטלוג.
-// נקרא מ: setRolePermission, setUserOverride
-// קורא ל: notFound, isChangeable, forbidden
 function requireKnownPermission(key) {
   if (!PERMISSION_BY_KEY.has(key)) throw notFound(`Unknown permission "${key}"`);
   if (!isChangeable(key)) throw forbidden('Platform permissions cannot be changed by an organization');
@@ -51,11 +46,7 @@ function requireKnownPermission(key) {
 
 // ---------- טבלת התפקידים ----------
 
-// כל מה שמסך התפקידים וההרשאות צריך: הקטלוג, ולכל תפקיד - האם יש לו
-// כל הרשאה בארגון הזה (והאם זו ברירת המחדל או שינוי).
 // מחזיר לכל תפקיד אילו הרשאות יש לו בארגון.
-// נקרא מ: permissions.routes.js, וגם בקובץ הזה
-// קורא ל: isChangeable, roleHasPermission, מסד הנתונים (organizationRolePermission)
 export async function getMatrix(actor) {
   const orgChanges = await prisma.organizationRolePermission.findMany({
     where: { organizationId: actor.organizationId },
@@ -83,10 +74,7 @@ export async function getMatrix(actor) {
   };
 }
 
-// granted: true = התפקיד מקבל, false = התפקיד מאבד, null = חזרה לברירת המחדל.
 // נותן או שולל הרשאה מתפקיד בארגון, או מחזיר לברירת המחדל.
-// נקרא מ: permissions.routes.js
-// קורא ל: requireKnownPermission, forbidden, isLockedFor, canGrant, recordAudit, getMatrix +1
 export async function setRolePermission(actor, roleName, key, granted) {
   requireKnownPermission(key);
   if (!EDITABLE_ROLES.includes(roleName)) throw forbidden('This role cannot be changed');
@@ -126,8 +114,6 @@ export async function setRolePermission(actor, roleName, key, granted) {
 // ---------- עובד אחד ----------
 
 // שולף את המשתמש שעורכים, באותו ארגון.
-// נקרא מ: getUserPermissions, setUserOverride
-// קורא ל: notFound, מסד הנתונים (user)
 async function requireTargetUser(actor, userId) {
   const user = await prisma.user.findFirst({
     where: { id: userId, organizationId: actor.organizationId, deletedAt: null },
@@ -137,10 +123,7 @@ async function requireTargetUser(actor, userId) {
   return { ...user, roleNames: user.roles.map((r) => r.role.name) };
 }
 
-// ההרשאות בפועל של משתמש, מאיפה כל אחת מגיעה, והחריגים שלו.
 // מחזיר את ההרשאות של משתמש ומאיפה כל אחת מגיעה.
-// נקרא מ: permissions.routes.js, וגם בקובץ הזה
-// קורא ל: requireTargetUser, loadPermissionInputs, canEditUser, explainPermissions, מסד הנתונים (userPermissionOverride)
 export async function getUserPermissions(actor, userId) {
   const user = await requireTargetUser(actor, userId);
   const inputs = await loadPermissionInputs(actor.organizationId, user.id);
@@ -167,10 +150,7 @@ export async function getUserPermissions(actor, userId) {
   };
 }
 
-// מחזיר null כשלמשתמש מותר לערוך את החריגים של המשתמש הזה, ואחרת את הסיבה שלא.
 // בודק אם מותר לערוך את החריגים של המשתמש.
-// נקרא מ: getUserPermissions, setUserOverride
-// קורא ל: highestRoleLevel
 function canEditUser(actor, user) {
   if (user.id === actor.userId) return "You can't change your own permissions";
   if (highestRoleLevel(user.roleNames) > highestRoleLevel(actor.roles)) {
@@ -179,11 +159,7 @@ function canEditUser(actor, user) {
   return null;
 }
 
-// granted: true = הרשאה נוספת, false = שלילת הרשאה, null = הסרת החריג.
-// expiresAt (אופציונלי) הופך את החריג לזמני.
 // קובע או מסיר חריג הרשאה אישי למשתמש.
-// נקרא מ: permissions.routes.js
-// קורא ל: requireKnownPermission, requireTargetUser, canEditUser, forbidden, canGrant, needsProjectManager +6
 export async function setUserOverride(actor, userId, key, { granted, expiresAt, reason }) {
   requireKnownPermission(key);
   const user = await requireTargetUser(actor, userId);

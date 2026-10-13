@@ -35,8 +35,6 @@ const ICONS = {
 };
 
 // כל ההתראות, עם סינון וסימון כנקראו.
-// נקרא מ: App.jsx
-// קורא ל: useAuth, useNotifications, useMarkNotificationRead, useMarkAllNotificationsRead, LoadingState, PageHeader +2
 export function NotificationCenterPage() {
   const { user } = useAuth();
   const navigate = useNavigate();

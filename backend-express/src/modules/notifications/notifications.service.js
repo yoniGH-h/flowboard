@@ -4,14 +4,7 @@ import { afterCommit, prisma } from '../../db.js';
 import { emitToUser } from '../../realtime/socket.js';
 import { forbidden, notFound } from '../../utils/httpError.js';
 
-// המקום היחיד שיוצר התראות - כל מודול עובר דרכו (ואף פעם לא קורא
-// ישירות ל-prisma.notification.create), כך שהשמירה במסד והשליחה בזמן אמת
-// לדפדפן תמיד קורות יחד.
-//
-// הקלט: { organizationId, userId, type, title, body, relatedProjectId?, relatedTaskId? }
 // שומר התראה במסד ושולח אותה למשתמש ב-Socket.IO.
-// נקרא מ: automation-rules.service.js, comments.routes.js, meetings.routes.js, projects.service.js +1
-// קורא ל: afterCommit, emitToUser, מסד הנתונים (notification)
 export async function createNotification(input) {
   const notification = await prisma.notification.create({ data: input });
   // בתוך טרנזקציה (למשל ביצוע החלטה) השליחה מחכה עד שהנתונים נשמרו,
@@ -21,8 +14,6 @@ export async function createNotification(input) {
 }
 
 // שולף את ההתראות של משתמש.
-// נקרא מ: notifications.routes.js
-// קורא ל: מסד הנתונים (notification)
 export function findForUser(userId) {
   return prisma.notification.findMany({
     where: { userId },
@@ -32,8 +23,6 @@ export function findForUser(userId) {
 }
 
 // מסמן התראה אחת כנקראה.
-// נקרא מ: notifications.routes.js
-// קורא ל: notFound, forbidden, emitToUser, מסד הנתונים (notification)
 export async function markRead(actor, notificationId) {
   const notification = await prisma.notification.findUnique({ where: { id: notificationId } });
   if (!notification) throw notFound('Notification not found');
@@ -50,8 +39,6 @@ export async function markRead(actor, notificationId) {
 }
 
 // מסמן את כל ההתראות של המשתמש כנקראו.
-// נקרא מ: notifications.routes.js
-// קורא ל: emitToUser, מסד הנתונים (notification)
 export async function markAllRead(actor) {
   await prisma.notification.updateMany({
     where: { userId: actor.userId, read: false },

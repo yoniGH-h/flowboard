@@ -17,7 +17,6 @@ import PsychologyAltOutlinedIcon from '@mui/icons-material/PsychologyAltOutlined
 import { ROLE_LEVEL } from '../lib/permissions';
 
 // הפריטים בתפריט, והדרג המינימלי שרואה כל אחד.
-// נקרא מ: Sidebar.jsx
 export const NAV_SECTIONS = [
   {
     title: 'Workspace',

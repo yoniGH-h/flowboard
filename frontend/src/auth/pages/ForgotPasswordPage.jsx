@@ -12,8 +12,6 @@ import { AuthLayout } from '../AuthLayout';
 import { requestPasswordReset } from '../../api/authApi';
 
 // טופס לבקשת איפוס סיסמה.
-// נקרא מ: App.jsx
-// קורא ל: requestPasswordReset, AuthLayout
 export function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
   const [error, setError] = useState(null);

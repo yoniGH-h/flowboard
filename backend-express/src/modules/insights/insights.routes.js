@@ -7,14 +7,9 @@ import { parse, uuid } from '../../utils/validate.js';
 import { getInsights } from './insights.service.js';
 
 // הראוטר של התובנות.
-// נקרא מ: app.js
 export const insightsRouter = Router();
 
-// GET /api/insights?projectId= - צפי, דיוק הערכות, צווארי בקבוק, מגמת סיכון
-// ומסקנות בשפה פשוטה, לפרויקטים שהמשתמש מנהל.
 // מחזיר את התובנות לפרויקטים שהמשתמש מנהל.
-// נקרא מ: fetchInsights (api.js)
-// קורא ל: requirePermission, parse, getInsights
 insightsRouter.get('/', requirePermission('reports.view'), async (req, res) => {
   const { projectId } = parse(z.strictObject({ projectId: uuid.optional() }), req.query);
   res.json(await getInsights(req.user, projectId));

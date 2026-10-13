@@ -11,8 +11,6 @@ import { initials, fullName, contrastTextColor } from '../../lib/format';
 const SIZE_MAP = { small: 24, medium: 32, large: 48 };
 
 // עיגול צבעוני עם ראשי התיבות של המשתמש.
-// נקרא מ: TaskRow.jsx, ManagementDashboardPage.jsx, KanbanTaskCard.jsx, ProfileSettingsPage.jsx +3, וגם בקובץ הזה
-// קורא ל: fullName, contrastTextColor, initials
 export function UserAvatar({ user, size = 'medium' }) {
   const px = SIZE_MAP[size];
   if (!user) {
@@ -34,8 +32,6 @@ export function UserAvatar({ user, size = 'medium' }) {
 }
 
 // אווטאר לצד שם וכותרת משנה.
-// נקרא מ: UserManagementPage.jsx, ProjectManagementPage.jsx, ProjectOverviewPage.jsx, ProjectTeamManagementPage.jsx +2
-// קורא ל: UserAvatar, fullName
 export function UserIdentity({ user, size = 'medium', subtitle }) {
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25, minWidth: 0 }}>
@@ -55,8 +51,6 @@ export function UserIdentity({ user, size = 'medium', subtitle }) {
 }
 
 // כמה אווטארים חופפים, עם "+N" לשאר.
-// נקרא מ: ProjectCard.jsx, ProjectOverviewPage.jsx
-// קורא ל: UserAvatar
 export function UserAvatarStack({ users, max = 4 }) {
   return (
     <AvatarGroup max={max} sx={{ '& .MuiAvatar-root': { width: 28, height: 28, fontSize: 12, borderColor: '#fff' } }}>

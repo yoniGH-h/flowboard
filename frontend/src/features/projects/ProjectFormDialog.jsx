@@ -16,8 +16,6 @@ import { useCreateProject, useUpdateProject } from '../../lib/queries';
 import { isOrgAdmin } from '../../lib/permissions';
 
 // חלון יצירה או עריכה של פרויקט.
-// נקרא מ: ProjectManagementPage.jsx
-// קורא ל: ProjectFormFields
 export function ProjectFormDialog({ open, onClose, managers, project }) {
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
@@ -29,8 +27,6 @@ export function ProjectFormDialog({ open, onClose, managers, project }) {
 }
 
 // שדות הטופס של הפרויקט והשמירה.
-// נקרא מ: ProjectFormDialog
-// קורא ל: useAuth, useCreateProject, useUpdateProject, isOrgAdmin, fullName
 function ProjectFormFields({ onClose, managers, project }) {
   const { organization, user, activeRole } = useAuth();
   const createProject = useCreateProject();

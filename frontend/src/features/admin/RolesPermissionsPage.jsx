@@ -27,8 +27,6 @@ import { usePermissionMatrix, useSetRolePermission } from '../../lib/queries';
 import { ROLE_LEVEL, SCOPE_LABELS } from '../../lib/permissions';
 
 // טבלת הרשאות לפי תפקיד, עם אפשרות לשנות.
-// נקרא מ: App.jsx
-// קורא ל: usePermissionMatrix, LoadingState, ErrorState, EditablePermissionMatrix
 export function RolesPermissionsPage() {
   const { data: matrix, isLoading, isError, refetch } = usePermissionMatrix();
 
@@ -40,8 +38,6 @@ export function RolesPermissionsPage() {
 // ---------- הטבלה הניתנת לעריכה ----------
 
 // טבלת ההרשאות שאפשר לערוך.
-// נקרא מ: RolesPermissionsPage
-// קורא ל: useSetRolePermission, PageHeader
 function EditablePermissionMatrix({ matrix }) {
   const setRolePermission = useSetRolePermission();
 

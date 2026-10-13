@@ -20,11 +20,7 @@ import { useSimulation } from '../../lib/queries';
 import { ImpactSummary } from './ImpactSummary';
 import { ApplyDecisionDialog } from './ApplyDecisionDialog';
 
-// סימולטור "מה אם": בוחרים שינויים בצד אחד ורואים את ההשפעה החזויה שלהם בצד השני.
-// שום דבר לא נשמר עד "Apply" - השרת רק מחשב.
 // בחירת שינויים והצגת ההשפעה שלהם, בלי לשמור.
-// נקרא מ: DecisionCenterPage.jsx
-// קורא ל: useSimulation, ImpactSummary, ApplyDecisionDialog
 export function SimulatorPanel({ projectId, view, initialChanges }) {
   const simulation = useSimulation();
   const [reassign, setReassign] = useState(initialChanges?.reassign ?? []);

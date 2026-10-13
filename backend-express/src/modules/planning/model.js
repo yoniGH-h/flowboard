@@ -12,19 +12,14 @@ import { calculateRisk, WORKLOAD_CAPACITY_TASKS } from '../projects/risk.js';
 
 export { WORKLOAD_CAPACITY_TASKS };
 // מספר הימים שלפיהם נמדד קצב העבודה (28).
-// נקרא מ: הקובץ הזה
 export const PACE_WINDOW_DAYS = 28; // "הקצב הנוכחי" = משימות שהושלמו ב-4 השבועות האחרונים
 // מינימום משימות שהושלמו כדי לסמוך על הצפי.
-// נקרא מ: הקובץ הזה
 export const MIN_PACE_SAMPLE = 3; // פחות משימות שהושלמו = מעט מדי נתונים לתאריך סיום
 const DAY_MS = 86_400_000;
 
 // ---------- טעינה ----------
 
-// כל מה שהמודל צריך על פרויקט אחד, כאובייקטים פשוטים (בלי גישה נוספת למסד).
 // טוען מהמסד את כל מה שהמודל צריך על פרויקט.
-// נקרא מ: planning.service.js
-// קורא ל: notFound, מסד הנתונים (project, task, user, taskStatusChange)
 export async function loadProjectState(actor, projectId, now = new Date()) {
   const project = await prisma.project.findFirst({
     where: { id: projectId, organizationId: actor.organizationId },
@@ -110,35 +105,17 @@ export async function loadProjectState(actor, projectId, now = new Date()) {
 }
 
 // מחזיר שם מלא של משתמש מתוך המצב.
-// נקרא מ: planning.service.js, וגם בקובץ הזה
-// קורא ל: —
 export const userName = (state, id) => {
   const u = state.users.get(id);
   return u ? `${u.firstName} ${u.lastName}` : 'someone';
 };
 // האם משימה פתוחה (לא הושלמה ולא נדחתה).
-// נקרא מ: planning.service.js, וגם בקובץ הזה
-// קורא ל: —
 export const isOpen = (t) => !t.completedAt && !t.deferred;
 // מעצב תאריך קצר.
-// נקרא מ: applyChanges
-// קורא ל: —
 const shortDate = (d) => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 
 // ---------- שינויי "מה אם" ----------
-//
-// changes = {
-//   reassign:       [{ taskId, toUserId }]   להעביר משימות פתוחות למישהו אחר
-//   deferTaskIds:   [taskId]                 להוציא משימות פתוחות מהגרסה הזו (ארכוב)
-//   addMemberIds:   [userId]                 להוסיף אנשים לפרויקט
-//   unblockTaskIds: [taskId]                 לסמן משימות חסומות כלא חסומות
-//   newTargetDate:  Date                     להזיז את תאריך היעד
-// }
-//
-// מחזיר מצב חדש (המקורי לא משתנה) ותיאורים קריאים של השינויים.
 // מחזיר מצב חדש עם השינויים, בלי לגעת במקורי.
-// נקרא מ: planning.service.js
-// קורא ל: isOpen, badRequest, userName, shortDate
 export function applyChanges(state, changes) {
   const next = {
     ...state,
@@ -206,10 +183,7 @@ export function applyChanges(state, changes) {
 
 // ---------- הערכה ----------
 
-// צפי, סיכון לעיכוב ועומס למצב נתון (אמיתי או מדומה).
 // מחשב צפי סיום, ציון סיכון ועומס למצב נתון.
-// נקרא מ: planning.service.js
-// קורא ל: isOpen, calculateRisk, userName
 export function evaluate(state) {
   const { now, project } = state;
   const open = state.tasks.filter(isOpen);
@@ -260,10 +234,7 @@ export function evaluate(state) {
   };
 }
 
-// ההנחות שמאחורי הסימולציה - מוצגות ליד כל תוצאה.
 // מנסח את ההנחות שמאחורי תוצאת הסימולציה.
-// נקרא מ: planning.service.js
-// קורא ל: —
 export function assumptionsFor(state, next) {
   const list = [
     `Pace = tasks completed in the last 4 weeks (${state.doneLast4Weeks}), assumed to continue.`,

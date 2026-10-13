@@ -18,7 +18,6 @@
 //      עם תאריך תפוגה אם רוצים.
 
 // רשימת כל ההרשאות: מפתח, קבוצה, היקף ותיאור.
-// נקרא מ: permissions.service.js, effective.js
 export const PERMISSIONS = [
   // --- עבודה בתוך פרויקטים שהמשתמש חבר בהם ---
   // includedIn: הרשאה חזקה יותר שכבר כוללת את זו (מי שיש לו tasks.manage
@@ -51,10 +50,8 @@ export const PERMISSIONS = [
 ];
 
 // קבוצת כל מפתחות ההרשאה, לבדיקה מהירה.
-// נקרא מ: auth.js
 export const PERMISSION_KEYS = new Set(PERMISSIONS.map((p) => p.key));
 // מפה ממפתח הרשאה אל ההגדרה שלה.
-// נקרא מ: permissions.service.js, projects.service.js
 export const PERMISSION_BY_KEY = new Map(PERMISSIONS.map((p) => [p.key, p]));
 
 // הרשאות ברירת המחדל של כל תפקיד. משתמש עם כמה תפקידים מקבל את האיחוד שלהן.
@@ -80,31 +77,17 @@ const ORG_ADMIN = [
 const SYSTEM_ADMIN = [...ORG_ADMIN, 'organizations.manage', 'system.audit.view'];
 
 // הרשאות ברירת המחדל של כל תפקיד.
-// נקרא מ: permissions.service.js, effective.js
 export const ROLE_DEFAULTS = { EMPLOYEE, PROJECT_MANAGER, ORG_ADMIN, SYSTEM_ADMIN };
 
-// התפקידים שארגון רשאי להתאים. SYSTEM_ADMIN הוא ברמת הפלטפורמה ונשאר קבוע.
 // התפקידים שארגון רשאי לשנות את ההרשאות שלהם.
-// נקרא מ: permissions.service.js, effective.js
 export const EDITABLE_ROLES = ['EMPLOYEE', 'PROJECT_MANAGER', 'ORG_ADMIN'];
 
-// האם ארגון יכול בכלל לשנות את ההרשאה הזו?
 // האם ארגון רשאי לשנות את ההרשאה הזו.
-// נקרא מ: permissions.service.js
-// קורא ל: —
 export const isChangeable = (key) => PERMISSION_BY_KEY.get(key)?.scope !== 'system';
 
-// האם מי שמחזיק ב-permissions רשאי להעניק את key? רק אם יש לו אותה בעצמו, או
-// הרשאה חזקה יותר שכוללת אותה - אף אחד לא יכול להעניק יותר ממה שמותר לו.
 // האם למשתמש מותר להעניק את ההרשאה הזו לאחרים.
-// נקרא מ: permissions.service.js
-// קורא ל: —
 export const canGrant = (permissions, key) =>
   permissions.has(key) || (PERMISSION_BY_KEY.get(key)?.includedIn ?? []).some((k) => permissions.has(k));
 
-// האם אסור לשלול את ההרשאה הזו מהתפקיד הזה? (מונע מארגון לנעול את
-// כל המנהלים מחוץ לניהול המשתמשים וההרשאות.)
 // האם ההרשאה נעולה לתפקיד הזה ואי אפשר לשלול אותה.
-// נקרא מ: permissions.service.js
-// קורא ל: —
 export const isLockedFor = (key, roleName) => PERMISSION_BY_KEY.get(key)?.lockedFor?.includes(roleName) ?? false;

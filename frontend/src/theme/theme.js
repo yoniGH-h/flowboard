@@ -2,10 +2,7 @@
 
 import { createTheme } from '@mui/material/styles';
 
-// שפת העיצוב של FlowBoard: רקע בהיר ורגוע, כחול מותג אחד ומאופק,
-// וצבעים סמנטיים שמורים רק למשמעות של סטטוס (אף פעם לא לקישוט).
 // ערכת העיצוב שכל רכיבי MUI משתמשים בה.
-// נקרא מ: main.jsx
 export const theme = createTheme({
   palette: {
     mode: 'light',

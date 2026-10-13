@@ -6,7 +6,6 @@ import { clearTokens, getAccessToken, notifySessionExpired, setTokens } from './
 const baseURL = import.meta.env.VITE_API_URL ?? 'http://localhost:3000/api';
 
 // מופע axios עם כתובת הבסיס של השרת וה-interceptors.
-// נקרא מ: api.js, authApi.js
 export const http = axios.create({ baseURL, withCredentials: true });
 
 http.interceptors.request.use((config) => {
@@ -24,8 +23,6 @@ const refreshClient = axios.create({ baseURL, withCredentials: true });
 let refreshPromise = null;
 
 // מבקש אסימון גישה חדש בעזרת עוגיית הרענון.
-// נקרא מ: הקובץ הזה
-// קורא ל: setTokens, clearTokens
 async function refreshAccessToken() {
   if (!refreshPromise) {
     refreshPromise = refreshClient
@@ -74,8 +71,6 @@ http.interceptors.response.use(
 );
 
 // שולף מהשגיאה את ההודעה שהשרת שלח.
-// נקרא מ: api.js, authApi.js
-// קורא ל: —
 export function getErrorMessage(error, fallback = 'Something went wrong. Please try again.') {
   if (axios.isAxiosError(error)) {
     const body = error.response?.data;

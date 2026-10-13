@@ -13,8 +13,6 @@ import { RoleSwitcher } from './RoleSwitcher';
 import { useAuth } from '../auth/AuthContext';
 
 // חיפוש, החלפת תפקיד, פעמון ותפריט משתמש.
-// נקרא מ: AppShell.jsx
-// קורא ל: useAuth, GlobalSearch, RoleSwitcher, NotificationBell, UserMenu
 export function Topbar({ onOpenMobileNav }) {
   const { organization } = useAuth();
   return (

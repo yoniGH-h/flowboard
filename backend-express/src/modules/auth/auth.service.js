@@ -17,14 +17,9 @@ const LOGIN_LOCK_MS = 15 * 60 * 1000;
 const AVATAR_COLORS = ['#2563EB', '#7C3AED', '#DB2777', '#059669', '#D97706', '#DC2626'];
 
 // בוחר צבע אקראי לאווטאר.
-// נקרא מ: signUp, joinOrganization
-// קורא ל: —
 const randomAvatarColor = () => AVATAR_COLORS[Math.floor(Math.random() * AVATAR_COLORS.length)];
 
-// הרשמה = יצירת ארגון חדש, כשהנרשם הוא מנהל הארגון הראשון שלו.
 // הרשמה: יוצר ארגון חדש ואת המשתמש הראשון שלו כמנהל הארגון.
-// נקרא מ: auth.routes.js
-// קורא ל: conflict, slugify, randomAvatarColor, recordAudit, issueSession, מסד הנתונים (user, organization, role)
 export async function signUp(dto) {
   const existingUser = await prisma.user.findUnique({ where: { email: dto.email } });
   if (existingUser) {
@@ -90,10 +85,7 @@ export async function signUp(dto) {
   return issueSession(user.id, user.email, organization.id, ['EMPLOYEE', 'ORG_ADMIN']);
 }
 
-// הצטרפות לארגון קיים (לפי ה-slug שלו) כעובד.
 // הרשמה לארגון קיים כעובד.
-// נקרא מ: auth.routes.js
-// קורא ל: conflict, badRequest, randomAvatarColor, recordAudit, issueSession, מסד הנתונים (user, organization, role)
 export async function joinOrganization(dto) {
   const existingUser = await prisma.user.findUnique({ where: { email: dto.email } });
   if (existingUser) {
@@ -133,8 +125,6 @@ export async function joinOrganization(dto) {
 }
 
 // כניסה: בודק סיסמה, מטפל בנעילה ומנפיק אסימונים.
-// נקרא מ: auth.routes.js
-// קורא ל: unauthorized, recordAudit, issueSession, מסד הנתונים (user)
 export async function signIn(dto) {
   const user = await prisma.user.findUnique({
     where: { email: dto.email },
@@ -184,11 +174,7 @@ export async function signIn(dto) {
   );
 }
 
-// רוטציה של אסימון הרענון: אסימון רענון תקף לשימוש אחד בדיוק. השימוש מבטל אותו ומנפיק
-// זוג חדש, כך שאסימון שנגנב ונשלח שוב נדחה.
 // מחליף אסימון רענון תקף בזוג אסימונים חדש.
-// נקרא מ: auth.routes.js
-// קורא ל: unauthorized, issueSession, מסד הנתונים (refreshToken, user)
 export async function refresh(refreshToken) {
   let payload;
   try {
@@ -224,8 +210,6 @@ export async function refresh(refreshToken) {
 }
 
 // יציאה: מבטל את אסימון הרענון.
-// נקרא מ: auth.routes.js
-// קורא ל: מסד הנתונים (refreshToken)
 export async function logout(refreshToken) {
   try {
     const payload = jwt.verify(refreshToken, config.jwt.refreshSecret);
@@ -238,11 +222,7 @@ export async function logout(refreshToken) {
   }
 }
 
-// הסיסמה הנוכחית חייבת להתאים. סיסמה נוכחית שגויה = 400 (ולא 401, שהיה גורם
-// לאתר לנסות לחדש את החיבור).
 // שינוי סיסמה למשתמש מחובר, וביטול שאר החיבורים שלו.
-// נקרא מ: auth.routes.js
-// קורא ל: badRequest, revokeAllSessions, recordAudit, issueSession, מסד הנתונים (user)
 export async function changePassword(actor, dto) {
   const user = await prisma.user.findUnique({ where: { id: actor.userId } });
   if (!user || !(await bcrypt.compare(dto.currentPassword, user.passwordHash))) {
@@ -269,8 +249,6 @@ export async function changePassword(actor, dto) {
 }
 
 // מבטל את כל אסימוני הרענון של משתמש.
-// נקרא מ: auth.routes.js, וגם בקובץ הזה
-// קורא ל: מסד הנתונים (refreshToken)
 export async function revokeAllSessions(userId) {
   await prisma.refreshToken.updateMany({
     where: { userId, revokedAt: null },
@@ -278,11 +256,7 @@ export async function revokeAllSessions(userId) {
   });
 }
 
-// לפיתוח בלבד: אין ספק דואר, ולכן אסימון האיפוס מוחזר בתשובה
-// במקום להישלח באימייל.
 // יוצר אסימון חד-פעמי לאיפוס סיסמה.
-// נקרא מ: auth.routes.js
-// קורא ל: revokeAllSessions, מסד הנתונים (user)
 export async function forgotPassword(dto) {
   const user = await prisma.user.findUnique({ where: { email: dto.email } });
   if (!user) {
@@ -303,8 +277,6 @@ export async function forgotPassword(dto) {
 }
 
 // קובע סיסמה חדשה לפי אסימון האיפוס.
-// נקרא מ: auth.routes.js
-// קורא ל: badRequest, recordAudit, מסד הנתונים (user)
 export async function resetPassword(dto) {
   const [userId, rawToken] = dto.token.split('.');
   if (!userId || !rawToken) {
@@ -340,12 +312,7 @@ export async function resetPassword(dto) {
   });
 }
 
-// אסימון גישה: קצר מועד (15 דקות), נשלח כ-"Authorization: Bearer ...".
-// אסימון רענון: ארוך מועד (7 ימים), נשמר רק כגיבוב bcrypt כך שדליפה של המסד לא מאפשרת
-// להשתמש בו; מזהה השורה שלו (jti) מאפשר לבטל אסימון יחיד.
 // מנפיק אסימון גישה ואסימון רענון.
-// נקרא מ: signUp, joinOrganization, signIn, refresh +1
-// קורא ל: refreshExpiryDate, מסד הנתונים (refreshToken)
 async function issueSession(userId, email, organizationId, roles) {
   const accessToken = jwt.sign({ sub: userId, email, organizationId, roles }, config.jwt.accessSecret, {
     expiresIn: config.jwt.accessTtl,
@@ -365,10 +332,7 @@ async function issueSession(userId, email, organizationId, roles) {
   return { accessToken, refreshToken };
 }
 
-// "7d" -> תאריך בעוד 7 ימים.
 // מחשב את תאריך התפוגה של אסימון הרענון.
-// נקרא מ: issueSession
-// קורא ל: —
 function refreshExpiryDate() {
   const match = /^(\d+)([smhd])$/.exec(config.jwt.refreshTtl);
   const amount = match ? Number(match[1]) : 7;

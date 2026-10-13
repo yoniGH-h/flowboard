@@ -43,11 +43,7 @@ const FORECAST_STATUS = {
   done: { label: 'All done', color: 'default' },
 };
 
-// "תובנות" במסך הדוחות: מסקנות שמנהל יכול לפעול לפיהן, מחושבות בשרת
-// מנתונים ש-FlowBoard כבר מחזיק (ראו backend-express/src/modules/insights).
 // צפי סיום, דיוק הערכות, צווארי בקבוק ומגמת סיכון.
-// נקרא מ: ReportsAnalyticsPage.jsx
-// קורא ל: useInsights, formatDate, fullName
 export function InsightsSection({ projectId, users }) {
   const { data, isLoading, isError } = useInsights(projectId);
   const navigate = useNavigate();
