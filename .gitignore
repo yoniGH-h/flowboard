@@ -19,5 +19,4 @@ backups/
 
 # Working files and local tool settings
 tmp/
-.claude/
 *.log
